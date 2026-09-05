@@ -1,0 +1,26 @@
+// Element Plus theme override — AI Already Did It palette (blue primary, green success).
+// Injected into every SCSS chunk by vite `css.preprocessorOptions.scss.additionalData`.
+@forward 'element-plus/theme-chalk/src/common/var.scss' with (
+  $colors: (
+    'primary': (
+      'base': #1f6feb,
+    ),
+    'success': (
+      'base': #2ea043,
+    ),
+    'warning': (
+      'base': #d29922,
+    ),
+    'danger': (
+      'base': #e5484d,
+    ),
+    'info': (
+      'base': #6b7280,
+    ),
+  ),
+  $border-radius: (
+    'base': 8px,
+    'small': 5px,
+    'round': 20px,
+  )
+);
