@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="AiAlreadyDidIt.Api/AiAlreadyDidIt.Api.csproj" />
+  <Project Path="AiAlreadyDidIt.Mcp/AiAlreadyDidIt.Mcp.csproj" />
+</Solution>
