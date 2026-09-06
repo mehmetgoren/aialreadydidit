@@ -336,5 +336,16 @@ public partial class AccountService(AadiDbContext db, IPasswordHasher hasher, Jw
         catch (Exception ex) { logger.LogError(ex, "Could not send e-mail to {To}", to); }
     }
 
-    public static string NormalizeLocale(string? locale) => locale?.StartsWith("tr", StringComparison.OrdinalIgnoreCase) == true ? "tr-TR" : "en-US";
+    /// <summary>UI languages the SPA ships (mirror of src-frontend/src/i18n/locales.ts).</summary>
+    public static readonly string[] SupportedLocales = ["en-US", "tr-TR", "es-ES", "pt-BR", "de-DE", "fr-FR", "ar-SA", "ru-RU", "ja-JP", "ko-KR", "zh-CN"];
+
+    /// <summary>"pt-PT" → "pt-BR", "de" → "de-DE", unknown → "en-US".</summary>
+    public static string NormalizeLocale(string? locale)
+    {
+        if (string.IsNullOrWhiteSpace(locale)) return "en-US";
+        var exact = SupportedLocales.FirstOrDefault(l => l.Equals(locale.Trim(), StringComparison.OrdinalIgnoreCase));
+        if (exact is not null) return exact;
+        var prefix = locale.Trim().Split('-', '_')[0];
+        return SupportedLocales.FirstOrDefault(l => l.StartsWith(prefix + "-", StringComparison.OrdinalIgnoreCase)) ?? "en-US";
+    }
 }
