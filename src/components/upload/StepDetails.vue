@@ -9,6 +9,7 @@ import { CatalogService } from '@/utils/services/catalog-service'
 import { useSiteStore } from '@/stores/site-store'
 import { useCategoryStore, useCategoryName } from '@/stores/category-store'
 import AppCard from '@/components/catalog/AppCard.vue'
+import CategoryPicker from '@/components/upload/CategoryPicker.vue'
 import { debounce, enableAfter, fieldErrors, notifyError, notifyS } from '@/utils/tools'
 
 /** Step 2 — name, descriptions (with live duplicate check), category (+ LLM suggestion), license, model, prompts, tags, lineage. */
@@ -160,10 +161,14 @@ async function save(next: boolean) {
         <div class="sub">{{ t('markdown_supported') }}</div>
       </ElFormItem>
 
-      <ElFormItem :label="t('category')" :error="errors.categoryId">
+      <!-- LLM categorisation on: free cascader + "Suggest". Off (Ai:EnableCategorySuggestions=false): explicit category / sub-category selects. -->
+      <ElFormItem v-if="!site.config?.categorySuggestionsAvailable" :label="t('category')" class="full">
+        <CategoryPicker v-model="form.categoryId" :error="errors.categoryId" />
+      </ElFormItem>
+      <ElFormItem v-else :label="t('category')" :error="errors.categoryId">
         <div class="cat-row">
           <ElCascader :model-value="categoryPath" :options="cascader" :props="{ checkStrictly: true, expandTrigger: 'hover' }" clearable filterable style="flex: 1" @update:model-value="onCategory" />
-          <ElButton v-if="site.config?.categorySuggestionsAvailable" :loading="suggesting" @click="suggest"><ElIcon><MagicStick /></ElIcon>{{ t('suggest') }}</ElButton>
+          <ElButton :loading="suggesting" @click="suggest"><ElIcon><MagicStick /></ElIcon>{{ t('suggest') }}</ElButton>
         </div>
         <ElAlert v-if="suggestion" type="success" :closable="true" show-icon class="suggestion" @close="suggestion = null">
           <template #title>{{ t('suggestion_title', { model: suggestion.model }) }}</template>
