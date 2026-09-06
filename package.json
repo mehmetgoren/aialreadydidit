@@ -10,6 +10,9 @@
     "dev": "vite",
     "build": "run-p type-check \"build-only {@}\" --",
     "preview": "vite preview",
+    "test": "vitest run",
+    "test:unit": "vitest",
+    "test:coverage": "vitest run --coverage",
     "build-only": "vite build",
     "type-check": "vue-tsc --build",
     "lint": "eslint . --fix",
@@ -32,12 +35,15 @@
     "@tsconfig/node22": "^22.0.2",
     "@types/node": "^22.19.0",
     "@vitejs/plugin-vue": "^6.0.8",
+    "@vitest/coverage-v8": "^5.0.0",
     "@vue/eslint-config-prettier": "^10.2.0",
     "@vue/eslint-config-typescript": "^14.9.0",
+    "@vue/test-utils": "^2.5.0",
     "@vue/tsconfig": "^0.9.1",
     "eslint": "^9.39.0",
     "eslint-plugin-vue": "^10.10.0",
     "jiti": "^2.7.0",
+    "jsdom": "^30.0.1",
     "npm-run-all2": "^9.0.3",
     "prettier": "^3.9.6",
     "sass-embedded": "^1.104.0",
@@ -45,6 +51,7 @@
     "unplugin-auto-import": "^21.1.0",
     "unplugin-vue-components": "^32.1.0",
     "vite": "^8.2.2",
+    "vitest": "^5.0.0",
     "vue-tsc": "^3.3.11"
   }
 }

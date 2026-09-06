@@ -10,6 +10,8 @@ import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '')
   const apiTarget = env.VITE_API_PROXY_TARGET || 'http://localhost:5190'
+  // Vitest runs with mode 'test': skip the per-component SCSS imports (Node cannot load .scss and tests never render styles).
+  const importStyle = mode === 'test' ? false : ('sass' as const)
 
   return {
     plugins: [
@@ -17,12 +19,12 @@ export default defineConfig(({ mode }) => {
       // Auto-import Vue / Router / Pinia APIs and Element Plus components on demand.
       AutoImport({
         imports: ['vue', 'vue-router', 'pinia', 'vue-i18n'],
-        resolvers: [ElementPlusResolver({ importStyle: 'sass' })],
+        resolvers: [ElementPlusResolver({ importStyle })],
         dts: 'src/types/auto-imports.d.ts',
         eslintrc: { enabled: false },
       }),
       Components({
-        resolvers: [ElementPlusResolver({ importStyle: 'sass' })],
+        resolvers: [ElementPlusResolver({ importStyle })],
         dts: 'src/types/components.d.ts',
       }),
     ],

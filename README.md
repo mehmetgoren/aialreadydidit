@@ -25,8 +25,11 @@ and a multi-stage nginx Docker image that also routes crawlers to the server-ren
 npm install
 npm run dev          # http://localhost:5174 (API root from .env → http://localhost:5190/api/v1)
 npm run build        # type-check + production build (dist/)
-npm run type-check   # vue-tsc --build
+npm run type-check   # vue-tsc --build (app + vitest projects)
 npm run lint         # eslint --fix
+npm run test         # vitest run (unit tests, jsdom)
+npm run test:unit    # vitest in watch mode
+npm run test:coverage
 ```
 
 Start the API first (`cd ../src-backend/AiAlreadyDidIt.Api && dotnet run --launch-profile http`), then sign in with a seeded
@@ -61,5 +64,18 @@ src/
   stores/          Pinia setup stores
   utils/           models/ (API DTOs), services/ (one per controller), validation/, tools.ts, format.ts, dashboard-menu.ts
   styles/          index.scss (design tokens, helpers), element/index.scss (Element Plus theme)
+  **/__tests__/    Vitest specs next to the code they cover (see below)
 docker/nginx.conf  SPA + /api /files proxy; crawler user-agents on /app/* → API /seo/app/* (server-rendered)
+vitest.config.ts   merges vite.config.ts (mode "test" turns off the Element Plus SCSS imports) + jsdom
 ```
+
+## Unit tests
+
+`npm run test` runs the Vitest suites in `src/**/__tests__/*.spec.ts` (jsdom, no API needed). Covered: `format.ts`,
+`tools.ts`, validation rules, `BaseService` (envelope unwrapping, URL building, uploads), `LocalService`, the axios boot
+(bearer header, single refresh on 401 with retry, sign-out on failed refresh, error normalisation), the user / site /
+category / common / notification stores, the router table (public vs. member vs. admin metas, title keys, dashboard menu)
+and the navigation guard, `useAppBrowser` (URL ↔ query sync), the `ScoreBadge`, `StatusTag`, `PagePagination`, `MarkdownView`
+components, and an i18n parity check (en-US and tr-TR expose identical keys with matching `{placeholders}`, and domain
+files never shadow each other). Services are mocked with `vi.mock` class stubs; the axios interceptors are exercised
+through a scripted `api.defaults.adapter`.
