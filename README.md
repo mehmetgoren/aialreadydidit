@@ -46,6 +46,7 @@ licenses, LLM models, roles, admin menus, settings — `Data/Seed/ReferenceData.
 | `Jwt` | `Key` (≥ 32 bytes), `AccessTokenMinutes` (15), `RefreshTokenDays` (30, httpOnly cookie) |
 | `Site` | `PublicUrl`, `ApiPublicUrl`, `McpPublicUrl`, `GoogleClientId` (empty = button hidden), `RequireEmailVerification`, `DefaultLocale` |
 | `Ai` | `Provider` = `Ollama` \| `OpenAi` \| `None`; optional `EmbeddingProvider` / `ChatProvider` overrides; `EmbeddingDimensions` (1024); `Ollama:*`, `OpenAi:*` |
+| `Ai:EnableCategorySuggestions` | `false` by default. `true` turns on LLM categorisation (wizard "Suggest" button, `categorize_app` job feeding the moderation queue) — needs a chat model, i.e. a GPU server or a paid API. When `false` the uploader must pick a category **and** sub-category in the wizard (submission is blocked otherwise). |
 | `Storage` | S3 endpoint (inside docker `http://minio:9000`), `PublicEndpoint` (what browsers reach), keys, size limits |
 | `ClamAv` | `Host`, `Port`, `FailClosed` (keep files pending while clamd is down) |
 | `RateLimiting` | per-minute limits for anonymous / members / API keys / downloads / auth |

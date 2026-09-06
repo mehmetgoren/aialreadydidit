@@ -22,7 +22,7 @@ namespace AiAlreadyDidIt.Api.Services.Apps;
 public sealed partial class AppEditorService(AadiDbContext db, ICurrentUser currentUser, IObjectStorage storage, IOptions<StorageOptions> storageOptions,
     IOptions<SiteOptions> siteOptions, IEnumerable<IRepositoryImporter> importers, IHttpClientFactory httpClientFactory, CategoryIndexService categories,
     AppLifecycleService lifecycle, SearchService search, EmbeddingService embeddings, SiteSettingsCache settings, JobQueue jobs, CatalogService catalog,
-    IHostEnvironment env, ILogger<AppEditorService> logger)
+    IHostEnvironment env, CategorySuggestionService suggestions, ILogger<AppEditorService> logger)
 {
     // ---------------------------------------------------------------- my apps
 
@@ -209,7 +209,16 @@ public sealed partial class AppEditorService(AadiDbContext db, ICurrentUser curr
         if (app.ShortDescription.Length < 10) Issue("details", "short_description", "Write a short description (10-200 characters).");
         if (app.LongDescription.Length < 50) Issue("details", "long_description", "Write a longer description (at least 50 characters) — this is what search and other LLMs read.");
         var category = await db.Categories.AsNoTracking().FirstOrDefaultAsync(c => c.Id == app.CategoryId, ct);
-        if (category is null || category.Slug.StartsWith("other")) Issue("details", "category", "Pick a specific category.", blocking: category is null);
+        if (suggestions.Available)
+        {
+            // The LLM proposes a category for the moderator, so a vague choice only warns.
+            if (category is null || category.Slug.StartsWith("other")) Issue("details", "category", "Pick a specific category.", blocking: category is null);
+        }
+        else if (category is null || category.Level < 2 || category.Slug.StartsWith("other"))
+        {
+            // No LLM to fall back on: the uploader must choose a category and a sub-category.
+            Issue("details", "category", "Pick a category and a sub-category.");
+        }
         if (app.LlmModelId is null) Issue("details", "llm_model", "Tell us which LLM generated the app.");
         await db.Entry(app).Collection(a => a.Prompts).LoadAsync(ct);
         if (!app.Prompts.Any(p => p.PromptText.Length >= 20)) Issue("details", "prompts", "Add the original prompt(s) you used (at least 20 characters) so others can make their own variant.");
@@ -263,7 +272,7 @@ public sealed partial class AppEditorService(AadiDbContext db, ICurrentUser curr
         version.RejectionReason = null;
         foreach (var f in version.Files.Where(f => f.ScanStatus == ScanStatus.Error)) f.ScanStatus = ScanStatus.Pending;
         jobs.Enqueue(JobTypes.ScanVersion, new { AppId = app.Id, VersionId = version.Id }, $"version:{version.Id}");
-        if (app.LlmSuggestedCategoryId is null) jobs.Enqueue(JobTypes.CategorizeApp, new { AppId = app.Id }, $"app:{app.Id}");
+        if (suggestions.Available && app.LlmSuggestedCategoryId is null) jobs.Enqueue(JobTypes.CategorizeApp, new { AppId = app.Id }, $"app:{app.Id}");
         await db.SaveChangesAsync(ct);
         return await MapDraftAsync(app, ct);
     }

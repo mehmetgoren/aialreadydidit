@@ -92,7 +92,12 @@ public class AiOptions
     public int EmbeddingDimensions { get; set; } = 1024;
     /// <summary>Cosine similarity above which the uploader is warned about a duplicate.</summary>
     public double DuplicateSimilarityThreshold { get; set; } = 0.72;
-    public bool EnableCategorySuggestions { get; set; } = true;
+    /// <summary>
+    /// LLM-assisted categorisation (wizard "Suggest" button + background <c>categorize_app</c> job for the moderation queue).
+    /// Off by default: it needs a chat model, i.e. a GPU server or a paid API. When off, uploaders pick the category and
+    /// sub-category themselves and the wizard enforces it.
+    /// </summary>
+    public bool EnableCategorySuggestions { get; set; } = false;
     public OllamaOptions Ollama { get; set; } = new();
     public OpenAiOptions OpenAi { get; set; } = new();
 }
