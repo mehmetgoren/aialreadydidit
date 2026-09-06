@@ -13,7 +13,7 @@ using Pgvector.EntityFrameworkCore;
 namespace AiAlreadyDidIt.Api.Services.Search;
 
 /// <summary>
-/// Hybrid search over published apps: PostgreSQL full-text (tsvector, weighted) + pgvector cosine similarity, fused with
+/// Hybrid search over published apps: PostgreSQL full-text (tsvector weighted, english-stemmed + exact tokens) + pgvector cosine similarity, fused with
 /// reciprocal rank fusion. Filters (category subtree, platform, license, model, rating, tags, uploader) apply to both legs.
 /// </summary>
 public sealed class SearchService(AadiDbContext db, EmbeddingService embeddings, CategoryIndexService categories, SiteSettingsCache settings, ICurrentUser currentUser)
@@ -47,15 +47,15 @@ public sealed class SearchService(AadiDbContext db, EmbeddingService embeddings,
         {
             var mode = (query.Mode ?? "hybrid").ToLowerInvariant();
             if (mode != "keyword" && !embeddings.Available) mode = "keyword";
-            var minSimilarity = await settings.GetDoubleAsync(SettingKeys.SearchMinSimilarity, 0.35, ct);
+            var minSimilarity = await settings.GetDoubleAsync(SettingKeys.SearchMinSimilarity, 0.45, ct);
 
             // keyword leg
             var keywordRanks = new Dictionary<int, int>();
             if (mode is "keyword" or "hybrid")
             {
                 var keywordIds = await Base()
-                    .Where(a => a.SearchVector!.Matches(EF.Functions.WebSearchToTsQuery("simple", q!)) || EF.Functions.ILike(a.Name, $"%{q}%"))
-                    .OrderByDescending(a => a.SearchVector!.Rank(EF.Functions.WebSearchToTsQuery("simple", q!)))
+                    .Where(a => a.SearchVector!.Matches(EF.Functions.WebSearchToTsQuery("english", q!)) || EF.Functions.ILike(a.Name, $"%{q}%"))
+                    .OrderByDescending(a => a.SearchVector!.Rank(EF.Functions.WebSearchToTsQuery("english", q!)))
                     .ThenByDescending(a => a.DownloadCount)
                     .Select(a => a.Id)
                     .Take(CandidateLimit)
@@ -90,8 +90,8 @@ public sealed class SearchService(AadiDbContext db, EmbeddingService embeddings,
                 else if (mode == "semantic")
                 {
                     mode = "keyword";
-                    var ids = await Base().Where(a => a.SearchVector!.Matches(EF.Functions.WebSearchToTsQuery("simple", q!)) || EF.Functions.ILike(a.Name, $"%{q}%"))
-                        .OrderByDescending(a => a.SearchVector!.Rank(EF.Functions.WebSearchToTsQuery("simple", q!))).Select(a => a.Id).Take(CandidateLimit).ToListAsync(ct);
+                    var ids = await Base().Where(a => a.SearchVector!.Matches(EF.Functions.WebSearchToTsQuery("english", q!)) || EF.Functions.ILike(a.Name, $"%{q}%"))
+                        .OrderByDescending(a => a.SearchVector!.Rank(EF.Functions.WebSearchToTsQuery("english", q!))).Select(a => a.Id).Take(CandidateLimit).ToListAsync(ct);
                     for (var i = 0; i < ids.Count; i++) keywordRanks[ids[i]] = i + 1;
                 }
             }

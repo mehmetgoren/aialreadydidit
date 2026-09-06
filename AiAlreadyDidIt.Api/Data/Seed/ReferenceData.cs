@@ -340,7 +340,7 @@ public static class ReferenceData
         new(SettingKeys.DuplicateThreshold, "0.72", "search", "decimal", "Cosine similarity above which the uploader is warned about a near duplicate."),
         new(SettingKeys.SearchKeywordWeight, "1.0", "search", "decimal", "Weight of keyword rank in hybrid fusion."),
         new(SettingKeys.SearchSemanticWeight, "1.0", "search", "decimal", "Weight of semantic rank in hybrid fusion."),
-        new(SettingKeys.SearchMinSimilarity, "0.35", "search", "decimal", "Semantic results below this cosine similarity are dropped."),
+        new(SettingKeys.SearchMinSimilarity, "0.45", "search", "decimal", "Semantic results below this cosine similarity are dropped (bge-m3: unrelated text scores ~0.35)."),
         new(SettingKeys.TokensPerLine, "12", "savings", "decimal", "Estimated tokens an LLM emits per source line (heuristic)."),
         new(SettingKeys.IterationFactor, "3", "savings", "decimal", "Multiplier for the back-and-forth (planning, fixes, re-reads) around the final code."),
         new(SettingKeys.PricePerMillionTokens, "15", "savings", "decimal", "Blended USD price per million tokens used for the savings counter."),

@@ -62,7 +62,11 @@ public static class HttpContextExtensions
     {
         var forwarded = context.Request.Headers["X-Forwarded-For"].ToString();
         if (!string.IsNullOrWhiteSpace(forwarded))
-            return forwarded.Split(',')[0].Trim();
-        return context.Connection.RemoteIpAddress?.ToString();
+            return Normalize(forwarded.Split(',')[0].Trim());
+        return context.Connection.RemoteIpAddress is { } ip ? Normalize(ip.ToString()) : null;
     }
+
+    /// <summary>"::ffff:1.2.3.4" (IPv4 mapped into IPv6 by the dual-stack listener) → "1.2.3.4".</summary>
+    private static string Normalize(string value) =>
+        System.Net.IPAddress.TryParse(value, out var ip) && ip.IsIPv4MappedToIPv6 ? ip.MapToIPv4().ToString() : value;
 }

@@ -40,10 +40,10 @@ public class AppConfiguration : IEntityTypeConfiguration<App>
         b.Property(x => x.SearchVector)
             .HasColumnType("tsvector")
             .HasComputedColumnSql(
-                "setweight(to_tsvector('simple', coalesce(name, '')), 'A') || " +
-                "setweight(to_tsvector('simple', coalesce(short_description, '')), 'B') || " +
-                "setweight(to_tsvector('simple', coalesce(tags_text, '') || ' ' || coalesce(category_path_text, '')), 'C') || " +
-                "setweight(to_tsvector('simple', left(coalesce(long_description, ''), 20000)), 'D')",
+                "setweight(to_tsvector('english', coalesce(name, '')) || to_tsvector('simple', coalesce(name, '')), 'A') || " +
+                "setweight(to_tsvector('english', coalesce(short_description, '')) || to_tsvector('simple', coalesce(short_description, '')), 'B') || " +
+                "setweight(to_tsvector('english', coalesce(tags_text, '') || ' ' || coalesce(category_path_text, '')) || to_tsvector('simple', coalesce(tags_text, '') || ' ' || coalesce(category_path_text, '')), 'C') || " +
+                "setweight(to_tsvector('english', left(coalesce(long_description, ''), 20000)) || to_tsvector('simple', left(coalesce(long_description, ''), 20000)), 'D')",
                 stored: true);
         b.HasIndex(x => x.SearchVector).HasMethod("GIN");
         b.HasIndex(x => x.Name).HasMethod("gin").HasOperators("gin_trgm_ops").HasDatabaseName("ix_apps_name_trgm");

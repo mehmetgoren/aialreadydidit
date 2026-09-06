@@ -3,6 +3,7 @@ using System;
 using AiAlreadyDidIt.Api.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using NpgsqlTypes;
@@ -13,9 +14,11 @@ using Pgvector;
 namespace AiAlreadyDidIt.Api.Data.Migrations
 {
     [DbContext(typeof(AadiDbContext))]
-    partial class AadiDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260906185614_SearchVectorEnglishStemming")]
+    partial class SearchVectorEnglishStemming
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
