@@ -4,6 +4,7 @@ export default {
   search: 'Ara',
   search_placeholder: 'Anahtar kelimeyle ara veya ihtiyacını anlat…',
   all_categories: 'Tüm kategoriler',
+  more_categories: 'Diğer',
   categories: 'Kategoriler',
   category: 'Kategori',
   for_agents: 'Ajanlar için',

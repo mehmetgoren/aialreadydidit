@@ -4,6 +4,7 @@ export default {
   search: 'Search',
   search_placeholder: 'Search apps by keyword or describe what you need…',
   all_categories: 'All categories',
+  more_categories: 'More',
   categories: 'Categories',
   category: 'Category',
   for_agents: 'For agents',
