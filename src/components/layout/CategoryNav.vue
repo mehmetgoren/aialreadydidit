@@ -21,9 +21,9 @@ let timer: ReturnType<typeof setTimeout> | null = null
 const inner = ref<HTMLElement | null>(null)
 const allEl = ref<unknown>(null) // RouterLink instance; resolved to its root element via toEl()
 const itemEls = new Map<number, HTMLElement>()
+const moreEl = ref<HTMLElement | null>(null)
 const visibleCount = ref(Number.MAX_SAFE_INTEGER)
 const GAP = 4
-const MORE_WIDTH = 84
 
 const hiddenRoots = computed(() => categories.roots.slice(visibleCount.value))
 
@@ -38,7 +38,7 @@ function setItem(id: number, el: unknown) {
   else itemEls.delete(id)
 }
 
-/** Fit as many roots as the row allows; reserve room for the "More" item when something must be hidden. */
+/** Fit as many roots as the row allows; reserve the measured width of the "More" item when something must be hidden. */
 function measure() {
   const container = inner.value
   const roots = categories.roots
@@ -54,10 +54,11 @@ function measure() {
     visibleCount.value = roots.length
     return
   }
+  const moreWidth = (moreEl.value?.offsetWidth ?? 80) + GAP
   let used = 0
   let count = 0
   for (const w of widths) {
-    if (used + w > budget - MORE_WIDTH) break
+    if (used + w > budget - moreWidth) break
     used += w
     count++
   }
@@ -121,7 +122,16 @@ function close() {
       >
         {{ name(root) }}
       </RouterLink>
-      <button v-if="hiddenRoots.length" type="button" class="catnav__item catnav__more" :class="{ 'is-open': moreOpen }" @mouseenter="enterMore" @click="moreOpen = !moreOpen">
+      <button
+        ref="moreEl"
+        type="button"
+        class="catnav__item catnav__more"
+        :class="{ 'is-open': moreOpen, 'is-hidden': hiddenRoots.length === 0 }"
+        :tabindex="hiddenRoots.length === 0 ? -1 : undefined"
+        :aria-hidden="hiddenRoots.length === 0 ? 'true' : undefined"
+        @mouseenter="enterMore"
+        @click="moreOpen = !moreOpen"
+      >
         {{ t('more_categories') }} <ElIcon><ArrowDown /></ElIcon>
       </button>
     </div>
@@ -167,6 +177,7 @@ function close() {
     position: relative; // contains the absolutely positioned hidden items so they are clipped by the row
     display: flex;
     align-items: center;
+    justify-content: space-between; // leftover width spreads between items instead of pooling before "More"
     gap: 4px;
     height: var(--gm-nav-height);
     overflow: hidden;
@@ -186,7 +197,7 @@ function close() {
   &__item {
     color: var(--gm-text);
     font-size: 13px;
-    padding: 6px 9px;
+    padding: 6px 8px;
     border-radius: 6px;
     white-space: nowrap;
     flex-shrink: 0;
@@ -211,7 +222,6 @@ function close() {
     font: inherit;
     font-size: 13px;
     cursor: pointer;
-    margin-left: auto;
   }
   &__mega {
     position: absolute;
