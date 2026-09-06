@@ -5,6 +5,7 @@ Two ASP.NET Core 10 projects (classic controllers, Entity Framework Core 10, Pos
 | Project | Purpose |
 |---|---|
 | `AiAlreadyDidIt.Api` | REST API for the storefront SPA, the member dashboard, the admin panel and LLM agents. Hosts the background workers (ClamAV scan, repository import, embeddings, notifications). |
+| `AiAlreadyDidIt.Tests` | xunit unit tests for the pure logic (slugs, hashing, license detection, archive analysis, repository URL normalisation, savings math, JSON conventions, JWT, API-key extraction). No database or network needed: `dotnet test`. |
 | `AiAlreadyDidIt.Mcp` | MCP server (Streamable HTTP at `/mcp`, or `--stdio`) exposing `check_before_building`, `search_apps`, `get_app`, `list_categories`, `download_app`, `submit_app_request`, `get_savings`. It is a thin client of the API. |
 
 ## Running locally
@@ -18,6 +19,7 @@ ollama pull bge-m3          # embeddings (host Ollama on :11434); qwen3.8 for ca
 
 cd AiAlreadyDidIt.Api && dotnet run --launch-profile http     # http://localhost:5190
 cd AiAlreadyDidIt.Mcp && dotnet run --launch-profile http     # http://localhost:5191/mcp
+dotnet test                                                    # unit tests (AiAlreadyDidIt.Tests)
 ```
 
 On startup the API applies migrations (`Database:MigrateOnStartup`), inserts the reference lists (categories, platforms, SPDX

@@ -47,7 +47,9 @@ public static class RepositoryUrl
         var s = input.Trim();
         if (s.StartsWith("git@github.com:", StringComparison.OrdinalIgnoreCase)) s = "https://github.com/" + s["git@github.com:".Length..];
         if (s.StartsWith("git@gitlab.com:", StringComparison.OrdinalIgnoreCase)) s = "https://gitlab.com/" + s["git@gitlab.com:".Length..];
-        if (!s.StartsWith("http://", StringComparison.OrdinalIgnoreCase) && !s.StartsWith("https://", StringComparison.OrdinalIgnoreCase)) s = "https://" + s;
+        var schemeEnd = s.IndexOf("://", StringComparison.Ordinal);
+        if (schemeEnd < 0) s = "https://" + s;
+        else if (!s.StartsWith("http://", StringComparison.OrdinalIgnoreCase) && !s.StartsWith("https://", StringComparison.OrdinalIgnoreCase)) return null;
         if (s.EndsWith(".git", StringComparison.OrdinalIgnoreCase)) s = s[..^4];
         s = s.TrimEnd('/');
         return Uri.TryCreate(s, UriKind.Absolute, out var uri) && uri.Scheme is "https" or "http" ? uri : null;

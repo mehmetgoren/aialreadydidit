@@ -8,3 +8,6 @@ AiAlreadyDidIt.Mcp/bin/
 AiAlreadyDidIt.Mcp/obj/
 
 AiAlreadyDidIt.Api/Files/
+AiAlreadyDidIt.Tests/bin/
+AiAlreadyDidIt.Tests/obj/
+.idea/

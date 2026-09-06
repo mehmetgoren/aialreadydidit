@@ -14,8 +14,11 @@ public static partial class TextUtil
     public static string Slugify(string value, int maxLength = 80)
     {
         if (string.IsNullOrWhiteSpace(value)) return string.Empty;
-        var s = value.Trim().ToLowerInvariant()
-            .Replace('ı', 'i').Replace('ğ', 'g').Replace('ü', 'u').Replace('ş', 's').Replace('ö', 'o').Replace('ç', 'c')
+        // Map the Turkish letters before lower-casing: invariant casing leaves U+0130 (İ) alone and it would be dropped.
+        var s = value.Trim()
+            .Replace('İ', 'i').Replace('I', 'i').Replace('ı', 'i').Replace('Ğ', 'g').Replace('ğ', 'g').Replace('Ş', 's').Replace('ş', 's')
+            .ToLowerInvariant()
+            .Replace('ü', 'u').Replace('ö', 'o').Replace('ç', 'c')
             .Replace("&", " and ").Replace("+", " plus ").Replace("#", " sharp ");
         var normalized = s.Normalize(NormalizationForm.FormD);
         var sb = new StringBuilder(normalized.Length);
