@@ -1,17 +1,28 @@
 import dayjs from 'dayjs'
 import 'dayjs/locale/tr'
+import 'dayjs/locale/es'
+import 'dayjs/locale/pt-br'
+import 'dayjs/locale/de'
+import 'dayjs/locale/fr'
+import 'dayjs/locale/ar'
+import 'dayjs/locale/ru'
+import 'dayjs/locale/ja'
+import 'dayjs/locale/ko'
+import 'dayjs/locale/zh-cn'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import { i18n } from '@/boot/i18n'
+import { localeDef } from '@/i18n/locales'
 
 dayjs.extend(relativeTime)
 
+/** Registry entry of the active UI language (dayjs id + Intl tag). */
 function loc() {
-  return String(i18n.global.locale.value) === 'tr-TR' ? 'tr' : 'en'
+  return localeDef(String(i18n.global.locale.value))
 }
 
 export function formatDate(value: string | Date | null | undefined, pattern = 'DD MMM YYYY'): string {
   if (!value) return '-'
-  return dayjs(value).locale(loc()).format(pattern)
+  return dayjs(value).locale(loc().dayjs).format(pattern)
 }
 
 export function formatDateTime(value: string | Date | null | undefined): string {
@@ -20,7 +31,7 @@ export function formatDateTime(value: string | Date | null | undefined): string 
 
 export function fromNow(value: string | Date | null | undefined): string {
   if (!value) return ''
-  return dayjs(value).locale(loc()).fromNow()
+  return dayjs(value).locale(loc().dayjs).fromNow()
 }
 
 export function toApiDate(value: Date | string | null | undefined): string | undefined {
@@ -30,18 +41,18 @@ export function toApiDate(value: Date | string | null | undefined): string | und
 
 export function formatNumber(value: number | null | undefined, digits = 0): string {
   if (value === null || value === undefined || Number.isNaN(value)) return '-'
-  return value.toLocaleString(loc() === 'tr' ? 'tr-TR' : 'en-US', { maximumFractionDigits: digits, minimumFractionDigits: digits })
+  return value.toLocaleString(loc().intl, { maximumFractionDigits: digits, minimumFractionDigits: digits })
 }
 
 /** 1234567 → "1.2M", 12345 → "12.3K" */
 export function formatCompact(value: number | null | undefined): string {
   if (value === null || value === undefined) return '-'
-  return new Intl.NumberFormat(loc() === 'tr' ? 'tr-TR' : 'en-US', { notation: 'compact', maximumFractionDigits: 1 }).format(value)
+  return new Intl.NumberFormat(loc().intl, { notation: 'compact', maximumFractionDigits: 1 }).format(value)
 }
 
 export function formatMoney(value: number | null | undefined, currency = 'USD'): string {
   if (value === null || value === undefined || Number.isNaN(value)) return '-'
-  return new Intl.NumberFormat(loc() === 'tr' ? 'tr-TR' : 'en-US', { style: 'currency', currency, maximumFractionDigits: value < 10 ? 2 : 0 }).format(value)
+  return new Intl.NumberFormat(loc().intl, { style: 'currency', currency, maximumFractionDigits: value < 10 ? 2 : 0 }).format(value)
 }
 
 export function formatBytes(bytes: number | null | undefined): string {

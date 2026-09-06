@@ -3,7 +3,7 @@ import { createPinia, setActivePinia } from 'pinia'
 import { mount } from '@vue/test-utils'
 import CategoryPicker from '@/components/upload/CategoryPicker.vue'
 import { useCategoryStore } from '@/stores/category-store'
-import { i18n } from '@/boot/i18n'
+import { i18n, loadLocaleMessages } from '@/boot/i18n'
 import type { CategoryNode } from '@/utils/models/catalog-models'
 
 const mocks = vi.hoisted(() => ({ getCategories: vi.fn() }))
@@ -70,6 +70,7 @@ describe('CategoryPicker', () => {
   })
 
   it('uses Turkish labels and names when the locale is tr-TR', async () => {
+    await loadLocaleMessages('tr-TR')
     i18n.global.locale.value = 'tr-TR'
     const w = await render(1)
     expect(labels(w)).toEqual(['Kategori*', 'Alt kategori*'])

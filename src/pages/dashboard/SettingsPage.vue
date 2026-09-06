@@ -31,7 +31,7 @@ async function saveProfile() {
     try {
       const me = await accounts.updateProfile({ displayName: profile.displayName, bio: profile.bio || null, website: profile.website || null, locale: profile.locale })
       user.patchMe(me)
-      setLocale(profile.locale as AppLocale)
+      void setLocale(profile.locale as AppLocale)
       notifyS(t('saved'))
     } catch (err) {
       notifyError(err)

@@ -235,3 +235,9 @@ html.dark .gm-table .el-table__header th {
 .fade-leave-to {
   opacity: 0;
 }
+
+/* Right-to-left languages (Arabic): mirror the few directional rules that are not logical properties yet. */
+[dir='rtl'] {
+  .catnav__all { border-right: 0; border-left: 1px solid var(--gm-border); padding: 0 0 0 10px; margin: 0 0 0 6px; }
+  .el-breadcrumb__separator { transform: scaleX(-1); }
+}

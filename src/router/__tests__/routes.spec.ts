@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest'
 import type { RouteRecordRaw } from 'vue-router'
 import { routes } from '@/router/routes'
 import { DASHBOARD_MENU } from '@/utils/dashboard-menu'
-import messages from '@/i18n'
+import messages from '@/i18n/all'
 
 type Flat = { path: string; name?: string; meta: RouteRecordRaw['meta'] }
 

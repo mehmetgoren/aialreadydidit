@@ -50,7 +50,8 @@ Google sign-in appears automatically when the API reports a `googleClientId` (`S
 ```
 src/
   boot/            axios (base URL + Bearer + refresh-on-401), i18n, theme, index (installs everything)
-  i18n/            en-US/ tr-TR/ → common, catalog, dashboard, upload, admin
+  i18n/            locales.ts (registry: code, native label, dayjs id, Intl tag, direction, browser prefixes)
+                   en-US/ tr-TR/ es-ES/ pt-BR/ de-DE/ fr-FR/ ar-SA/ ru-RU/ ja-JP/ ko-KR/ zh-CN/ → common, catalog, dashboard, upload, admin
   layouts/         StorefrontLayout (announcement, header, category mega-menu, breadcrumb, footer)
                    DashboardLayout (member left menu from utils/dashboard-menu.ts)
                    AdminLayout (header + drawer LeftMenu fed by /admin/panel/menu)
@@ -68,6 +69,17 @@ src/
 docker/nginx.conf  SPA + /api /files proxy; crawler user-agents on /app/* → API /seo/app/* (server-rendered)
 vitest.config.ts   merges vite.config.ts (mode "test" turns off the Element Plus SCSS imports) + jsdom
 ```
+
+## Languages
+
+Eleven UI languages ship in `src/i18n/<code>/` (English, Turkish, Spanish, Brazilian Portuguese, German, French, Arabic,
+Russian, Japanese, Korean, Simplified Chinese). `src/i18n/locales.ts` is the only registry: it drives the switcher, browser
+language detection (`navigator.languages` prefixes, `pt-PT` → `pt-BR`), dayjs and `Intl` formatting, the Element Plus
+locale and `<html lang dir>` (Arabic is RTL; only a few directional rules are mirrored, so expect rough edges). English is bundled; every other language is a separate chunk loaded the first time it is selected
+(`src/i18n/index.ts` loaders, `loadLocaleMessages`). Adding a language = one registry row, one loader line and one folder
+with the same five files. The i18n test enforces that every locale has exactly
+the English key set with the same `{placeholders}` and is not a copy of the English text. Category names come from the
+database in English and Turkish only, so other languages see the English category names.
 
 ## Unit tests
 

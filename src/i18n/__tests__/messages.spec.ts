@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import messages from '@/i18n'
+import messages from '@/i18n/all'
 import enCommon from '@/i18n/en-US/common'
 import enCatalog from '@/i18n/en-US/catalog'
 import enDashboard from '@/i18n/en-US/dashboard'
@@ -14,22 +14,24 @@ import trAdmin from '@/i18n/tr-TR/admin'
 type Dict = Record<string, string>
 const en = messages['en-US'] as Dict
 const tr = messages['tr-TR'] as Dict
+const others = Object.entries(messages).filter(([code]) => code !== 'en-US') as [string, Dict][]
 // Unique names: plural forms ('{n} rating | {n} ratings') repeat a placeholder that Turkish (no plural split) uses once.
 const placeholders = (s: string) => [...new Set([...s.matchAll(/\{(\w+)\}/g)].map((m) => m[1]))].sort()
 
 describe('i18n messages', () => {
-  it('both locales expose exactly the same keys', () => {
+  it('every locale exposes exactly the same keys as en-US', () => {
     const enKeys = Object.keys(en).sort()
-    const trKeys = Object.keys(tr).sort()
-    const missingInTr = enKeys.filter((k) => !(k in tr))
-    const missingInEn = trKeys.filter((k) => !(k in en))
-    expect(missingInTr, 'keys missing in tr-TR').toEqual([])
-    expect(missingInEn, 'keys missing in en-US').toEqual([])
     expect(enKeys.length).toBeGreaterThan(600)
+    expect(others.map(([code]) => code).sort()).toEqual(['ar-SA', 'de-DE', 'es-ES', 'fr-FR', 'ja-JP', 'ko-KR', 'pt-BR', 'ru-RU', 'tr-TR', 'zh-CN'])
+    for (const [code, dict] of others) {
+      const keys = Object.keys(dict).sort()
+      expect(enKeys.filter((k) => !(k in dict)), `keys missing in ${code}`).toEqual([])
+      expect(keys.filter((k) => !(k in en)), `extra keys in ${code}`).toEqual([])
+    }
   })
 
   it('every value is a non-empty string and every key is a flat identifier', () => {
-    for (const [locale, dict] of Object.entries({ en, tr })) {
+    for (const [locale, dict] of Object.entries(messages)) {
       for (const [key, value] of Object.entries(dict)) {
         expect(typeof value, `${locale}.${key}`).toBe('string')
         expect(value.trim().length, `${locale}.${key} is empty`).toBeGreaterThan(0)
@@ -39,9 +41,19 @@ describe('i18n messages', () => {
     }
   })
 
-  it('interpolation placeholders match between locales', () => {
-    const mismatched = Object.keys(en).filter((k) => tr[k] !== undefined && placeholders(en[k]!).join() !== placeholders(tr[k]!).join())
-    expect(mismatched).toEqual([])
+  it('interpolation placeholders match en-US in every locale', () => {
+    for (const [code, dict] of others) {
+      const mismatched = Object.keys(en).filter((k) => dict[k] !== undefined && placeholders(en[k]!).join() !== placeholders(dict[k]!).join())
+      expect(mismatched, `placeholder mismatch in ${code}`).toEqual([])
+    }
+  })
+
+  it('translations are not just copies of the English text', () => {
+    // Technical labels legitimately stay identical (API, MCP, URL…); a real translation differs on most keys.
+    for (const [code, dict] of others) {
+      const same = Object.keys(en).filter((k) => dict[k] === en[k]).length
+      expect(same / Object.keys(en).length, `${code} looks untranslated`).toBeLessThan(0.35)
+    }
   })
 
   it('domain files never shadow each other', () => {

@@ -13,5 +13,4 @@ window.addEventListener('vite:preloadError', (event) => {
 })
 
 const app = createApp(App)
-bootApp(app)
-app.mount('#app')
+bootApp(app).then(() => app.mount('#app'))
