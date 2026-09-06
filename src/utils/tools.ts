@@ -6,17 +6,19 @@ import { i18n } from '@/boot/i18n'
 const t = (key: string, params?: Record<string, unknown>) => i18n.global.t(key, params ?? {})
 
 // ---------------------------------------------------------------- notifications (prototype: notifyE/S/W/I)
+/** Toasts start below the sticky storefront header instead of covering it. */
+const TOAST_OFFSET = 72
 export function notifyE(message: string) {
-  ElMessage({ type: 'error', message, showClose: true, duration: 5000 })
+  ElMessage({ type: 'error', message, showClose: true, duration: 5000, offset: TOAST_OFFSET })
 }
 export function notifyS(message: string) {
-  ElMessage({ type: 'success', message, duration: 3000 })
+  ElMessage({ type: 'success', message, duration: 3000, offset: TOAST_OFFSET })
 }
 export function notifyW(message: string) {
-  ElMessage({ type: 'warning', message, showClose: true, duration: 4000 })
+  ElMessage({ type: 'warning', message, showClose: true, duration: 4000, offset: TOAST_OFFSET })
 }
 export function notifyI(message: string) {
-  ElMessage({ type: 'info', message, duration: 3000 })
+  ElMessage({ type: 'info', message, duration: 3000, offset: TOAST_OFFSET })
 }
 
 /** Show the API error message (or a fallback) as a toast and return it. */

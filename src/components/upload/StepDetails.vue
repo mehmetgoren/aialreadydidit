@@ -181,13 +181,13 @@ async function save(next: boolean) {
         </ElAlert>
       </ElFormItem>
       <ElFormItem :label="t('license')" :error="errors.licenseId">
-        <ElSelect v-model="form.licenseId" filterable style="width: 100%">
+        <ElSelect v-model="form.licenseId" filterable default-first-option style="width: 100%">
           <ElOption v-for="l in site.licenses.filter((x) => x.isAllowed)" :key="l.id" :value="l.id" :label="`${l.spdxId} — ${l.name}`" />
         </ElSelect>
         <div class="sub">{{ t('license_hint') }}</div>
       </ElFormItem>
       <ElFormItem :label="t('generated_by')" :error="errors.llmModelId">
-        <ElSelect v-model="form.llmModelId" filterable style="width: 100%">
+        <ElSelect v-model="form.llmModelId" filterable default-first-option style="width: 100%">
           <ElOption v-for="m in site.llmModels" :key="m.id" :value="m.id" :label="m.displayName" />
         </ElSelect>
       </ElFormItem>

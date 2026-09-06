@@ -112,7 +112,7 @@ async function sendReply(r: RatingDto) {
     <div class="ratings__summary">
       <div class="ratings__big">
         <ScoreBadge :score="summary?.average ?? 0" :count="summary?.count ?? 0" large />
-        <div class="gm-muted">{{ t('ratings_count', { n: summary?.count ?? 0 }) }}</div>
+        <div class="gm-muted">{{ t('ratings_count', { n: summary?.count ?? 0 }, summary?.count ?? 0) }}</div>
         <div v-if="summary && summary.count" class="ratings__worked">
           <span class="is-ok">✔ {{ summary.workedCount }} {{ t('worked') }}</span>
           <span class="is-bad">✘ {{ summary.notWorkedCount }} {{ t('did_not_work') }}</span>

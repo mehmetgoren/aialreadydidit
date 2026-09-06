@@ -74,13 +74,13 @@ async function revoke(k: ApiKeyDto) {
 
     <ElTable v-loading="loading" :data="keys" class="gm-table" stripe>
       <ElTableColumn :label="t('name')" prop="name" min-width="140" />
-      <ElTableColumn :label="t('key')" width="150"><template #default="{ row }"><code>{{ row.prefix }}…</code></template></ElTableColumn>
-      <ElTableColumn :label="t('scopes')" prop="scopes" width="170" />
-      <ElTableColumn :label="t('requests')" width="100" align="right"><template #default="{ row }">{{ formatNumber(row.requestCount) }}</template></ElTableColumn>
+      <ElTableColumn :label="t('key')" width="120"><template #default="{ row }"><code>{{ row.prefix }}…</code></template></ElTableColumn>
+      <ElTableColumn :label="t('scopes')" prop="scopes" min-width="120" />
+      <ElTableColumn :label="t('requests')" width="90" align="right"><template #default="{ row }">{{ formatNumber(row.requestCount) }}</template></ElTableColumn>
       <ElTableColumn :label="t('downloads')" width="100" align="right" prop="downloadCount" />
-      <ElTableColumn :label="t('last_used')" width="150"><template #default="{ row }">{{ row.lastUsedAt ? formatDateTime(row.lastUsedAt) : '—' }}</template></ElTableColumn>
-      <ElTableColumn :label="t('status')" width="110"><template #default="{ row }"><ElTag :type="row.revokedAt ? 'info' : 'success'" size="small">{{ row.revokedAt ? t('revoked') : t('active') }}</ElTag></template></ElTableColumn>
-      <ElTableColumn width="100" align="right"><template #default="{ row }"><ElButton v-if="!row.revokedAt" size="small" type="danger" text @click="revoke(row as ApiKeyDto)">{{ t('revoke') }}</ElButton></template></ElTableColumn>
+      <ElTableColumn :label="t('last_used')" width="140"><template #default="{ row }">{{ row.lastUsedAt ? formatDateTime(row.lastUsedAt) : '—' }}</template></ElTableColumn>
+      <ElTableColumn :label="t('status')" width="96"><template #default="{ row }"><ElTag :type="row.revokedAt ? 'info' : 'success'" size="small">{{ row.revokedAt ? t('revoked') : t('active') }}</ElTag></template></ElTableColumn>
+      <ElTableColumn width="90" align="right"><template #default="{ row }"><ElButton v-if="!row.revokedAt" size="small" type="danger" text @click="revoke(row as ApiKeyDto)">{{ t('revoke') }}</ElButton></template></ElTableColumn>
     </ElTable>
 
     <ElDialog v-model="dialog" :title="t('new_api_key')" width="480px">

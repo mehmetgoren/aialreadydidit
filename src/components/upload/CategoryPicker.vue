@@ -41,7 +41,7 @@ function choose(level: number, id: number | null) {
   <div class="picker" :class="{ 'is-error': error }">
     <div v-for="(level, i) in levels" :key="i" class="picker__level">
       <span class="picker__label">{{ t(labels[i] ?? 'category_type') }}<span v-if="i < 2" class="picker__required">*</span></span>
-      <ElSelect :model-value="level.selected" filterable :clearable="i > 0" :placeholder="t('select_placeholder')" style="width: 100%" @update:model-value="choose(i, $event as number | null)">
+      <ElSelect :model-value="level.selected" filterable default-first-option :clearable="i > 0" :placeholder="t('select_placeholder')" style="width: 100%" @update:model-value="choose(i, $event as number | null)">
         <ElOption v-for="n in level.options" :key="n.id" :value="n.id" :label="name(n)" />
       </ElSelect>
     </div>

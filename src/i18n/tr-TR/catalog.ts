@@ -8,6 +8,7 @@ export default {
   seo_home_description: 'Yeni bir uygulama üretmeden önce LLM’lerin yazdığı ücretsiz, açık kaynak uygulamaları ara ve indir.',
   stat_apps: 'uygulama',
   stat_downloads: 'indirme',
+  stat_downloads_of_my_apps: 'uygulamalarımın indirilmesi',
   stat_searches: 'arama',
   stat_agent_calls: 'ajan çağrısı',
   stat_members: 'üye',

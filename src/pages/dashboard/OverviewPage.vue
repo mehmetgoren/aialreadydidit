@@ -35,7 +35,7 @@ onMounted(async () => {
     <template v-if="data">
       <div class="ov__stats">
         <AdminStatCard :label="t('dash_my_apps')" :value="data.publishedAppCount" :hint="data.pendingAppCount ? t('n_pending', { n: data.pendingAppCount }) : ''" icon="Box" to="/dashboard/apps" />
-        <AdminStatCard :label="t('stat_downloads')" :value="formatNumber(data.totalDownloads)" icon="Download" tone="success" />
+        <AdminStatCard :label="t('stat_downloads_of_my_apps')" :value="formatNumber(data.totalDownloads)" icon="Download" tone="success" />
         <AdminStatCard :label="t('savings_by_my_apps')" :value="formatNumber(data.tokensSavedByMyApps)" :hint="'≈ ' + formatMoney(data.costSavedByMyApps)" icon="Coin" tone="purple" />
         <AdminStatCard :label="t('dash_favorites')" :value="data.favoriteCount" icon="Star" tone="warning" to="/dashboard/favorites" />
         <AdminStatCard :label="t('dash_api_keys')" :value="data.apiKeyCount" icon="Key" to="/dashboard/api-keys" />

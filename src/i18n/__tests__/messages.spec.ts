@@ -14,7 +14,8 @@ import trAdmin from '@/i18n/tr-TR/admin'
 type Dict = Record<string, string>
 const en = messages['en-US'] as Dict
 const tr = messages['tr-TR'] as Dict
-const placeholders = (s: string) => [...s.matchAll(/\{(\w+)\}/g)].map((m) => m[1]).sort()
+// Unique names: plural forms ('{n} rating | {n} ratings') repeat a placeholder that Turkish (no plural split) uses once.
+const placeholders = (s: string) => [...new Set([...s.matchAll(/\{(\w+)\}/g)].map((m) => m[1]))].sort()
 
 describe('i18n messages', () => {
   it('both locales expose exactly the same keys', () => {

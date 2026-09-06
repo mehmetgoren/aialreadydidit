@@ -2,7 +2,7 @@ export default {
   app_name: 'AI Already Did It',
   home: 'Home',
   search: 'Search',
-  search_placeholder: 'Search apps by keyword or describe what you need…',
+  search_placeholder: 'Search apps…',
   all_categories: 'All categories',
   more_categories: 'More',
   categories: 'Categories',

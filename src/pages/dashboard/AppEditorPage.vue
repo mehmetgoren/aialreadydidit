@@ -58,12 +58,21 @@ watch(id, load)
 
 function onUpdated(d: AppDraft) {
   draft.value = d
+  common.setPageTitle(d.name)
+  common.setBreadcrumb([{ label: t('dash_my_apps'), to: '/dashboard/apps' }, { label: d.name }])
   if (!id.value) router.replace(`/upload/${d.id}`)
+}
+
+/** An untouched draft ("Untitled app", no description) left behind by an earlier visit — reuse it instead of piling up drafts. */
+async function findEmptyDraft(): Promise<AppDraft | null> {
+  const mine = await service.list().catch(() => [])
+  const empty = mine.find((a) => a.status === 'draft' && a.name === 'Untitled app' && !a.shortDescription)
+  return empty ? await service.getDraft(empty.id).catch(() => null) : null
 }
 
 async function ensureDraft(): Promise<AppDraft> {
   if (draft.value) return draft.value
-  const d = await service.create()
+  const d = (await findEmptyDraft()) ?? (await service.create())
   onUpdated(d)
   return d
 }

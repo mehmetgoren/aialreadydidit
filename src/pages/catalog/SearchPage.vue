@@ -71,7 +71,7 @@ function submit() {
       <FilterSidebar :query="query" :category="category" :facets="result" @update="update" />
       <div class="search__results">
         <div class="search__meta gm-muted">
-          <span>{{ t('results_count', { n: result.page.totalCount }) }}</span>
+          <span v-if="!loading">{{ t('results_count', { n: result.page.totalCount }) }}</span>
           <span v-if="query.q && result.modeUsed !== 'browse'"> · {{ t('mode_used', { mode: t(`mode_${result.modeUsed}`) }) }}</span>
         </div>
         <AppGrid :apps="result.page.items" :loading="loading" :show-similarity="Boolean(query.q)" :empty-title="t('no_results_title')" :empty-text="t('no_results_text')">

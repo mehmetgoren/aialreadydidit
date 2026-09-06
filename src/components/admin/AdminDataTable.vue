@@ -155,7 +155,7 @@ defineExpose({ reload, rows, loading })
         :page-sizes="[10, 25, 50, 100]"
         layout="sizes, prev, pager, next, jumper"
         background
-        small
+        size="small"
       />
     </div>
   </div>

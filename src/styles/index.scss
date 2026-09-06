@@ -207,6 +207,7 @@ html.dark .gm-table .el-table__header th {
   img { max-width: 100%; border-radius: 8px; }
   table { border-collapse: collapse; margin: 0.8em 0; display: block; overflow-x: auto; }
   th, td { border: 1px solid var(--gm-border); padding: 6px 10px; text-align: left; }
+  th:first-child, td:first-child { white-space: nowrap; } // short label columns must not wrap letter by letter
   blockquote { margin: 0.8em 0; padding: 4px 14px; border-left: 3px solid var(--gm-primary); color: var(--gm-text-muted); }
   ul, ol { padding-left: 22px; }
 }

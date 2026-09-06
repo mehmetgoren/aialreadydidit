@@ -34,6 +34,16 @@ const catalog = new CatalogService()
 const dashboard = new DashboardService()
 
 const app = ref<AppDetail | null>(null)
+/** Raw-content root of the linked repository so README images with relative paths resolve (archives have no such base). */
+const readmeBaseUrl = computed(() => {
+  const url = app.value?.repoUrl
+  if (!url) return null
+  const gh = url.match(/^https?:\/\/github\.com\/([^/]+)\/([^/#?]+)/i)
+  if (gh) return `https://raw.githubusercontent.com/${gh[1]}/${gh[2].replace(/\.git$/, '')}/HEAD/`
+  const gl = url.match(/^https?:\/\/gitlab\.com\/(.+?)(?:\.git)?\/?$/i)
+  if (gl) return `https://gitlab.com/${gl[1]}/-/raw/HEAD/`
+  return null
+})
 const similar = ref<AppCardDto[]>([])
 const lineage = ref<LineageNode | null>(null)
 const loading = ref(true)
@@ -154,7 +164,7 @@ function openReport(ratingId: number | null = null) {
                 </div>
               </ElTabPane>
               <ElTabPane v-if="app.readmeMarkdown && app.readmeMarkdown !== app.longDescription" label="README" name="readme">
-                <MarkdownView :source="app.readmeMarkdown" />
+                <MarkdownView :source="app.readmeMarkdown" :base-url="readmeBaseUrl" />
               </ElTabPane>
               <ElTabPane :label="`${t('tab_prompts')} (${app.prompts.length})`" name="prompts">
                 <p class="gm-muted">{{ t('prompts_intro') }}</p>

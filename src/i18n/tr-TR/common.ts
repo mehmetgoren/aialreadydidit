@@ -2,7 +2,7 @@ export default {
   app_name: 'AI Already Did It',
   home: 'Ana sayfa',
   search: 'Ara',
-  search_placeholder: 'Anahtar kelimeyle ara veya ihtiyacını anlat…',
+  search_placeholder: 'Uygulama ara…',
   all_categories: 'Tüm kategoriler',
   more_categories: 'Diğer',
   categories: 'Kategoriler',
