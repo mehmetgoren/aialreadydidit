@@ -7,6 +7,7 @@ using AiAlreadyDidIt.Api.Data;
 using AiAlreadyDidIt.Api.Entities;
 using AiAlreadyDidIt.Api.Infrastructure;
 using AiAlreadyDidIt.Api.Infrastructure.Ai;
+using AiAlreadyDidIt.Api.Infrastructure.Email;
 using AiAlreadyDidIt.Api.Infrastructure.Jobs;
 using AiAlreadyDidIt.Api.Infrastructure.Scanning;
 using AiAlreadyDidIt.Api.Infrastructure.Storage;
@@ -22,7 +23,8 @@ namespace AiAlreadyDidIt.Api.Services.Admin;
 /// <summary>Admin › panel menu, dashboard, statistics, search analytics, savings, settings, audit log, jobs, health.</summary>
 public sealed class AdminSystemService(AadiDbContext db, ICurrentUser currentUser, SavingsService savings, SiteSettingsCache settings, AuditService audit, JobQueue jobs,
     IObjectStorage storage, IVirusScanner scanner, ILlmProviderFactory providers, IOptions<AiOptions> ai, IOptions<StorageOptions> storageOptions, IOptions<ClamAvOptions> clam,
-    IOptions<SiteOptions> site, IOptions<RateLimitingOptions> rateLimits, IHostEnvironment env, IMemoryCache cache, AdminModerationService moderation, AdminReportsService reports)
+    IOptions<SiteOptions> site, IOptions<RateLimitingOptions> rateLimits, IHostEnvironment env, IMemoryCache cache, AdminModerationService moderation, AdminReportsService reports,
+    IOptions<EmailOptions> email, IEmailSender emailSender)
 {
     private static readonly DateTime StartedAt = DateTime.UtcNow;
 
@@ -226,6 +228,19 @@ public sealed class AdminSystemService(AadiDbContext db, ICurrentUser currentUse
 
     // ---------------------------------------------------------------- health
 
+    /// <summary>Sends a short message to the signed-in admin through the configured provider; surfaces the SMTP error verbatim.</summary>
+    public async Task<string> SendTestEmailAsync(CancellationToken ct)
+    {
+        var user = await db.Users.AsNoTracking().FirstAsync(u => u.Id == currentUser.Id, ct);
+        var o = email.Value;
+        var via = string.Equals(o.Provider, "Smtp", StringComparison.OrdinalIgnoreCase) ? $"SMTP {o.SmtpHost}:{o.SmtpPort}" : "the Console provider (API log only)";
+        var body = $"<p>This is a test message from <strong>{site.Value.Name}</strong> ({site.Value.PublicUrl}).</p><p>Sent {Clock.Now:u} via {via}.</p>";
+        try { await emailSender.SendAsync(user.Email, $"[{site.Value.Name}] Test e-mail", body, $"Test message from {site.Value.Name} sent {Clock.Now:u} via {via}.", ct); }
+        catch (Exception ex) { throw ApiException.Unprocessable($"Sending failed: {ex.GetBaseException().Message}"); }
+        audit.Log("system.test_email", "user", user.Id, new { user.Email, o.Provider });
+        return $"Sent to {user.Email} via {via}.";
+    }
+
     public async Task<SystemHealthDto> HealthAsync(CancellationToken ct)
     {
         var checks = new List<HealthCheckDto>();
@@ -250,6 +265,14 @@ public sealed class AdminSystemService(AadiDbContext db, ICurrentUser currentUse
         await Check("Background jobs", async () => { var queued = await db.BackgroundJobs.CountAsync(j => j.Status == JobStatus.Queued, ct); var failed = await db.BackgroundJobs.CountAsync(j => j.Status == JobStatus.Failed, ct); var stuck = await db.BackgroundJobs.CountAsync(j => j.Status == JobStatus.Running && j.StartedAt < Clock.Now.AddMinutes(-30), ct); return (failed == 0 && stuck == 0, $"{queued} queued · {failed} failed · {stuck} stuck"); });
         await Check("Temp disk", () => { var path = Path.IsPathRooted(storageOptions.Value.TempPath) ? storageOptions.Value.TempPath : Path.Combine(env.ContentRootPath, storageOptions.Value.TempPath); Directory.CreateDirectory(path); var drive = new DriveInfo(Path.GetPathRoot(Path.GetFullPath(path))!); var free = drive.AvailableFreeSpace; return Task.FromResult((free > 2L * 1024 * 1024 * 1024, $"{TextUtil.HumanSize(free)} free at {path}")); });
         await Check("Stale embeddings", async () => { var stale = await db.Apps.CountAsync(a => a.Status == AppStatus.Published && (a.EmbeddingStale || a.Embedding == null), ct); return (stale == 0, $"{stale} published apps need (re)embedding"); });
+        await Check("E-mail", () =>
+        {
+            var o = email.Value;
+            var smtp = string.Equals(o.Provider, "Smtp", StringComparison.OrdinalIgnoreCase);
+            if (!smtp) return Task.FromResult((!env.IsProduction(), "Console provider — e-mails only reach the API log" + (env.IsProduction() ? " (set EMAIL_PROVIDER=Smtp)" : string.Empty)));
+            var configured = !string.IsNullOrWhiteSpace(o.SmtpHost) && o.SmtpHost != "localhost";
+            return Task.FromResult((configured, $"SMTP {o.SmtpHost}:{o.SmtpPort} ({(o.SmtpUseSsl ? "TLS" : "STARTTLS")}) · from {o.FromAddress}" + (configured ? " · use “Send test e-mail” to verify" : " — host not set")));
+        });
 
         return new SystemHealthDto
         {
@@ -260,7 +283,8 @@ public sealed class AdminSystemService(AadiDbContext db, ICurrentUser currentUse
             Config = new Dictionary<string, string>
             {
                 ["Site:PublicUrl"] = site.Value.PublicUrl, ["Site:ApiPublicUrl"] = site.Value.ApiPublicUrl, ["Site:McpPublicUrl"] = site.Value.McpPublicUrl,
-                ["Site:GoogleClientId"] = string.IsNullOrEmpty(site.Value.GoogleClientId) ? "(not set — Google sign-in hidden)" : "configured", ["Site:RequireEmailVerification"] = site.Value.RequireEmailVerification.ToString(),
+                ["Site:GoogleClientId"] = string.IsNullOrEmpty(site.Value.GoogleClientId) ? "(not set — Google sign-in hidden)" : "configured",
+                ["Email:Provider"] = email.Value.Provider, ["Email:FromAddress"] = email.Value.FromAddress, ["Email:SmtpHost"] = string.Equals(email.Value.Provider, "Smtp", StringComparison.OrdinalIgnoreCase) ? $"{email.Value.SmtpHost}:{email.Value.SmtpPort}" : "(console)", ["Site:RequireEmailVerification"] = site.Value.RequireEmailVerification.ToString(),
                 ["Ai:Provider"] = ai.Value.Provider, ["Ai:EmbeddingProvider"] = providers.Embeddings.Name, ["Ai:ChatProvider"] = providers.Chat.Name, ["Ai:EmbeddingDimensions"] = ai.Value.EmbeddingDimensions.ToString(),
                 ["Ai:Ollama:BaseUrl"] = ai.Value.Ollama.BaseUrl, ["Ai:Ollama:ChatModel"] = ai.Value.Ollama.ChatModel, ["Ai:Ollama:EmbeddingModel"] = ai.Value.Ollama.EmbeddingModel, ["Ai:OpenAi:BaseUrl"] = ai.Value.OpenAi.BaseUrl, ["Ai:OpenAi:ChatModel"] = ai.Value.OpenAi.ChatModel, ["Ai:OpenAi:EmbeddingModel"] = ai.Value.OpenAi.EmbeddingModel,
                 ["Storage:Endpoint"] = storageOptions.Value.Endpoint, ["Storage:PublicEndpoint"] = storageOptions.Value.PublicEndpoint, ["Storage:MaxInstallerBytes"] = TextUtil.HumanSize(storageOptions.Value.MaxInstallerBytes), ["Storage:MaxSourceArchiveBytes"] = TextUtil.HumanSize(storageOptions.Value.MaxSourceArchiveBytes),

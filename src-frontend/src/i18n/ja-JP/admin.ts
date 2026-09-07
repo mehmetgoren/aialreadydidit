@@ -224,4 +224,5 @@ export default {
   adm_started: '開始しました',
   adm_effective_config: '有効な設定',
   adm_value: '値',
+  adm_send_test_email: 'テストメールを送信',
 }

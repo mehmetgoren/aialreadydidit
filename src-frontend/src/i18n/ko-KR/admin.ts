@@ -224,4 +224,5 @@ export default {
   adm_started: '시작됨',
   adm_effective_config: '적용된 설정',
   adm_value: '값',
+  adm_send_test_email: '테스트 이메일 보내기',
 }

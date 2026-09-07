@@ -224,4 +224,5 @@ export default {
   adm_started: '已开始',
   adm_effective_config: '生效配置',
   adm_value: '值',
+  adm_send_test_email: '发送测试邮件',
 }

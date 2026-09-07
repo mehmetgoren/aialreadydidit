@@ -4,19 +4,27 @@ import { useI18n } from 'vue-i18n'
 import AdminPage from '@/components/admin/AdminPage.vue'
 import { AdminSystemService } from '@/utils/services/admin-service'
 import type { SystemHealth } from '@/utils/models/admin-models'
-import { notifyError } from '@/utils/tools'
+import { notifyError, notifyS } from '@/utils/tools'
 import { formatDateTime } from '@/utils/format'
 
 const { t } = useI18n()
 const data = ref<SystemHealth | null>(null)
 const loading = ref(true)
 async function load() { loading.value = true; data.value = await new AdminSystemService().health().catch((e) => { notifyError(e); return null }); loading.value = false }
+const sending = ref(false)
+async function testEmail() {
+  sending.value = true
+  try { notifyS(await new AdminSystemService().testEmail()) } catch (e) { notifyError(e) } finally { sending.value = false }
+}
 onMounted(load)
 </script>
 
 <template>
   <AdminPage :title="t('adm_system_health')" :loading="loading">
-    <template #actions><ElButton @click="load"><ElIcon><Refresh /></ElIcon>{{ t('refresh') }}</ElButton></template>
+    <template #actions>
+      <ElButton :loading="sending" @click="testEmail"><ElIcon><Message /></ElIcon>{{ t('adm_send_test_email') }}</ElButton>
+      <ElButton @click="load"><ElIcon><Refresh /></ElIcon>{{ t('refresh') }}</ElButton>
+    </template>
     <template v-if="data">
       <div class="hl__checks">
         <div v-for="c in data.checks" :key="c.name" class="gm-card hl__check" :class="c.ok ? 'is-ok' : 'is-bad'">

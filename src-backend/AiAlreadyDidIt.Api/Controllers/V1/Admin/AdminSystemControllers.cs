@@ -50,6 +50,8 @@ public class AdminJobsController(AdminSystemService service) : ControllerBase
 public class AdminHealthController(AdminSystemService service) : ControllerBase
 {
     [HttpGet] public async Task<ActionResult<ApiResponse<SystemHealthDto>>> Get(CancellationToken ct) => Ok(ApiResponse.Ok(await service.HealthAsync(ct)));
+    /// <summary>Sends a test e-mail to the signed-in admin through the configured provider.</summary>
+    [HttpPost("test-email")] public async Task<ActionResult<ApiResponse<string>>> TestEmail(CancellationToken ct) => Ok(ApiResponse.Ok(await service.SendTestEmailAsync(ct)));
 }
 
 [ApiController, Authorize, RoleActionAuthorize, Route("api/v1/admin/featured"), Produces("application/json")]

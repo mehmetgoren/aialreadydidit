@@ -224,4 +224,5 @@ export default {
   adm_started: 'gestartet',
   adm_effective_config: 'Effektive Konfiguration',
   adm_value: 'Wert',
+  adm_send_test_email: 'Test-E-Mail senden',
 }

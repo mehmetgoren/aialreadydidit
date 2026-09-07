@@ -347,4 +347,7 @@ export class AdminSystemService extends BaseService {
   health() {
     return this.get<SystemHealth>('health')
   }
+  testEmail() {
+    return this.post<string>('health/test-email')
+  }
 }

@@ -83,6 +83,15 @@ services:
       Site__ApiPublicUrl: ${API_PUBLIC_URL:-http://localhost:5190}
       Site__McpPublicUrl: ${MCP_PUBLIC_URL:-http://localhost:5191/mcp}
       Site__GoogleClientId: ${GOOGLE_CLIENT_ID:-}
+      # E-mail: Console (log only) or Smtp. 587 = STARTTLS (EMAIL_SMTP_SSL=false), 465 = implicit TLS (EMAIL_SMTP_SSL=true).
+      Email__Provider: ${EMAIL_PROVIDER:-Console}
+      Email__FromAddress: ${EMAIL_FROM_ADDRESS:-no-reply@localhost}
+      Email__FromName: ${EMAIL_FROM_NAME:-AI Already Did It}
+      Email__SmtpHost: ${EMAIL_SMTP_HOST:-localhost}
+      Email__SmtpPort: ${EMAIL_SMTP_PORT:-587}
+      Email__SmtpUser: ${EMAIL_SMTP_USER:-}
+      Email__SmtpPassword: ${EMAIL_SMTP_PASSWORD:-}
+      Email__SmtpUseSsl: ${EMAIL_SMTP_SSL:-false}
       Admin__Email: ${ADMIN_EMAIL}
       Site__SupportEmail: ${SUPPORT_EMAIL:-${ADMIN_EMAIL}}
       Admin__InitialPassword: ${ADMIN_INITIAL_PASSWORD}

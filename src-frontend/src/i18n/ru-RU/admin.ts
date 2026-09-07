@@ -224,4 +224,5 @@ export default {
   adm_started: 'запущено',
   adm_effective_config: 'Действующая конфигурация',
   adm_value: 'Значение',
+  adm_send_test_email: 'Отправить тестовое письмо',
 }

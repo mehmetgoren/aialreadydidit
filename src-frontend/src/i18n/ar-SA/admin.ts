@@ -224,4 +224,5 @@ export default {
   adm_started: 'بدأ',
   adm_effective_config: 'الإعدادات الفعلية',
   adm_value: 'القيمة',
+  adm_send_test_email: 'إرسال بريد تجريبي',
 }

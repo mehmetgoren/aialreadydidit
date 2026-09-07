@@ -224,4 +224,5 @@ export default {
   adm_started: 'başlangıç',
   adm_effective_config: 'Geçerli yapılandırma',
   adm_value: 'Değer',
+  adm_send_test_email: 'Test e-postası gönder',
 }
