@@ -70,7 +70,7 @@ public sealed class OllamaLlmProvider(AiOptions options, IHttpClientFactory http
         return content.Trim();
     }
 
-    public async Task<LlmHealth> CheckHealthAsync(CancellationToken ct = default)
+    public async Task<LlmHealth> CheckHealthAsync(LlmCapability capability = LlmCapability.Both, CancellationToken ct = default)
     {
         try
         {
@@ -79,8 +79,10 @@ public sealed class OllamaLlmProvider(AiOptions options, IHttpClientFactory http
             var tags = await client.GetFromJsonAsync<TagsResponse>("api/tags", ct);
             var names = tags?.Models?.Select(m => m.Name).ToList() ?? [];
             var missing = new List<string>();
-            if (SupportsEmbeddings && !names.Any(n => Matches(n, _o.EmbeddingModel))) missing.Add(_o.EmbeddingModel);
-            if (SupportsChat && !names.Any(n => Matches(n, _o.ChatModel))) missing.Add(_o.ChatModel);
+            var wantEmbeddings = capability is LlmCapability.Both or LlmCapability.Embeddings;
+            var wantChat = capability is LlmCapability.Both or LlmCapability.Chat;
+            if (wantEmbeddings && SupportsEmbeddings && !names.Any(n => Matches(n, _o.EmbeddingModel))) missing.Add(_o.EmbeddingModel);
+            if (wantChat && SupportsChat && !names.Any(n => Matches(n, _o.ChatModel))) missing.Add(_o.ChatModel);
             return new LlmHealth(missing.Count == 0, Name, _o.ChatModel, _o.EmbeddingModel,
                 missing.Count == 0 ? $"{names.Count} models available" : "missing models: " + string.Join(", ", missing));
         }

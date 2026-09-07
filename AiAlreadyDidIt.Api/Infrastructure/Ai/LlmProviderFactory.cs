@@ -46,7 +46,7 @@ public sealed class NullLlmProvider : ILlmProvider
     public Task<float[]> EmbedAsync(string text, CancellationToken ct = default) => throw new NotSupportedException("AI provider is disabled (Ai:Provider = None).");
     public Task<IReadOnlyList<float[]>> EmbedManyAsync(IReadOnlyList<string> texts, CancellationToken ct = default) => throw new NotSupportedException("AI provider is disabled (Ai:Provider = None).");
     public Task<string> ChatAsync(string systemPrompt, string userPrompt, LlmChatOptions? options = null, CancellationToken ct = default) => throw new NotSupportedException("AI provider is disabled (Ai:Provider = None).");
-    public Task<LlmHealth> CheckHealthAsync(CancellationToken ct = default) => Task.FromResult(new LlmHealth(false, Name, null, null, "disabled"));
+    public Task<LlmHealth> CheckHealthAsync(LlmCapability capability = LlmCapability.Both, CancellationToken ct = default) => Task.FromResult(new LlmHealth(false, Name, null, null, "disabled"));
 }
 
 internal static class VectorMath

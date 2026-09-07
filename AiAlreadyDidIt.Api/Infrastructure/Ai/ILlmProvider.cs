@@ -7,6 +7,9 @@ public sealed record LlmChatOptions(bool JsonMode = false, double Temperature = 
 
 public sealed record LlmHealth(bool Ok, string Provider, string? ChatModel, string? EmbeddingModel, string? Detail);
 
+/// <summary>Which model(s) a health check must find — a provider can serve embeddings while its chat model is intentionally absent.</summary>
+public enum LlmCapability { Both = 0, Embeddings = 1, Chat = 2 }
+
 /// <summary>
 /// One abstraction for every LLM backend (chat + embeddings), selected from configuration — the .NET port of the
 /// CL-AI <c>LlmFactory</c>/<c>LlmProvider</c> pattern. Concrete classes: Ollama (local container / host) and any
@@ -29,7 +32,7 @@ public interface ILlmProvider
     /// <summary>Single-turn chat completion. With <c>JsonMode</c> the model is asked to answer with a JSON object only.</summary>
     Task<string> ChatAsync(string systemPrompt, string userPrompt, LlmChatOptions? options = null, CancellationToken ct = default);
 
-    Task<LlmHealth> CheckHealthAsync(CancellationToken ct = default);
+    Task<LlmHealth> CheckHealthAsync(LlmCapability capability = LlmCapability.Both, CancellationToken ct = default);
 }
 
 /// <summary>Resolves the configured providers (embeddings and chat may use different backends).</summary>

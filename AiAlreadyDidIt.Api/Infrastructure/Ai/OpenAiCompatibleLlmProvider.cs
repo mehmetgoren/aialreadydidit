@@ -74,7 +74,7 @@ public sealed class OpenAiCompatibleLlmProvider(AiOptions options, IHttpClientFa
         return content.Trim();
     }
 
-    public async Task<LlmHealth> CheckHealthAsync(CancellationToken ct = default)
+    public async Task<LlmHealth> CheckHealthAsync(LlmCapability capability = LlmCapability.Both, CancellationToken ct = default)
     {
         if (string.IsNullOrWhiteSpace(_o.ApiKey) && _o.BaseUrl.Contains("openai.com", StringComparison.OrdinalIgnoreCase))
             return new LlmHealth(false, Name, _o.ChatModel, _o.EmbeddingModel, "Ai:OpenAi:ApiKey is empty");

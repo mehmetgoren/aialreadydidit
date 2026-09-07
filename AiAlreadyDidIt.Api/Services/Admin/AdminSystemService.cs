@@ -238,8 +238,15 @@ public sealed class AdminSystemService(AadiDbContext db, ICurrentUser currentUse
         await Check("PostgreSQL", async () => { var v = await db.Database.SqlQueryRaw<string>("SELECT version() AS \"Value\"").FirstAsync(ct); var vec = await db.Database.SqlQueryRaw<string>("SELECT extversion AS \"Value\" FROM pg_extension WHERE extname = 'vector'").FirstOrDefaultAsync(ct); return (true, $"{v.Split(',')[0]} · pgvector {vec ?? "missing"}"); });
         await Check("Object storage (MinIO/S3)", async () => (await storage.PingAsync(ct), storageOptions.Value.Endpoint));
         await Check("ClamAV", async () => { var (ok, detail) = await scanner.PingAsync(ct); return (ok || !clam.Value.Enabled, clam.Value.Enabled ? detail : "disabled"); });
-        await Check($"Embeddings ({providers.Embeddings.Name})", async () => { if (!providers.Embeddings.SupportsEmbeddings) return (false, "disabled — keyword search only"); var h = await providers.Embeddings.CheckHealthAsync(ct); return (h.Ok, $"{h.EmbeddingModel} · {h.Detail}"); });
-        await Check($"Chat model ({providers.Chat.Name})", async () => { if (!providers.Chat.SupportsChat) return (false, "disabled — no category suggestions"); var h = await providers.Chat.CheckHealthAsync(ct); return (h.Ok, $"{h.ChatModel} · {h.Detail}"); });
+        await Check($"Embeddings ({providers.Embeddings.Name})", async () => { if (!providers.Embeddings.SupportsEmbeddings) return (false, "disabled — keyword search only"); var h = await providers.Embeddings.CheckHealthAsync(LlmCapability.Embeddings, ct); return (h.Ok, $"{h.EmbeddingModel} · {h.Detail}"); });
+        await Check($"Chat model ({providers.Chat.Name})", async () =>
+        {
+            // Chat is only used for LLM categorisation; when that feature is off a missing chat model is not a fault.
+            if (!ai.Value.EnableCategorySuggestions) return (true, "off — Ai:EnableCategorySuggestions=false (manual categories)");
+            if (!providers.Chat.SupportsChat) return (false, "disabled — no category suggestions");
+            var h = await providers.Chat.CheckHealthAsync(LlmCapability.Chat, ct);
+            return (h.Ok, $"{h.ChatModel} · {h.Detail}");
+        });
         await Check("Background jobs", async () => { var queued = await db.BackgroundJobs.CountAsync(j => j.Status == JobStatus.Queued, ct); var failed = await db.BackgroundJobs.CountAsync(j => j.Status == JobStatus.Failed, ct); var stuck = await db.BackgroundJobs.CountAsync(j => j.Status == JobStatus.Running && j.StartedAt < Clock.Now.AddMinutes(-30), ct); return (failed == 0 && stuck == 0, $"{queued} queued · {failed} failed · {stuck} stuck"); });
         await Check("Temp disk", () => { var path = Path.IsPathRooted(storageOptions.Value.TempPath) ? storageOptions.Value.TempPath : Path.Combine(env.ContentRootPath, storageOptions.Value.TempPath); Directory.CreateDirectory(path); var drive = new DriveInfo(Path.GetPathRoot(Path.GetFullPath(path))!); var free = drive.AvailableFreeSpace; return Task.FromResult((free > 2L * 1024 * 1024 * 1024, $"{TextUtil.HumanSize(free)} free at {path}")); });
         await Check("Stale embeddings", async () => { var stale = await db.Apps.CountAsync(a => a.Status == AppStatus.Published && (a.EmbeddingStale || a.Embedding == null), ct); return (stale == 0, $"{stale} published apps need (re)embedding"); });
