@@ -196,7 +196,7 @@ cd src-backend/AiAlreadyDidIt.Api && dotnet run --launch-profile http
 cd src-backend/AiAlreadyDidIt.Mcp && dotnet run --launch-profile http
 
 # storefront with hot reload (http://localhost:5174)
-cd src-frontend && npm install && npm run dev
+cd src-frontend && cp .env.example .env && npm install && npm run dev
 ```
 
 Tests: `dotnet test` in `src-backend` (128 unit tests: text utilities, license detection, source analysis, JWT, hashing,
