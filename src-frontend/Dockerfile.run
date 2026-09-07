@@ -1,0 +1,7 @@
+# Build & run notes (not a Dockerfile)
+#
+#   docker build -t aadi/web:1.0.0 .
+#   docker run -d --restart unless-stopped --name aadi-web -p 9002:80 -e TZ=Europe/Istanbul aadi/web:1.0.0
+#
+# The image serves the SPA and proxies /api and /files to a container named "api" on port 8080
+# (see docker/nginx.conf). Use ../docker-compose.yml at the AiAlreadyDidIt root to run db + api + web together.
