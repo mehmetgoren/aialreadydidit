@@ -14,7 +14,7 @@ public class JwtTokenServiceTests
     private static readonly JwtOptions Options = new() { Key = "unit-test-key-that-is-long-enough-for-hmac-sha256!!", Issuer = "aadi-test", Audience = "aadi-test-api", AccessTokenMinutes = 15 };
     private readonly JwtTokenService _svc = new(Microsoft.Extensions.Options.Options.Create(Options));
 
-    private static User Admin() => new() { Id = 42, Username = "admin", Email = "ioniangamer@gmail.com", Role = new Role { Name = "Admin", IsAdmin = true } };
+    private static User Admin() => new() { Id = 42, Username = "admin", Email = "admin@example.com", Role = new Role { Name = "Admin", IsAdmin = true } };
 
     [Fact]
     public void Access_token_carries_identity_claims_and_validates()
