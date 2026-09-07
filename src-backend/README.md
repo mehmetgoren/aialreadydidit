@@ -36,7 +36,7 @@ licenses, LLM models, roles, admin menus, settings — `Data/Seed/ReferenceData.
 
 | Login | Password | Role |
 |---|---|---|
-| `ioniangamer@gmail.com` (`admin`) | `Aadi123!` (`Admin:InitialPassword`) | Admin |
+| `ADMIN_EMAIL` (`admin`) | `Aadi123!` (`Admin:InitialPassword`, dev default) | Admin |
 | `demo` | `Aadi123!` | Member (uploaded a fork, rated the demo apps) |
 
 ## Configuration (`appsettings.json`, overridable with `Section__Key` environment variables)

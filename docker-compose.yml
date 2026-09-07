@@ -84,6 +84,7 @@ services:
       Site__McpPublicUrl: ${MCP_PUBLIC_URL:-http://localhost:5191/mcp}
       Site__GoogleClientId: ${GOOGLE_CLIENT_ID:-}
       Admin__Email: ${ADMIN_EMAIL}
+      Site__SupportEmail: ${SUPPORT_EMAIL:-${ADMIN_EMAIL}}
       Admin__InitialPassword: ${ADMIN_INITIAL_PASSWORD}
       Storage__Endpoint: http://minio:9000
       Storage__PublicEndpoint: ${MINIO_PUBLIC_ENDPOINT:-http://localhost:9000}

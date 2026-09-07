@@ -128,4 +128,4 @@ PBKDF2 passwords, JWT access 15 min + rotating refresh token (httpOnly cookie, 3
 
 ## 10. Seed data
 
-Two apps from `/mnt/sdy1/stuff/LLM generated projects`: **CPU-Z for Linux** (cpuz-linux, GTK 3, `.deb`, 10 screenshots in `docs/`) and **HWMonitor for Linux** (hwmonitor-linux, MIT, `.deb`, 3 screenshots). Seed uploads them through the real pipeline (archive path, snapshot built from the working tree without `.venv/.idea/.git/dist`) so scan/license/embedding all run for real. Admin account + a demo member account (Development only).
+Two apps from the owner's LLM-generated projects (`seed-projects/`): **CPU-Z for Linux** (cpuz-linux, GTK 3, `.deb`, 10 screenshots in `docs/`) and **HWMonitor for Linux** (hwmonitor-linux, MIT, `.deb`, 3 screenshots). Seed uploads them through the real pipeline (archive path, snapshot built from the working tree without `.venv/.idea/.git/dist`) so scan/license/embedding all run for real. Admin account + a demo member account (Development only).

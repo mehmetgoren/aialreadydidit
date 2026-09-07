@@ -54,11 +54,11 @@ kategori oluştursun" — the LLM should pick the category and may propose a new
 | Question | Answer |
 |---|---|
 | Embedding provider | Ollama (local container running qwen3.8 — the owner's local model) **and** an OpenAI-compatible API key in production. One interface, derived classes, selection from appsettings. |
-| LLM-assisted categorization | Yes, include it; use the same abstraction. Pattern reference: `/mnt/sdr1/albaavis/CandorLight/CL-AI` (`LlmProvider` enum + `LlmFactory` creating chat model and embeddings per provider, per-provider config sections). |
+| LLM-assisted categorization | Yes, include it; use the same abstraction. Pattern reference: the owner's CL-AI project (`LlmProvider` enum + `LlmFactory` creating chat model and embeddings per provider, per-provider config sections). |
 | cpu_z has no LICENSE | Add an MIT LICENSE to CPU-Z. Rule: a user uploads source code **or** a GitHub/GitLab URL, never both. |
 | Google OAuth | Build the flow behind a config value (button hidden until `Site:GoogleClientId` is set). |
 | Default language | English. |
-| Admin account | ioniangamer@gmail.com (for now). |
+| Admin account | the owner's e-mail (set via `ADMIN_EMAIL`, not stored in the repo). |
 
 Note: the CL-AI settings files contain real API keys; they were read for the pattern only and must never be copied here.
 
@@ -173,7 +173,7 @@ cd src-frontend && npm install && npm run dev                            # 5174
 Never put `pkill -f "<pattern>"` in the same shell command as the pattern text itself (it killed the session shell twice);
 use small helper scripts instead.
 
-Accounts (Development): admin `ioniangamer@gmail.com` / `Aadi123!` (also username `admin`), member `demo` / `Aadi123!`.
+Accounts (Development): admin `ADMIN_EMAIL` / `Aadi123!` (also username `admin`), member `demo` / `Aadi123!`.
 
 Production (2026-09-07): AWS Lightsail `aadi-prod-1` (Frankfurt, 16 GB/4 vCPU/320 GB, static IP `18.195.74.135`, IPv6
 `2a05:d014:8bf:7600:99f0:159f:37b0:471`), Ubuntu 24.04, firewall 22/80/443. `deploy/server-setup.sh` prepares the host,

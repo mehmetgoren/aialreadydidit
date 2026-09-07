@@ -33,7 +33,7 @@ npm run test:coverage
 ```
 
 Start the API first (`cd ../src-backend/AiAlreadyDidIt.Api && dotnet run --launch-profile http`), then sign in with a seeded
-account, e.g. admin `ioniangamer@gmail.com` / `Aadi123!` or member `demo` / `Aadi123!`.
+account, e.g. admin `admin` / `Aadi123!` (dev default) or member `demo` / `Aadi123!`.
 
 ## Environment
 
