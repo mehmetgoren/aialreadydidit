@@ -1,0 +1,20 @@
+# secrets and machine-specific files
+.env
+.env.production
+*.pem
+
+# the owner's LLM-generated sample projects (published as apps, not as part of this repo)
+seed-projects/*
+!seed-projects/README.txt
+
+# build output and tooling
+**/bin/
+**/obj/
+**/node_modules/
+src-frontend/dist/
+src-frontend/coverage/
+.vs/
+.idea/
+TestResults/
+*.log
+.DS_Store

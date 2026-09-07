@@ -1,0 +1,40 @@
+# TLS front for the production stack (docker-compose.prod.yml). Certificates come from Let's Encrypt automatically;
+# Caddy also redirects http:// to https:// and forwards X-Forwarded-For / X-Forwarded-Proto to nginx and the API.
+{
+    email ioniangamer@gmail.com
+}
+
+# Storefront + API + files + SEO — everything the SPA's nginx already routes.
+aialreadydidit.com {
+    encode zstd gzip
+    header Strict-Transport-Security "max-age=31536000; includeSubDomains"
+    request_body {
+        max_size 600MB
+    }
+    reverse_proxy web:80 {
+        transport http {
+            read_timeout 600s
+        }
+    }
+}
+
+www.aialreadydidit.com {
+    redir https://aialreadydidit.com{uri} permanent
+}
+
+# Presigned MinIO download links (Storage:PublicEndpoint). MinIO signs the Host header, so it needs its own hostname.
+files.aialreadydidit.com {
+    header Strict-Transport-Security "max-age=31536000; includeSubDomains"
+    reverse_proxy minio:9000
+}
+
+# MCP server for agents (Streamable HTTP at /mcp).
+mcp.aialreadydidit.com {
+    header Strict-Transport-Security "max-age=31536000; includeSubDomains"
+    reverse_proxy mcp:8080
+}
+
+# Second domain: pure redirect to the canonical name.
+aialreadymadeit.com, www.aialreadymadeit.com {
+    redir https://aialreadydidit.com{uri} permanent
+}

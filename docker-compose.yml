@@ -1,0 +1,149 @@
+# Full stack: PostgreSQL+pgvector, MinIO, ClamAV, Ollama, AiAlreadyDidIt.Api, MCP server, storefront (nginx).
+#   cp .env.example .env   (edit)   →   docker compose up --build
+# Storefront http://localhost:9002 · API http://localhost:5190 (Scalar docs at /scalar/v1) · MCP http://localhost:5191/mcp · MinIO console http://localhost:9090
+services:
+  db:
+    image: pgvector/pgvector:pg18
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-1234}
+      POSTGRES_DB: aialreadydidit
+      TZ: UTC
+    volumes:
+      - aadi-db:/var/lib/postgresql
+    ports:
+      - "5433:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d aialreadydidit"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  minio:
+    image: minio/minio:latest
+    command: server /data --console-address ":9090"
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-minioadmin}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-minioadmin}
+    volumes:
+      - aadi-minio:/data
+    ports:
+      - "9000:9000"
+      - "9090:9090"
+    healthcheck:
+      test: ["CMD", "mc", "ready", "local"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  clamav:
+    image: clamav/clamav:latest
+    environment:
+      CLAMAV_NO_MILTERD: "true"
+    volumes:
+      - aadi-clamav:/var/lib/clamav
+      - ./docker/clamav/clamd.conf:/etc/clamav/clamd.conf:ro
+    # first start downloads the signature database (~300 MB); the API keeps files "pending" until clamd answers
+
+  ollama:
+    image: ollama/ollama:latest
+    entrypoint: ["/bin/sh", "/entrypoint.sh"]
+    environment:
+      OLLAMA_PULL_MODELS: ${OLLAMA_PULL_MODELS:-bge-m3}
+      OLLAMA_KEEP_ALIVE: 30m
+    volumes:
+      - aadi-ollama:/root/.ollama
+      - ./docker/ollama/entrypoint.sh:/entrypoint.sh:ro
+    ports:
+      - "11435:11434"
+    # GPU (NVIDIA): uncomment to let the chat model run on the GPU
+    # deploy:
+    #   resources:
+    #     reservations:
+    #       devices:
+    #         - driver: nvidia
+    #           count: all
+    #           capabilities: [gpu]
+
+  api:
+    build:
+      context: ./src-backend
+      dockerfile: AiAlreadyDidIt.Api/Dockerfile
+    depends_on:
+      db:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
+    environment:
+      ASPNETCORE_ENVIRONMENT: ${ASPNETCORE_ENVIRONMENT:-Development}
+      ASPNETCORE_URLS: http://+:8080
+      ConnectionStrings__AiAlreadyDidIt: "User ID=postgres;Password=${POSTGRES_PASSWORD:-1234};Server=db;Port=5432;Database=aialreadydidit;"
+      Jwt__Key: ${JWT_KEY}
+      Site__PublicUrl: ${SITE_PUBLIC_URL:-http://localhost:9002}
+      Site__ApiPublicUrl: ${API_PUBLIC_URL:-http://localhost:5190}
+      Site__McpPublicUrl: ${MCP_PUBLIC_URL:-http://localhost:5191/mcp}
+      Site__GoogleClientId: ${GOOGLE_CLIENT_ID:-}
+      Admin__Email: ${ADMIN_EMAIL}
+      Admin__InitialPassword: ${ADMIN_INITIAL_PASSWORD}
+      Storage__Endpoint: http://minio:9000
+      Storage__PublicEndpoint: ${MINIO_PUBLIC_ENDPOINT:-http://localhost:9000}
+      Storage__AccessKey: ${MINIO_ROOT_USER:-minioadmin}
+      Storage__SecretKey: ${MINIO_ROOT_PASSWORD:-minioadmin}
+      ClamAv__Host: clamav
+      ClamAv__Port: "3310"
+      Ai__Provider: ${AI_PROVIDER:-Ollama}
+      Ai__EmbeddingProvider: ${AI_EMBEDDING_PROVIDER:-}
+      Ai__ChatProvider: ${AI_CHAT_PROVIDER:-}
+      Ai__EnableCategorySuggestions: ${AI_CATEGORY_SUGGESTIONS:-false}
+      Ai__Ollama__BaseUrl: ${OLLAMA_BASE_URL:-http://ollama:11434}
+      Ai__Ollama__ChatModel: ${OLLAMA_CHAT_MODEL:-qwen3.8:latest}
+      Ai__Ollama__EmbeddingModel: ${OLLAMA_EMBEDDING_MODEL:-bge-m3}
+      Ai__OpenAi__BaseUrl: ${OPENAI_BASE_URL:-https://api.openai.com/v1}
+      Ai__OpenAi__ApiKey: ${OPENAI_API_KEY:-}
+      Ai__OpenAi__ChatModel: ${OPENAI_CHAT_MODEL:-gpt-5-mini}
+      Ai__OpenAi__EmbeddingModel: ${OPENAI_EMBEDDING_MODEL:-text-embedding-3-small}
+      RepositoryImport__GitHubToken: ${GITHUB_TOKEN:-}
+      Seed__LlmProjectsPath: /seed
+      Seed__PublishSampleApps: ${SEED_PUBLISH_SAMPLE_APPS:-false}
+      Cors__Origins__0: ${SITE_PUBLIC_URL:-http://localhost:9002}
+      TZ: UTC
+    volumes:
+      - aadi-files:/app/Files
+      - "${LLM_PROJECTS_PATH:-./seed-projects}:/seed:ro"
+    ports:
+      - "5190:8080"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  mcp:
+    build:
+      context: ./src-backend
+      dockerfile: AiAlreadyDidIt.Mcp/Dockerfile
+    depends_on:
+      - api
+    environment:
+      ASPNETCORE_URLS: http://+:8080
+      Api__BaseUrl: http://api:8080
+      Api__PublicUrl: ${API_PUBLIC_URL:-http://localhost:5190}
+      Site__PublicUrl: ${SITE_PUBLIC_URL:-http://localhost:9002}
+    ports:
+      - "5191:8080"
+
+  web:
+    build:
+      context: ./src-frontend
+      args:
+        VITE_API_BASE_URL: /api/v1
+    depends_on:
+      - api
+    environment:
+      TZ: UTC
+    ports:
+      - "9002:80"
+
+volumes:
+  aadi-db:
+  aadi-minio:
+  aadi-clamav:
+  aadi-ollama:
+  aadi-files:

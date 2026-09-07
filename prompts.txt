@@ -1,0 +1,162 @@
+-------------------------------------------------------------------------------------------------------------------------------------------------------------
+- Look at home page, Internet & Networking menu is not shown correctly. I' ve installed Claude Chrome extensions, you can also test it
+
+- You know we auto classify uploaded application by LLM. But this one is gonna cost us real money since we need a GPU based server. 
+So lets make this one optional. Add a boolean field to Api appsettings.json. Default must be false. 
+If it is true then current LLM auto implementation applies. but if not, we need to let user select category and sub category from the UI
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Must be open source so the other LLM can modify the source code whcih leads burm much less token
+
+Must be installable for specific platforms
+
+Must be Free
+
+
+Purpose: 
+1. Eğer daha önce yapıldıysa boşuna dünya kaynaklarını yeniden tüketme. 
+2. Boşa kendi  tokenlarını yakma daha önce yapılmış uygulamalar için
+
+
+
+
+Kategorilere ayır. Bunu yaparken de LLM karar versin. Gerekirse yeni bir kategori oluştursun ve oraya koysun
+
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+I want you to create a project called "AI already did it". It's a web based application.
+
+Yapılcak proje LLM tarafından yazılan uygulamalar için bir repo / ücretsiz mağaza oluşturmak. Kullanıcılar arama yaparak daha öncdeden LLM tarafından yapılmış uygulamarı
+kelime bazlı veya semantik olarak arayıp diledikleri gibi indirebilcekler
+
+Amacı ise 
+1. Zaten daha önceden LLM ile yapılmış uygulamarın yeniden yeniden yapılıp dünya kaynaklarının boşuna tüketilmesinin önüne geçmek.
+2. Kişinin daha önce yapılmış uygulamalar için boşuna kendi token' larını tüketmemesi ki bu da onu ekstra masraftan kurtarır
+
+ 
+- Kullanıcı arayüzü:
+  - Mevcut uygulamalar için bir vitrin (açıkalması, ekran görüntüsü, puanı, kaç kişi puanlamış vs...)
+  - Arama ekranı, sahibinden.com' daki arama güzel bir örnek katagori bazında.
+  - Login / signup. email ve google ile kayıt olma.
+  - Kayıt olmadan da kullanıcılar istediği uygulamayı aratıp indirebilecek. Kayt olmak opsiyonel olacak.
+  - KUllanıcılar için indirip kullandığı uygulamalar için puan verme (100 üzerinden)
+  - Kullanıcı admin paneli. (kendi yüklediği uygulamarı gösteren. Puanlama yaptığı uygulamalar gösteren , kendin de ekstralar ekleyebilirsin
+ Programın kategorisi, adı, açıklaması, screenshot' ları olacak
+
+- Genel admin panel, yönetici ben olduğum için benim için çok kpasamlı bir admin panel
+
+- Yüklenecek programlar için şu 3 altın kuralımız olacak:
+    1. Must be open source so the other LLM can modify the source code whcih provides burning much less tokens
+    2. Must be installable for specific platforms
+    3. All apps  must be free
+
+Kullanılacak teknolojiler:
+  - Database: postgresql, opensearch (for semantic search, if there is a better alternative, let use it)
+  - Backend:
+    * Create src-backend directory
+    * Use ASp.net 10 web api for backend 
+    * 
+
+  - Fronend:
+    * Create src-backend directory
+    * Use Vue3 + Typescript + Element Plus
+
+  - Look at "/mnt/sdy1/products/Gemecik" "src-backend" and "src-frontend" project. Bu yeni projenin de yapısı / şablonu tıpkı böyle olmalı
+  - Look at my LLM generated projercts in "/mnt/sdy1/stuff/LLM generated projects". These will be the first two applications to be uploaded. Examine the applications as well, so you can better understand the purpose of the project.
+
+- Daha önce buna benzer uygulamalar var ise araştır, oradan bakıp arayüzümüzde değişiklikler ve eklemeler yapabiliriz. Zaten Android Google Play ve Apple appstore' da buna güzel bir örnek
+- Benim unuttuğum bir şey var ise sen de o eklemleri / özellikleri ekleyeblirsin 
+- Aslında sahibinden.com' daki gibi. Ürün eklemek yerine LLM generated uygulamayı ekliyorsun ve bedeva olmak sorunda. Bizim uygulamamız için güzel bir  alt yapısal örnek sunuyor zaten, onu baz olabiliriz.
+
+Evet, bunlar güzel öneriler, hepsini ekleyelim. Ek olarak bir kullanıcı LLM-Generated uygulamayı yüklerken mutlaka kaynak kodu (ya da github linkini), uygulamnın çalışan bir yükleme dosyasını (.dep, .exe gibi) ve ekran görüntüsünü yüklemek zorunda olsun. Çünkü bunlar diğer kulalnıcıların işini kolaylaştıracak etmenler.
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------------
+1. Ollama support both container running qwen3.8 (my local) and OpenAI-compatible API key on production. Create interface and derevide classes and take which one should be used from appsettings
+
+2. Yes include it. Use same abtraction to select LLM provider. Look at "/mnt/sdr1/albaavis/CandorLight/CL-AI" project. You will find your answer there (LLMProvider section)
+
+3. Add mit license file to CPU-Z. But remember. An user can upload source code or github/gitlab URLs. Not both of them.
+
+4. Build the flow behind a config value
+
+5. Default should be Endglish.
+
+6. For now, admin email: ioniangamer@gmail.com
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+I want you to create a project called "AI already did it". It is a web-based application.
+
+## What we are building
+A repository / free marketplace for applications written by LLMs. Humans and LLM agents can search previously LLM-generated applications by keyword or semantically and download them freely.
+
+## Purpose
+1. Prevent the same applications from being generated over and over by LLMs, wasting the world's compute and energy resources.
+2. Save users from burning their own tokens (and money) on applications that have already been built.
+
+## Three golden rules for every uploaded app
+1. Must be open source, so another LLM can modify the source code — which burns far fewer tokens than generating from scratch. Enforce this: a mandatory SPDX license field, plus a check that the repository/archive actually contains a LICENSE file matching it.
+2. Must be installable on specific, declared platforms.
+3. Must be free.
+
+## Mandatory upload requirements
+An app submission cannot be completed unless ALL of the following are provided:
+1. Source code — either a public Git repository URL (GitHub/GitLab) or a source archive upload. Repository import is the primary path: fetch README, LICENSE, primary language, stars, releases and changelog automatically. Zip upload is the fallback.
+2. At least one working, ready-to-run install/binary file per declared platform (e.g. .exe, .msi, .deb, .rpm, .dmg, .apk, .AppImage, Docker image reference, or a runnable web bundle).
+3. At least one screenshot (enforce a minimum; recommend 3+).
+These exist to make life easier for other users, so validate them strictly on both client and server.
+
+## Additional required metadata per app
+- Category (hierarchical), name, short and long description, tags.
+- Platforms: structured list (Windows / Linux / macOS / Web / Android / iOS / Docker / CLI), each with its own install file.
+- Versions: every version has its own files, changelog and release date.
+- Generating LLM: model name and version (e.g. Claude Opus 4.x, GPT-5, Gemini 2.5), plus the original prompt(s) used to generate the app, so others can edit the prompt and quickly produce their own variant.
+- Lineage: optional "derived from / fork of" link to another app in the store.
+- License (SPDX).
+
+## Duplicate detection at upload time
+While the uploader types the description, run a semantic search against existing apps. If similarity is above a threshold, show "This looks ~85% similar to X — would you rather contribute to it or declare yours as a fork?" This directly serves the project's purpose.
+
+## API for LLM agents (key differentiator)
+- A public REST API for search and download so agents (Claude Code, etc.) can query the store before generating anything.
+- An MCP server exposing tools such as `search_apps`, `get_app`, `list_categories`, `download_app`. The intended flow: an agent is asked to build something → it first asks this store "has someone already done this?".
+- API keys and rate limiting for these endpoints.
+
+## User interface
+- Storefront / showcase: description, screenshots, rating, number of ratings, download count, platforms, license, generating model.
+- Search: category-first filtering like sahibinden.com, then refine by platform, license, model, rating, tags. Keyword and semantic search combined.
+- Login / signup with email and Google (OAuth). Registration is optional — anonymous users can search and download everything.
+- Ratings out of 100 + short review + a "worked / didn't work on version X" flag. Only users who actually downloaded the app can rate it.
+- User dashboard: my uploaded apps, my ratings/reviews, download history, favorites/collections, "notify me on new versions of this app", API keys for the agent API.
+- Report abuse button on every app.
+- Homepage "savings counter": estimated tokens/cost saved thanks to the store (downloads × estimated generation cost of the app). Make the mission visible.
+- TR/EN i18n. SEO: app detail pages must be server-rendered or prerendered.
+
+## Global admin panel
+I am the site administrator, so build a very comprehensive admin panel: moderation queue (new uploads require approval), reports handling, user management, category/tag management, license/platform lists, featured apps, statistics (downloads, searches, savings, top apps), audit log, system health.
+
+## Security
+- Uploaded archives and binaries go through a basic scan (ClamAV) before publication.
+- JWT + refresh tokens, Google OAuth, rate limiting on all public endpoints.
+
+## Technology stack
+- Database: PostgreSQL.
+- Semantic search: evaluate PostgreSQL + pgvector (+ tsvector for full text) first, since it keeps everything in one database and is operationally much lighter. Use OpenSearch only if you can justify it; explain your choice.
+- Object storage for screenshots and install files: S3-compatible (MinIO locally).
+- Backend:
+  * Create a `src-backend` directory.
+  * ASP.NET Core 10 Web API.
+- Frontend:
+  * Create a `src-frontend` directory.
+  * Vue 3 + TypeScript + Element Plus.
+- docker-compose that brings up the whole stack (API, frontend, PostgreSQL, MinIO, ClamAV, MCP server) with a single command.
+
+## References
+- Look at the `src-backend` and `src-frontend` projects under "/mnt/sdy1/products/Gemecik". The new project's structure and template must mirror them exactly.
+- Look at my LLM-generated projects in "/mnt/sdy1/stuff/LLM generated projects". These will be the first two applications uploaded to the store. Examine them so you understand the purpose of the project, and use them as seed data.
+- Research existing similar applications (Google Play and Apple App Store are good examples) and borrow UI ideas and features from them.
+- The overall model is sahibinden.com: instead of listing a product for sale, you list an LLM-generated app, and it must be free.
+- If I have forgotten anything, add the missing features yourself. Before writing code, produce a short architecture and data-model plan and ask me any blocking questions.

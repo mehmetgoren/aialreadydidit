@@ -1,0 +1,55 @@
+# Production overlay: docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d --build
+# - nothing but Caddy (80/443) is published on the host; API, MCP, MinIO, DB and Ollama stay on the compose network
+# - Caddy terminates TLS for aialreadydidit.com, www, files., mcp. and the redirect domain (deploy/Caddyfile)
+# - every container restarts with the host and keeps its logs bounded
+x-restart: &restart
+  restart: unless-stopped
+x-logging: &logging
+  logging:
+    driver: json-file
+    options:
+      max-size: "20m"
+      max-file: "5"
+
+services:
+  db:
+    <<: [*restart, *logging]
+    ports: !reset []
+  minio:
+    <<: [*restart, *logging]
+    ports: !reset []
+  clamav:
+    <<: [*restart, *logging]
+  ollama:
+    <<: [*restart, *logging]
+    ports: !reset []
+  api:
+    <<: [*restart, *logging]
+    ports: !reset []
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+  mcp:
+    <<: [*restart, *logging]
+    ports: !reset []
+  web:
+    <<: [*restart, *logging]
+    ports: !reset []
+  caddy:
+    <<: [*restart, *logging]
+    image: caddy:2
+    depends_on:
+      - web
+      - mcp
+      - minio
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    volumes:
+      - ./deploy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - aadi-caddy-data:/data
+      - aadi-caddy-config:/config
+
+volumes:
+  aadi-caddy-data:
+  aadi-caddy-config:
