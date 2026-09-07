@@ -227,6 +227,12 @@ await using (var scope = app.Services.CreateAsyncScope())
         try { await scope.ServiceProvider.GetRequiredService<DbSeeder>().SeedAsync(); }
         catch (Exception ex) { logger.LogError(ex, "Demo seed failed"); }
     }
+    else if (builder.Configuration.GetValue<bool>("Seed:PublishSampleApps"))
+    {
+        // Production: publish the two real sample apps (no demo member / engagement). Idempotent.
+        try { await scope.ServiceProvider.GetRequiredService<DbSeeder>().SeedAsync(sampleAppsOnly: true); }
+        catch (Exception ex) { logger.LogError(ex, "Sample app seed failed"); }
+    }
 }
 
 app.Run();

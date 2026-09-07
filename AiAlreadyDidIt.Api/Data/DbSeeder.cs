@@ -25,14 +25,18 @@ public sealed class DbSeeder(AadiDbContext db, IPasswordHasher hasher, IObjectSt
     private sealed record SeedApp(string Folder, string Name, string Slug, string Short, string CategorySlug, string[] Tags, string[] Screenshots, string Installer, string Version,
         string Changelog, string ModelSlug, string ModelNote, (string Title, string Text)[] Prompts, string? DerivedFromSlug = null);
 
-    public async Task SeedAsync(CancellationToken ct = default)
+    /// <param name="sampleAppsOnly">
+    /// Production mode (<c>Seed:PublishSampleApps</c>): publish the two real apps under the admin account with current
+    /// timestamps, but no demo member, no fake downloads / ratings. Idempotent — skipped once any app exists.
+    /// </param>
+    public async Task SeedAsync(bool sampleAppsOnly = false, CancellationToken ct = default)
     {
         if (await db.Apps.AnyAsync(ct)) { logger.LogInformation("Apps already seeded; skipping."); return; }
         var root = configuration["Seed:LlmProjectsPath"];
         if (string.IsNullOrWhiteSpace(root) || !Directory.Exists(root)) { logger.LogWarning("Seed:LlmProjectsPath '{Path}' not found; skipping demo apps.", root); return; }
 
         var admin = await db.Users.Include(u => u.Role).OrderBy(u => u.Id).FirstAsync(u => u.Role.IsAdmin, ct);
-        var demo = await EnsureDemoMemberAsync(ct);
+        var demo = sampleAppsOnly ? null : await EnsureDemoMemberAsync(ct);
 
         var cpuz = new SeedApp("cpu_z", "CPU-Z for Linux", "cpuz-linux",
             "Unofficial CPU-Z re-implementation for Linux Mint / GTK 3: CPU, caches, mainboard, memory, SPD, graphics, bench and validation tabs filled from the kernel.",
@@ -65,10 +69,10 @@ public sealed class DbSeeder(AadiDbContext db, IPasswordHasher hasher, IObjectSt
         var index = await categories.GetAsync(ct);
         foreach (var seed in new[] { cpuz, hw })
         {
-            try { await SeedAppAsync(seed, admin, index, root, ct); }
+            try { await SeedAppAsync(seed, admin, index, root, backdate: !sampleAppsOnly, ct); }
             catch (Exception ex) { logger.LogError(ex, "Seeding {App} failed", seed.Name); }
         }
-        await SeedEngagementAsync(demo, ct);
+        if (demo is not null) await SeedEngagementAsync(demo, ct);
         await lifecycle.RecomputeReferenceCountsAsync(ct);
         logger.LogInformation("Seed completed.");
     }
@@ -89,7 +93,7 @@ public sealed class DbSeeder(AadiDbContext db, IPasswordHasher hasher, IObjectSt
         return demo;
     }
 
-    private async Task SeedAppAsync(SeedApp seed, User uploader, CategoryIndexService.CategoryIndex index, string root, CancellationToken ct)
+    private async Task SeedAppAsync(SeedApp seed, User uploader, CategoryIndexService.CategoryIndex index, string root, bool backdate, CancellationToken ct)
     {
         var dir = Path.Combine(root, seed.Folder);
         if (!Directory.Exists(dir)) { logger.LogWarning("Seed folder {Dir} missing", dir); return; }
@@ -99,16 +103,18 @@ public sealed class DbSeeder(AadiDbContext db, IPasswordHasher hasher, IObjectSt
         var license = await db.Licenses.FirstAsync(l => l.SpdxId == "MIT", ct);
         var linux = await db.Platforms.FirstAsync(p => p.Code == "linux", ct);
         var now = Clock.Now;
+        // Development backdates the timeline so the storefront looks lived-in; production publishes "now".
+        DateTime Ago(int days) => backdate ? now.AddDays(-days) : now;
 
         var app = new App
         {
             Slug = seed.Slug, Name = seed.Name, ShortDescription = TextUtil.Truncate(seed.Short, 200), LongDescription = readme is null ? seed.Short : TextUtil.Truncate(readme, 20000), ReadmeMarkdown = readme,
             CategoryId = category.Id, LicenseId = license.Id, License = license, UploaderUserId = uploader.Id, LlmModelId = model?.Id, LlmModelNote = seed.ModelNote,
-            SourceKind = SourceKind.Archive, Status = AppStatus.Published, SubmittedAt = now.AddDays(-3), PublishedAt = now.AddDays(-2), TagsText = string.Empty, CategoryPathText = string.Empty,
-            CreatedAt = now.AddDays(-4), UpdatedAt = now.AddDays(-2), IsFeatured = true, FeaturedOrder = seed.Slug == "cpuz-linux" ? 1 : 2
+            SourceKind = SourceKind.Archive, Status = AppStatus.Published, SubmittedAt = Ago(3), PublishedAt = Ago(2), TagsText = string.Empty, CategoryPathText = string.Empty,
+            CreatedAt = Ago(4), UpdatedAt = Ago(2), IsFeatured = true, FeaturedOrder = seed.Slug == "cpuz-linux" ? 1 : 2
         };
         if (seed.DerivedFromSlug is not null) app.DerivedFromAppId = await db.Apps.Where(a => a.Slug == seed.DerivedFromSlug).Select(a => (int?)a.Id).FirstOrDefaultAsync(ct);
-        var version = new AppVersion { Version = seed.Version, Changelog = seed.Changelog, ReleasedAt = now.AddDays(-2), Status = VersionStatus.Published, CreatedByUserId = uploader.Id, CreatedAt = now.AddDays(-3), PublishedAt = now.AddDays(-2) };
+        var version = new AppVersion { Version = seed.Version, Changelog = seed.Changelog, ReleasedAt = Ago(2), Status = VersionStatus.Published, CreatedByUserId = uploader.Id, CreatedAt = Ago(3), PublishedAt = Ago(2) };
         app.Versions.Add(version);
         var order = 0;
         foreach (var (title, text) in seed.Prompts) app.Prompts.Add(new AppPrompt { Title = title, PromptText = text, SortOrder = order++ });
