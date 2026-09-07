@@ -12,6 +12,7 @@ import AdminPage from '@/components/admin/AdminPage.vue'
 import StatusTag from '@/components/common/StatusTag.vue'
 import VersionsList from '@/components/catalog/VersionsList.vue'
 import { enableAfter, notifyError, notifyS } from '@/utils/tools'
+import MarkdownEditor from '@/components/common/MarkdownEditor.vue'
 
 /** Admin edit of any app: texts, category, license, model, featured, slug, license override. Files/screenshots stay with the uploader's editor. */
 const route = useRoute()
@@ -78,7 +79,7 @@ async function recompute() {
         <ElFormItem :label="t('app_name_label')"><ElInput v-model="form.name" maxlength="120" /></ElFormItem>
         <ElFormItem label="Slug"><ElInput v-model="form.slug" maxlength="120" /></ElFormItem>
         <ElFormItem :label="t('short_description')" class="full"><ElInput v-model="form.shortDescription" maxlength="200" show-word-limit /></ElFormItem>
-        <ElFormItem :label="t('long_description')" class="full"><ElInput v-model="form.longDescription" type="textarea" :rows="8" /></ElFormItem>
+        <ElFormItem :label="t('long_description')" class="full"><MarkdownEditor v-model="form.longDescription" :rows="8" /></ElFormItem>
         <ElFormItem :label="t('category')"><ElCascader :model-value="categoryPath" :options="cascader" :props="{ checkStrictly: true }" style="width: 100%" @update:model-value="form.categoryId = ($event as number[] | null)?.at(-1) ?? null" /></ElFormItem>
         <ElFormItem :label="t('license')"><ElSelect v-model="form.licenseId" filterable style="width: 100%"><ElOption v-for="l in site.licenses" :key="l.id" :value="l.id" :label="`${l.spdxId} — ${l.name}`" /></ElSelect></ElFormItem>
         <ElFormItem :label="t('generated_by')"><ElSelect v-model="form.llmModelId" filterable clearable style="width: 100%"><ElOption v-for="m in site.llmModels" :key="m.id" :value="m.id" :label="m.displayName" /></ElSelect></ElFormItem>

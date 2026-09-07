@@ -10,6 +10,7 @@ import { useSiteStore } from '@/stores/site-store'
 import { useCategoryStore, useCategoryName } from '@/stores/category-store'
 import AppCard from '@/components/catalog/AppCard.vue'
 import CategoryPicker from '@/components/upload/CategoryPicker.vue'
+import MarkdownEditor from '@/components/common/MarkdownEditor.vue'
 import { debounce, enableAfter, fieldErrors, notifyError, notifyS } from '@/utils/tools'
 
 /** Step 2 — name, descriptions (with live duplicate check), category (+ LLM suggestion), license, model, prompts, tags, lineage. */
@@ -157,8 +158,7 @@ async function save(next: boolean) {
       <ElFormItem :label="t('app_name_label')" :error="errors.name" class="full"><ElInput v-model="form.name" maxlength="120" show-word-limit size="large" /></ElFormItem>
       <ElFormItem :label="t('short_description')" :error="errors.shortDescription" class="full"><ElInput v-model="form.shortDescription" maxlength="200" show-word-limit :placeholder="t('short_description_hint')" /></ElFormItem>
       <ElFormItem :label="t('long_description')" :error="errors.longDescription" class="full">
-        <ElInput v-model="form.longDescription" type="textarea" :rows="10" :placeholder="t('long_description_hint')" />
-        <div class="sub">{{ t('markdown_supported') }}</div>
+        <MarkdownEditor v-model="form.longDescription" :rows="10" :placeholder="t('long_description_hint')" />
       </ElFormItem>
 
       <!-- LLM categorisation on: free cascader + "Suggest". Off (Ai:EnableCategorySuggestions=false): explicit category / sub-category selects. -->
