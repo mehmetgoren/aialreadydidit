@@ -40,6 +40,16 @@ builder.Services.Configure<JobsOptions>(configuration.GetSection(JobsOptions.Sec
 var jwt = configuration.GetSection(JwtOptions.SectionName).Get<JwtOptions>() ?? new JwtOptions();
 if (string.IsNullOrWhiteSpace(jwt.Key) || Encoding.UTF8.GetByteCount(jwt.Key) < 32)
     throw new InvalidOperationException("Jwt:Key must be configured with at least 32 bytes.");
+if (!builder.Environment.IsDevelopment())
+{
+    // Refuse to boot a public instance on the development defaults that ship in appsettings.json / .env.example.
+    var leaks = new List<string>();
+    if (jwt.Key.StartsWith("CHANGE_ME", StringComparison.Ordinal)) leaks.Add("Jwt:Key");
+    if (configuration["Admin:InitialPassword"] == "Aadi123!") leaks.Add("Admin:InitialPassword");
+    if (configuration["Storage:SecretKey"] == "minioadmin") leaks.Add("Storage:SecretKey");
+    if ((configuration.GetConnectionString("AiAlreadyDidIt") ?? "").Contains("Password=1234;", StringComparison.Ordinal)) leaks.Add("ConnectionStrings:AiAlreadyDidIt");
+    if (leaks.Count > 0) throw new InvalidOperationException($"Development defaults are not allowed outside Development: {string.Join(", ", leaks)}. Set real values (see .env.example).");
+}
 
 // ---------------------------------------------------------------- data
 builder.Services.AddDbContext<AadiDbContext>(options =>
