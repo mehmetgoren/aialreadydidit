@@ -31,7 +31,8 @@ public sealed class DbSeeder(AadiDbContext db, IPasswordHasher hasher, IObjectSt
     /// </param>
     public async Task SeedAsync(bool sampleAppsOnly = false, CancellationToken ct = default)
     {
-        if (await db.Apps.AnyAsync(ct)) { logger.LogInformation("Apps already seeded; skipping."); return; }
+        // Idempotence keyed on the sample slugs, so an unrelated draft (e.g. the admin trying the wizard) does not block the seed.
+        if (await db.Apps.AnyAsync(a => a.Slug == "cpuz-linux" || a.Slug == "hwmonitor-linux", ct)) { logger.LogInformation("Sample apps already seeded; skipping."); return; }
         var root = configuration["Seed:LlmProjectsPath"];
         if (string.IsNullOrWhiteSpace(root) || !Directory.Exists(root)) { logger.LogWarning("Seed:LlmProjectsPath '{Path}' not found; skipping demo apps.", root); return; }
 
