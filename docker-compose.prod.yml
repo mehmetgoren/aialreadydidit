@@ -37,6 +37,8 @@ services:
   caddy:
     <<: [*restart, *logging]
     image: caddy:2
+    environment:
+      ACME_EMAIL: ${SUPPORT_EMAIL:-${ADMIN_EMAIL}}
     depends_on:
       - web
       - mcp

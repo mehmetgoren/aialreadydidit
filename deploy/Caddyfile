@@ -1,7 +1,8 @@
 # TLS front for the production stack (docker-compose.prod.yml). Certificates come from Let's Encrypt automatically;
 # Caddy also redirects http:// to https:// and forwards X-Forwarded-For / X-Forwarded-Proto to nginx and the API.
 {
-    email ioniangamer@gmail.com
+    # ACME account e-mail (Let's Encrypt expiry notices) — comes from SUPPORT_EMAIL in .env
+    email {$ACME_EMAIL}
 }
 
 # Storefront + API + files + SEO — everything the SPA's nginx already routes.
