@@ -341,3 +341,6 @@ the migration was regenerated after the build.
     in `seed-projects/`, fixed the seeder's idempotence (an admin draft had blocked it), health check made
     capability-aware, HSTS added in Caddy. Live: 2 featured apps, scans clean, embeddings done, downloads via
     files.aialreadydidit.com. The owner's stray production draft `cpuz-linux-1-0-0-source` (id 1) was left in place.
+18. Published to GitHub (https://github.com/mehmetgoren/aialreadydidit, `main`, 21 commits): root monorepo with both
+    histories subtree-merged, security sweep (no secrets/notes/personal e-mail tracked; production guard against placeholder
+    secrets), MIT LICENSE, GitHub-style README with production screenshots in `docs/screenshots/`.
