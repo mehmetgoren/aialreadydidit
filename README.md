@@ -178,12 +178,47 @@ variables; `docker-compose.yml` maps the important ones to `.env`:
 | `AI_CATEGORY_SUGGESTIONS` | LLM categorisation + tag suggestions (needs a chat model) | `false` |
 | `OLLAMA_BASE_URL`, `OLLAMA_PULL_MODELS`, `OLLAMA_EMBEDDING_MODEL`, `OLLAMA_CHAT_MODEL` | Local models | container, `bge-m3` |
 | `OPENAI_BASE_URL`, `OPENAI_API_KEY`, `OPENAI_EMBEDDING_MODEL`, `OPENAI_CHAT_MODEL` | Any OpenAI-compatible endpoint | — |
-| `GOOGLE_CLIENT_ID` | Enables the Google sign-in button | hidden |
+| `GOOGLE_CLIENT_ID` | Enables the Google sign-in button (see below) | hidden |
+| `EMAIL_PROVIDER`, `EMAIL_FROM_ADDRESS`, `EMAIL_FROM_NAME`, `EMAIL_SMTP_HOST`, `EMAIL_SMTP_PORT`, `EMAIL_SMTP_USER`, `EMAIL_SMTP_PASSWORD`, `EMAIL_SMTP_SSL` | Outgoing e-mail (verification, password reset, notifications); `Console` only logs (see below) | `Console` |
 | `GITHUB_TOKEN` | Raises the GitHub API quota for repository imports | — |
 | `SEED_PUBLISH_SAMPLE_APPS`, `LLM_PROJECTS_PATH` | Publish the sample apps from a folder on the host | `false`, `./seed-projects` |
 
 Admin panel → Settings holds the runtime knobs: duplicate threshold, semantic floor, rate tiers, savings coefficients
 (tokens per line, price per million tokens, kWh, CO₂), moderation rules, announcement bar, SEO texts.
+
+### Google sign-in
+
+The button appears as soon as `GOOGLE_CLIENT_ID` is set; the API verifies the ID token's audience against the same id,
+so no client secret is needed.
+
+1. [Google Cloud console](https://console.cloud.google.com/) → create or pick a project → **APIs & Services › OAuth consent
+   screen**: External, app name, support e-mail, developer contact. No scopes beyond the defaults (`email`, `profile`,
+   `openid`). Publish the app (in "Testing" only listed test users can sign in).
+2. **APIs & Services › Credentials › Create credentials › OAuth client ID** → *Web application*.
+   Authorised JavaScript origins: `https://aialreadydidit.com` (add `http://localhost:9002` and `http://localhost:5174`
+   for local runs). Authorised redirect URIs: none (the button uses the popup flow).
+3. Copy the client id (`…apps.googleusercontent.com`) into `GOOGLE_CLIENT_ID` and redeploy. Admin › System health lists
+   `Site:GoogleClientId = configured` and the login page shows "Continue with Google".
+
+### Outgoing e-mail (SMTP)
+
+Any SMTP relay works (Amazon SES, Brevo, Postmark, Mailgun, Resend, Google Workspace…). Use a sender domain you own and
+publish its SPF/DKIM records, otherwise password-reset mails land in spam.
+
+```
+EMAIL_PROVIDER=Smtp
+EMAIL_FROM_ADDRESS=no-reply@aialreadydidit.com
+EMAIL_FROM_NAME=AI Already Did It
+EMAIL_SMTP_HOST=smtp-relay.example.com
+EMAIL_SMTP_PORT=587          # 587 + EMAIL_SMTP_SSL=false → STARTTLS; 465 + EMAIL_SMTP_SSL=true → implicit TLS
+EMAIL_SMTP_USER=…
+EMAIL_SMTP_PASSWORD=…
+EMAIL_SMTP_SSL=false
+```
+
+Redeploy, then Admin › System health → **Send test e-mail** delivers a message to the signed-in admin and shows the SMTP
+error verbatim if the relay refuses it. The "E-mail" health check stays red in production while `Console` is active.
+Once mail flows, `Site__RequireEmailVerification=true` makes new accounts confirm their address before uploading.
 
 ## Development
 
