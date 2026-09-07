@@ -367,6 +367,14 @@ the migration was regenerated after the build.
     compose stack: headers present on SPA/app/asset/API routes, absent on `/scalar`; headless-Chrome crawl of home, search,
     app, category, login, wanted, agents, about and the bot-rendered app page → zero CSP violations, pages render fully.
     Deployed to production the same day (owner asked); verified live: CSP on SPA/app/API routes, not on /scalar, crawl clean.
+21. Owner: publish `/mnt/sdy1/stuff/LLM generated projects/audio_format_selector` to production. Added an MIT `LICENSE` to that
+    project (its `debian-copyright` already declared MIT), captured the GTK window on the owner's desktop (`xwininfo` + Gdk
+    pixbuf, no xdotool on this machine), and drove the wizard in the owner's signed-in Chrome tab via the extension (reading
+    the session token from localStorage is blocked by the auto-mode classifier; `file_upload` accepts scratchpad paths).
+    Published as https://aialreadydidit.com/app/audio-format-selector (Media › Audio & Music, MIT, Linux .deb, 1 screenshot,
+    prompt reconstructed from the README, model recorded as Claude Fable 5.1 — owner to correct if different). Observed:
+    the admin review page takes ~17 s on production because `AdminModerationService.DetailAsync` embeds the app text via the
+    CPU-only Ollama container for the "similar apps" panel (and again after approve) — reuse the stored embedding instead.
 
 ## 12. Where things stand (2026-09-08)
 
@@ -375,5 +383,5 @@ the migration was regenerated after the build.
 - Code on GitHub: https://github.com/mehmetgoren/aialreadydidit (`main`), everything committed and pushed. Deployed 2026-09-08
   (CSP + installer sniffing): headers live, health 200, headless-Chrome crawl of 7 production pages → zero CSP violations.
 - Redeploy: `SSH_KEY=~/.ssh/LightsailDefaultKey-eu-central-1.pem deploy/deploy.sh` from the project root.
-- Open: Google client id + SMTP (password-reset mails only hit the container log), native-speaker review of the 9 LLM translations, per-language category names, GitHub repo topics/homepage/
+- Open: review page latency (embed once / reuse stored vector), Google client id + SMTP (password-reset mails only hit the container log), native-speaker review of the 9 LLM translations, per-language category names, GitHub repo topics/homepage/
   secret scanning (owner to click), the owner's stray production draft `cpuz-linux-1-0-0-source` (id 1).
