@@ -376,6 +376,10 @@ the migration was regenerated after the build.
     prompt reconstructed from the README, model recorded as Claude Fable 5.1 — owner to correct if different). Observed:
     the admin review page takes ~17 s on production because `AdminModerationService.DetailAsync` embeds the app text via the
     CPU-only Ollama container for the "similar apps" panel (and again after approve) — reuse the stored embedding instead.
+22. Owner (2026-09-08): admin apps grid actions 404 → `{action}` route-token fix (c6783f6, deployed); "Long Description should
+    be Markdown editor" → `components/common/MarkdownEditor.vue` (toolbar + Write/Preview via MarkdownView, Ctrl/⌘+B/I,
+    char count, no new dependency) replaces the textarea in the wizard Details step and the admin app editor; keys
+    `md_*` in `common.ts` of all 11 locales; 8 Vitest cases (frontend 116). Deployed (e33a7e0).
 
 ## 12. Where things stand (2026-09-08)
 
