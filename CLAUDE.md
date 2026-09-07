@@ -344,3 +344,19 @@ the migration was regenerated after the build.
 18. Published to GitHub (https://github.com/mehmetgoren/aialreadydidit, `main`, 21 commits): root monorepo with both
     histories subtree-merged, security sweep (no secrets/notes/personal e-mail tracked; production guard against placeholder
     secrets), MIT LICENSE, GitHub-style README with production screenshots in `docs/screenshots/`.
+19. Market check (2026-09-07): no exact match for the name or the concept. Closest neighbour is onesvibe.app (~10k live
+    vibe-coded *web* apps, semantic search JSON API + MCP tool `search_similar_projects`, CC0 daily JSON export) — links to
+    hosted demos only, no downloads/source/prompts/license checks/lineage. Others are plain galleries (youraiproject.com,
+    vibcod.dev, builtwithvibecode.com, vibecodingshowcase.com, awesome lists) or agent-tool registries (skills.sh, mcp.so).
+    Possible follow-ups: import onesvibe's open-source-flagged entries as "wanted"/"also exists" hints; lead marketing with
+    "download or fork it, with license + prompt + scanned installer".
+
+## 12. Where things stand (end of 2026-09-07)
+
+- Production live at https://aialreadydidit.com (Lightsail Frankfurt, 18.195.74.135): 2 featured apps, health 8/8,
+  admin password was changed by the owner after first sign-in (initial one is burned — it was shown in chat).
+- Code on GitHub: https://github.com/mehmetgoren/aialreadydidit (`main`), everything committed and pushed.
+- Redeploy: `SSH_KEY=~/.ssh/LightsailDefaultKey-eu-central-1.pem deploy/deploy.sh` from the project root.
+- Open: Google client id + SMTP (password-reset mails only hit the container log), CSP header, installer magic-byte
+  checks, native-speaker review of the 9 LLM translations, per-language category names, GitHub repo topics/homepage/
+  secret scanning (owner to click), the owner's stray production draft `cpuz-linux-1-0-0-source` (id 1).
