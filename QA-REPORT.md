@@ -44,9 +44,10 @@ docker-compose stack (web 9002, api 5190). Backend 110 + frontend 103 unit tests
 - **Do not publish API port 5190 (and think about 5191) directly**: the forwarded-headers middleware trusts any proxy, so a
   client hitting the API port directly can spoof `X-Forwarded-For` and dodge per-IP rate limits. Keep both behind
   nginx/TLS or bind them to 127.0.0.1 in the production compose file.
-- **Content-Security-Policy**: not set (Element Plus inline styles need nonces or `style-src 'unsafe-inline'`).
-- **Install files are validated by extension only** (a text file named `.deb` is accepted); consider magic-byte checks for
-  .deb/.rpm/.exe/.msi/.dmg/.apk/.zip.
+- ~~Content-Security-Policy~~ — added 2026-09-08 (`src-frontend/docker/security-headers.conf`, `style-src 'unsafe-inline'`
+  because Element Plus sets inline styles; scripts/frames/connect only allow self + Google Identity Services).
+- ~~Install files validated by extension only~~ — magic-byte checks added 2026-09-08 (`InstallerSignature`): renamed web
+  pages / text files are rejected for every binary format; `.dmg` and `.flatpak` (no stable header) get the web-page check only.
 - Review page shows the app and version status twice when equal ("In review · In review").
 - Stale-shell caching: tabs opened *before* the `Cache-Control: no-cache` fix may still hold an old `index.html` for a
   while (per URL); harmless after the first production deploy.

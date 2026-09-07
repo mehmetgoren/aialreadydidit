@@ -98,6 +98,15 @@ Note: the CL-AI settings files contain real API keys; they were read for the pat
 - **Extra features added**: "wanted" request board (fed by agents too), developer replies and helpful votes on reviews,
   public collections, trending/newest/updated/top-rated rows, lineage tree, "make my own variant" prompt copier, search
   analytics with zero-result queries, background-job monitor, system health page, llms.txt, agent playground page.
+- **Install files are sniffed, not just extension-checked** (2026-09-08): `Infrastructure/Import/InstallerSignature` reads the
+  first 32 KiB of every uploaded / imported installer and matches the magic bytes the extension promises (MZ, OLE/MSI, ar/.deb,
+  RPM, ELF or ISO 9660 for AppImage, squashfs, xar/.pkg, zip family incl. apk/aab/ipa/jar/whl/msix, gzip/xz/ustar, text for
+  scripts). Renamed web pages/text files are rejected with a message naming the expected format; `.dmg`/`.flatpak` have no
+  stable header and only get the web-page check.
+- **Content-Security-Policy** (2026-09-08) lives in `src-frontend/docker/security-headers.conf`, included by every nginx
+  location (nginx drops inherited `add_header`s once a location adds its own). `style-src 'unsafe-inline'` stays because
+  Element Plus sets inline styles; scripts/frames/connect allow only self + `accounts.google.com`; `img-src https:` for README
+  images of linked repositories. The Scalar docs route gets baseline headers only (it loads its UI from a CDN).
 - **ImageSharp pinned to 3.1.x** — version 4 fails the Docker build without a paid Six Labors license key.
 - **Ports** avoid Gemecik (5182/9001): web 9002, api 5190, mcp 5191, db 5433, minio 9000/9090, ollama 11435 (container).
 - Default locale English; Gemecik's Turkish error strings were replaced with English ones.
@@ -244,6 +253,7 @@ the migration was regenerated after the build.
 | Browser kept a stale `index.html` after `docker compose up --build web` (nginx sent no `Cache-Control`, Chrome cached heuristically) | `add_header Cache-Control "no-cache"` on the SPA shell locations; hashed assets stay immutable |
 | QA 2026-09-06 (see `QA-REPORT.md`): keyword search unstemmed, nonsense queries matched, drafts piled up, README relative images broken, no security headers, anonymous rate limit 60/min, chunk-load failure after deploys, several UI nits | fixed in backend commit "QA fixes" + frontend commit "QA fixes"; tsvector migration `SearchVectorEnglishStemming`; `search.min_similarity` 0.45 |
 | `aialreadydidit-clamav-1` shown **unhealthy** although clamd works: the image's `clamdcheck.sh` pings `localhost:3310`, Alpine resolves `localhost` to `::1` first, and our `clamd.conf` bound `TCPAddr 0.0.0.0` only | added `TCPAddr ::` (clamd accepts several `TCPAddr` lines) |
+| Headless Chrome (`--headless=new --enable-logging=stderr --v=0`) prints page console messages, so CSP violations ("Refused to …") can be checked from the shell without the extension | used for the CSP verification crawl |
 | Claude Chrome extension screenshots time out when the tab is in the background (`document.visibilityState === 'hidden'`) | verify via the JavaScript tool / DOM, or headless `google-chrome --screenshot` from the shell |
 
 ## 9. Seed data facts
@@ -350,13 +360,20 @@ the migration was regenerated after the build.
     vibcod.dev, builtwithvibecode.com, vibecodingshowcase.com, awesome lists) or agent-tool registries (skills.sh, mcp.so).
     Possible follow-ups: import onesvibe's open-source-flagged entries as "wanted"/"also exists" hints; lead marketing with
     "download or fork it, with license + prompt + scanned installer".
+20. "Let's continue" (2026-09-08): closed two open items without owner input — installer magic-byte checks
+    (`InstallerSignature` + 51 xunit tests → 179, wired into `StoreInstallerFromTempAsync` so uploads and release-asset imports
+    are both covered; verified via the API: text-as-.deb and HTML-as-.exe → 422 with a specific message, the real seed .deb →
+    200) and the nginx Content-Security-Policy (snippet file, per-location include, Scalar excluded). Verified on the local
+    compose stack: headers present on SPA/app/asset/API routes, absent on `/scalar`; headless-Chrome crawl of home, search,
+    app, category, login, wanted, agents, about and the bot-rendered app page → zero CSP violations, pages render fully.
+    Not deployed to production yet — run `deploy/deploy.sh` to ship it.
 
-## 12. Where things stand (end of 2026-09-07)
+## 12. Where things stand (2026-09-08)
 
 - Production live at https://aialreadydidit.com (Lightsail Frankfurt, 18.195.74.135): 2 featured apps, health 8/8,
   admin password was changed by the owner after first sign-in (initial one is burned — it was shown in chat).
-- Code on GitHub: https://github.com/mehmetgoren/aialreadydidit (`main`), everything committed and pushed.
+- Code on GitHub: https://github.com/mehmetgoren/aialreadydidit (`main`), everything committed and pushed. The 2026-09-08
+  commit (CSP + installer sniffing) is **not yet deployed** to production.
 - Redeploy: `SSH_KEY=~/.ssh/LightsailDefaultKey-eu-central-1.pem deploy/deploy.sh` from the project root.
-- Open: Google client id + SMTP (password-reset mails only hit the container log), CSP header, installer magic-byte
-  checks, native-speaker review of the 9 LLM translations, per-language category names, GitHub repo topics/homepage/
+- Open: Google client id + SMTP (password-reset mails only hit the container log), native-speaker review of the 9 LLM translations, per-language category names, GitHub repo topics/homepage/
   secret scanning (owner to click), the owner's stray production draft `cpuz-linux-1-0-0-source` (id 1).

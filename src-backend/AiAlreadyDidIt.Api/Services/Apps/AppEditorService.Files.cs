@@ -3,6 +3,7 @@ using AiAlreadyDidIt.Api.Contracts.Catalog;
 using AiAlreadyDidIt.Api.Contracts.Common;
 using AiAlreadyDidIt.Api.Entities;
 using AiAlreadyDidIt.Api.Infrastructure;
+using AiAlreadyDidIt.Api.Infrastructure.Import;
 using AiAlreadyDidIt.Api.Infrastructure.Storage;
 using AiAlreadyDidIt.Api.Services.Catalog;
 using Microsoft.EntityFrameworkCore;
@@ -38,6 +39,13 @@ public sealed partial class AppEditorService
     private async Task<AppFile> StoreInstallerFromTempAsync(App app, AppVersion version, Platform platform, string tempPath, string originalName, string? contentType, string? installHint, CancellationToken ct)
     {
         var info = new FileInfo(tempPath);
+        await using (var head = File.OpenRead(tempPath))
+        {
+            var buffer = new byte[Math.Min(InstallerSignature.HeadLength, info.Length)];
+            var read = await head.ReadAtLeastAsync(buffer, buffer.Length, throwOnEndOfStream: false, ct);
+            var problem = InstallerSignature.Check(originalName, buffer.AsMemory(0, read));
+            if (problem is not null) throw ApiException.Unprocessable(problem, "file");
+        }
         string sha;
         await using (var fs = File.OpenRead(tempPath)) sha = Convert.ToHexStringLower(await System.Security.Cryptography.SHA256.HashDataAsync(fs, ct));
         var safeName = SafeFileName(originalName);

@@ -81,7 +81,7 @@ AiAlreadyDidIt.Api/
   Data/                    AadiDbContext, Configurations/, Migrations/, Seed/ (reference data), DbSeeder (demo)
   Entities/                Identity, Reference, Catalog, Engagement, Platform
   Infrastructure/          Options, CurrentUser, Middleware, Ai/ (providers), Auth/ (JWT, API keys, role-action filter), Storage/ (S3, images),
-                           Scanning/ (ClamAV), Import/ (GitHub, GitLab, license detector, source analyzer), Jobs/ (durable queue), Email/
+                           Scanning/ (ClamAV), Import/ (GitHub, GitLab, license detector, source analyzer, installer magic-byte check), Jobs/ (durable queue), Email/
   Services/<Domain>/       one service per controller (auto-registered by the "*Service" suffix); Jobs/ holds the IJobHandler implementations
 AiAlreadyDidIt.Mcp/        StoreTools (MCP tools), AadiApiClient, Program (http | --stdio)
 ```

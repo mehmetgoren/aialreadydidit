@@ -14,6 +14,7 @@ FROM nginx:1.27-alpine AS production-stage
 ENV TZ=Europe/Istanbul
 RUN apk add --no-cache tzdata
 COPY docker/nginx.conf /etc/nginx/conf.d/default.conf
+COPY docker/security-headers.conf /etc/nginx/security-headers.conf
 COPY --from=build-stage /app/dist /usr/share/nginx/html
 EXPOSE 80
 CMD ["nginx", "-g", "daemon off;"]
