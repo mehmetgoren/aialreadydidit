@@ -366,14 +366,14 @@ the migration was regenerated after the build.
     200) and the nginx Content-Security-Policy (snippet file, per-location include, Scalar excluded). Verified on the local
     compose stack: headers present on SPA/app/asset/API routes, absent on `/scalar`; headless-Chrome crawl of home, search,
     app, category, login, wanted, agents, about and the bot-rendered app page → zero CSP violations, pages render fully.
-    Not deployed to production yet — run `deploy/deploy.sh` to ship it.
+    Deployed to production the same day (owner asked); verified live: CSP on SPA/app/API routes, not on /scalar, crawl clean.
 
 ## 12. Where things stand (2026-09-08)
 
 - Production live at https://aialreadydidit.com (Lightsail Frankfurt, 18.195.74.135): 2 featured apps, health 8/8,
   admin password was changed by the owner after first sign-in (initial one is burned — it was shown in chat).
-- Code on GitHub: https://github.com/mehmetgoren/aialreadydidit (`main`), everything committed and pushed. The 2026-09-08
-  commit (CSP + installer sniffing) is **not yet deployed** to production.
+- Code on GitHub: https://github.com/mehmetgoren/aialreadydidit (`main`), everything committed and pushed. Deployed 2026-09-08
+  (CSP + installer sniffing): headers live, health 200, headless-Chrome crawl of 7 production pages → zero CSP violations.
 - Redeploy: `SSH_KEY=~/.ssh/LightsailDefaultKey-eu-central-1.pem deploy/deploy.sh` from the project root.
 - Open: Google client id + SMTP (password-reset mails only hit the container log), native-speaker review of the 9 LLM translations, per-language category names, GitHub repo topics/homepage/
   secret scanning (owner to click), the owner's stray production draft `cpuz-linux-1-0-0-source` (id 1).
