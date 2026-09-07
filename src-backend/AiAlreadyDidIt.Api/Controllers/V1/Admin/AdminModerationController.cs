@@ -90,9 +90,10 @@ public class AdminAppsController(AdminAppsService service) : ControllerBase
     [HttpPut("{id:int}")]
     public async Task<ActionResult<ApiResponse<Contracts.Apps.AppDraftDto>>> Update(int id, [FromBody] AdminAppUpdateRequest request, CancellationToken ct) => Ok(ApiResponse.Ok(await service.UpdateAsync(id, request, ct)));
 
-    /// <summary>action = unlist | restore | remove | feature | unfeature</summary>
-    [HttpPost("{id:int}/{action}")]
-    public async Task<ActionResult<ApiResponse<Contracts.Apps.AppDraftDto>>> Action(int id, string action, [FromQuery] string? note, CancellationToken ct) => Ok(ApiResponse.Ok(await service.SetStatusAsync(id, action, note, ct)));
+    /// <summary>verb = unlist | restore | remove | feature | unfeature. (The parameter must not be called "action":
+    /// that is MVC's reserved route token and the route would only match the literal action-method name → 404.)</summary>
+    [HttpPost("{id:int}/{verb}")]
+    public async Task<ActionResult<ApiResponse<Contracts.Apps.AppDraftDto>>> Action(int id, string verb, [FromQuery] string? note, CancellationToken ct) => Ok(ApiResponse.Ok(await service.SetStatusAsync(id, verb, note, ct)));
 
     [HttpPost("{id:int}/recompute")]
     public async Task<ActionResult<ApiResponse<OkDto>>> Recompute(int id, CancellationToken ct) { await service.RecomputeAsync(id, ct); return Ok(ApiResponse.Ok(new OkDto())); }

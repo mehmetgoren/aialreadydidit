@@ -81,7 +81,10 @@ public sealed class AdminAppsService(AadiDbContext db, ICurrentUser currentUser,
                 if (app.PublishedAt is null) throw ApiException.Unprocessable("This app was never published; approve it from the moderation queue.");
                 app.Status = AppStatus.Published; kind = ModerationActionKind.Restore; break;
             case "remove": app.Status = AppStatus.Removed; kind = ModerationActionKind.Remove; break;
-            case "feature": app.IsFeatured = true; kind = ModerationActionKind.Feature; break;
+            case "feature":
+                if (app.Status != AppStatus.Published) throw ApiException.Unprocessable("Only published apps can be featured.");
+                if (!app.IsFeatured) app.FeaturedOrder = (await db.Apps.Where(a => a.IsFeatured).Select(a => (int?)a.FeaturedOrder).MaxAsync(ct) ?? 0) + 1;
+                app.IsFeatured = true; kind = ModerationActionKind.Feature; break;
             case "unfeature": app.IsFeatured = false; app.FeaturedOrder = 0; kind = ModerationActionKind.Unfeature; break;
             default: throw ApiException.BadRequest("Unknown action.");
         }

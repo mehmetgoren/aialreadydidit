@@ -108,7 +108,7 @@ public sealed class AdminModerationService(AadiDbContext db, ICurrentUser curren
             app.CategoryId = cid;
             await lifecycle.RefreshSearchTextAsync(app, ct);
         }
-        if (request.Feature) { app.IsFeatured = true; }
+        if (request.Feature && !app.IsFeatured) { app.IsFeatured = true; app.FeaturedOrder = (await db.Apps.Where(a => a.IsFeatured).Select(a => (int?)a.FeaturedOrder).MaxAsync(ct) ?? 0) + 1; }
         await lifecycle.PublishAsync(app, version, notifyUploader: true, ct);
         db.ModerationActions.Add(new ModerationAction { AppId = app.Id, VersionId = version.Id, AdminUserId = currentUser.Id, Action = app.Versions.Count(v => v.Status == VersionStatus.Published) > 1 ? ModerationActionKind.ApproveVersion : ModerationActionKind.Approve, Note = request.Note, CreatedAt = Clock.Now });
         audit.Log("moderation.approve", "app", app.Id, new { version.Version, request.Note });
