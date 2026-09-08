@@ -380,6 +380,22 @@ the migration was regenerated after the build.
     be Markdown editor" → `components/common/MarkdownEditor.vue` (toolbar + Write/Preview via MarkdownView, Ctrl/⌘+B/I,
     char count, no new dependency) replaces the textarea in the wizard Details step and the admin app editor; keys
     `md_*` in `common.ts` of all 11 locales; 8 Vitest cases (frontend 116). Deployed (e33a7e0).
+23. Google sign-in + SMTP (2026-09-08): compose now passes `Email__*` from `EMAIL_*` (documented in `.env.example` and the
+    README "Configuration" section, which has step-by-step guides for both); admin System health has an "E-mail" check (red
+    in Production while `Console`) and a **Send test e-mail** button (`POST admin/health/test-email`, sends to the signed-in
+    admin, SMTP error shown verbatim). Owner created an OAuth *Web* client (origin https://aialreadydidit.com, no redirect
+    URIs); only the client id was taken from the downloaded JSON (secret unused) → `GOOGLE_CLIENT_ID` in `.env.production`,
+    deployed, "Continue with Google" renders on /login with zero CSP violations. Owner still needs to test a real Google
+    sign-in (if "access blocked": publish the OAuth consent screen) and fill the `EMAIL_*` values (currently Console).
+24. Launch research (2026-09-08, owner asked whether/where to announce on Reddit): rules read via the Reddit JSON endpoints in
+    the owner's browser. Recommendation: **Show HN first**, Reddit second; before either, grow the catalogue from 5 to
+    20–30 apps (GitHub import + owner's projects) and post from an account with history. Ranked: r/ClaudeAI (explicitly
+    encourages Claude-built showcases, flair), r/opensource (LICENSE required, promote "to a degree"), r/SideProject,
+    r/vibecoding (must explain how it was built), r/coolgithubprojects; r/selfhosted only via the New Project Megathread;
+    r/LocalLLaMA and r/mcp later. Avoid r/ChatGPTCoding (weekly promo thread only, FOSS included), r/programming (no
+    "I made this"), r/webdev (Showoff Saturday only), r/InternetIsBeautiful (no aggregators/stores), r/artificial.
+    Also: Product Hunt, dev.to/Hashnode article, fosstodon, Anthropic Discord showcase, awesome-mcp-servers. Next step
+    offered: draft the Show HN + r/ClaudeAI posts and import candidate apps.
 
 ## 12. Where things stand (2026-09-08)
 
@@ -388,5 +404,11 @@ the migration was regenerated after the build.
 - Code on GitHub: https://github.com/mehmetgoren/aialreadydidit (`main`), everything committed and pushed. Deployed 2026-09-08
   (CSP + installer sniffing): headers live, health 200, headless-Chrome crawl of 7 production pages → zero CSP violations.
 - Redeploy: `SSH_KEY=~/.ssh/LightsailDefaultKey-eu-central-1.pem deploy/deploy.sh` from the project root.
-- Open: review page latency (embed once / reuse stored vector), SMTP values (owner; plumbing, health check, test-mail button and README guide done 2026-09-08 — `.env.production` has EMAIL_* placeholders on Console; Google client id set 2026-09-08 from the owner's OAuth Web client, origin https://aialreadydidit.com, secret unused), native-speaker review of the 9 LLM translations, per-language category names, GitHub repo topics/homepage/
+- Production content (2026-09-08): 5 published apps — CPU-Z, HWMonitor, Audio Format Selector (all admin), Mint Paint
+  (admin), AdBlock (member `hakanss`); drafts `paint` (5) and `cpuz-linux-1-0-0-source` (1). Google sign-in live.
+- Next session candidates: (1) SMTP values from the owner → deploy → "Send test e-mail"; (2) grow the catalogue to 20–30
+  apps before announcing; (3) draft Show HN + r/ClaudeAI posts (see log 24); (4) review-page latency (reuse the stored
+  embedding in `AdminModerationService.DetailAsync`); (5) Markdown editor for changelog fields if wanted.
+- Open: review page latency, SMTP values (owner; plumbing, health check, test-mail button and README guide done 2026-09-08 —
+  `.env.production` has EMAIL_* placeholders on Console; Google client id set 2026-09-08, secret unused), native-speaker review of the 9 LLM translations, per-language category names, GitHub repo topics/homepage/
   secret scanning (owner to click), the owner's stray production draft `cpuz-linux-1-0-0-source` (id 1).
