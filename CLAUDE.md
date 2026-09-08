@@ -274,7 +274,9 @@ the migration was regenerated after the build.
 
 - Git: since 2026-09-07 the project root is one repository (`main`) published at https://github.com/mehmetgoren/aialreadydidit;
   the former `src-backend` and `src-frontend` repositories were merged in with their full histories (subtree merge). Never
-  commit `.env`, `.env.production`, `*.pem` or `seed-projects/*` — all gitignored.
+  commit `.env`, `.env.production`, `*.pem`, `seed-projects/*` or the owner's notes `aialreadydidit.md` / `prompts.txt` — all
+  gitignored. GitHub push protection blocked a `git add -A` commit on 2026-09-08 because the notes hold the Google OAuth
+  client id + secret; it was amended before it ever reached GitHub. Stage files explicitly instead of `git add -A`.
 - Domain: `aialreadydidit.com` registered 2026-09-07 (plus `aialreadymadeit.com` as a redirect). Production URLs should be
   `https://aialreadydidit.com`, `https://api.aialreadydidit.com` (or `/api` behind the same host) and `https://mcp.aialreadydidit.com/mcp`.
 - Set a real `JWT_KEY`, passwords, public URLs, `GOOGLE_CLIENT_ID`, SMTP (`Email__Provider=Smtp`) before going public;
