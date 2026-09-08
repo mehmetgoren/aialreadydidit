@@ -388,5 +388,5 @@ the migration was regenerated after the build.
 - Code on GitHub: https://github.com/mehmetgoren/aialreadydidit (`main`), everything committed and pushed. Deployed 2026-09-08
   (CSP + installer sniffing): headers live, health 200, headless-Chrome crawl of 7 production pages → zero CSP violations.
 - Redeploy: `SSH_KEY=~/.ssh/LightsailDefaultKey-eu-central-1.pem deploy/deploy.sh` from the project root.
-- Open: review page latency (embed once / reuse stored vector), Google client id + SMTP values (owner; plumbing, health check, test-mail button and README guide done 2026-09-08 — `.env.production` has EMAIL_* placeholders on Console), native-speaker review of the 9 LLM translations, per-language category names, GitHub repo topics/homepage/
+- Open: review page latency (embed once / reuse stored vector), SMTP values (owner; plumbing, health check, test-mail button and README guide done 2026-09-08 — `.env.production` has EMAIL_* placeholders on Console; Google client id set 2026-09-08 from the owner's OAuth Web client, origin https://aialreadydidit.com, secret unused), native-speaker review of the 9 LLM translations, per-language category names, GitHub repo topics/homepage/
   secret scanning (owner to click), the owner's stray production draft `cpuz-linux-1-0-0-source` (id 1).
