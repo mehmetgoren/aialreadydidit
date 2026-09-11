@@ -69,7 +69,7 @@ export default {
   dupe_declare_fork: 'Fork olarak beyan et',
   dupe_continue: 'Yine de devam et',
   files_intro: 'Altın kural 2: beyan ettiğiniz her platform için çalışmaya hazır bir kurulum dosyası gerekir — .exe / .msi, .deb / .rpm / .AppImage, .dmg, .apk, Docker imaj adresi veya web paketi.',
-  files_rule_hint: 'Dosyalar yayından önce ClamAV ile taranır. Platform başına bir dosya; yeni yükleme öncekini değiştirir.',
+  files_rule_hint: 'Dosyalar yayından önce ClamAV ile taranır. Platform başına birden fazla dosya ekleyebilirsiniz (ör. Linux için hem .deb hem .AppImage); aynı adlı bir dosya yüklemek öncekinin yerine geçer.',
   version_info: 'Sürüm',
   release_date: 'Yayın tarihi',
   changelog: 'Değişiklik notları',

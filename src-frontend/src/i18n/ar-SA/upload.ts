@@ -69,7 +69,7 @@ export default {
   dupe_declare_fork: 'إعلانه كنسخة متفرعة',
   dupe_continue: 'المتابعة على أي حال',
   files_intro: 'القاعدة الذهبية الثانية: كل منصة تُصرّح بها تحتاج إلى ملف تثبيت جاهز للتشغيل — .exe / .msi، .deb / .rpm / .AppImage، .dmg، .apk، مرجع صورة Docker، أو حزمة ويب.',
-  files_rule_hint: 'يتم فحص الملفات بواسطة ClamAV قبل النشر. ملف واحد لكل منصة؛ رفع ملف آخر يستبدله.',
+  files_rule_hint: 'يتم فحص الملفات بواسطة ClamAV قبل النشر. يمكنك إضافة عدة ملفات لكل منصة (مثلاً ‎.deb و ‎.AppImage لنظام Linux)؛ ورفع ملف بالاسم نفسه يستبدل الملف السابق.',
   version_info: 'الإصدار',
   release_date: 'تاريخ الإصدار',
   changelog: 'سجل التغييرات',

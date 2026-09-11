@@ -9,7 +9,7 @@ import StatusTag from '@/components/common/StatusTag.vue'
 import { confirmX, enableAfter, notifyError, notifyS, platformIcon } from '@/utils/tools'
 import { formatBytes } from '@/utils/format'
 
-/** Step 3 — one ready-to-run install file (or reference) per declared platform, plus version info. */
+/** Step 3 — ready-to-run install files (or references) per declared platform (several per platform are fine, e.g. .deb + .AppImage), plus version info. */
 const props = defineProps<{ draft: AppDraft }>()
 const emit = defineEmits<{ updated: [d: AppDraft]; refresh: []; next: []; back: [] }>()
 const { t } = useI18n()

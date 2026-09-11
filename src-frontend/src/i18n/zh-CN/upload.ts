@@ -69,7 +69,7 @@ export default {
   dupe_declare_fork: '声明为复刻',
   dupe_continue: '仍然继续',
   files_intro: '黄金法则二：您声明的每个平台都需要一个可直接运行的安装文件——.exe / .msi、.deb / .rpm / .AppImage、.dmg、.apk、Docker 镜像引用或网页应用包。',
-  files_rule_hint: '文件在发布前会经过 ClamAV 扫描。每个平台限一个文件；上传新文件会替换旧文件。',
+  files_rule_hint: '文件在发布前会经过 ClamAV 扫描。每个平台可以添加多个文件（例如 Linux 的 .deb 和 .AppImage）；上传同名文件会替换原文件。',
   version_info: '版本',
   release_date: '发布日期',
   changelog: '更新日志',

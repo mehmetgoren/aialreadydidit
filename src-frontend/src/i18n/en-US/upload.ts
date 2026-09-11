@@ -69,7 +69,7 @@ export default {
   dupe_declare_fork: 'Declare as a fork',
   dupe_continue: 'Continue anyway',
   files_intro: 'Golden rule 2: every platform you declare needs a ready-to-run install file — .exe / .msi, .deb / .rpm / .AppImage, .dmg, .apk, a Docker image reference or a web bundle.',
-  files_rule_hint: 'Files are scanned with ClamAV before publication. One file per platform; uploading another replaces it.',
+  files_rule_hint: 'Files are scanned with ClamAV before publication. You can add several files per platform (e.g. a .deb and an .AppImage for Linux); uploading a file with the same name replaces it.',
   version_info: 'Version',
   release_date: 'Release date',
   changelog: 'Changelog',

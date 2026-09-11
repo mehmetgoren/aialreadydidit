@@ -69,7 +69,7 @@ export default {
   dupe_declare_fork: 'フォークとして宣言',
   dupe_continue: 'そのまま続ける',
   files_intro: '黄金律2: 宣言する各プラットフォームにはすぐ実行できるインストールファイルが必要です — .exe / .msi、.deb / .rpm / .AppImage、.dmg、.apk、Dockerイメージ参照、またはウェブバンドル。',
-  files_rule_hint: 'ファイルは公開前にClamAVでスキャンされます。プラットフォームごとに1ファイル、別のファイルをアップロードすると置き換えられます。',
+  files_rule_hint: 'ファイルは公開前にClamAVでスキャンされます。1 つのプラットフォームに複数のファイルを追加できます（例：Linux 用の .deb と .AppImage）。同じ名前のファイルをアップロードすると置き換えられます。',
   version_info: 'バージョン',
   release_date: 'リリース日',
   changelog: '変更履歴',

@@ -439,6 +439,13 @@ the migration was regenerated after the build.
     746 460 stored, counter 301 698 tokens from 5 unique of 8 downloads. Tests: backend 183, frontend 116. Headless
     verification trick: `scratchpad/cdp-shot.mjs` (Node 24 built-in WebSocket + CDP) signs in through the API and writes
     `localStorage.aadi_user` the way the SPA does, then screenshots any admin page — no Playwright needed.
+27. Owner (2026-09-11): several install files per platform (e.g. `.deb` + `.AppImage`). Before, `StoreInstallerFromTempAsync` /
+    `AddExternalFileAsync` deleted every file of that platform on upload and `UpdateFileAsync` refused a platform that already
+    had one. Now only a file with the **same name** (case-insensitive) on the same platform is replaced (`ReplaceSameNameAsync`);
+    readiness still needs ≥ 1 per declared platform; `DownloadButtons.vue` appends the extension to the label when a platform
+    has more than one file; MCP `download_app` with a platform picks the first file and lists the rest under `alternatives`;
+    `files_rule_hint` rewritten in 11 locales. Verified via the API as `demo`: two Linux .deb files coexist, re-upload of the
+    same name replaced it. Rule text in the brief ("at least one file per declared platform") is unchanged.
     Chrome extension note: after a Chrome restart two extension instances were "connected"; the stale one kept the old tab
     ids and a signed-out profile — use `list_connected_browsers` + `select_browser` (ask the owner which) before assuming
     the cookie is missing. Observed: "Continue with Google" rendered twice on the login page after a second SPA navigation.

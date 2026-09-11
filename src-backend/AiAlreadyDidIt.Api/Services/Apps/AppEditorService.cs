@@ -233,7 +233,7 @@ public sealed partial class AppEditorService(AadiDbContext db, ICurrentUser curr
         var licenseCheck = await lifecycle.CheckLicenseAsync(app, ct);
         if (!licenseCheck.Ok && (sourceFile is not null || app.LicenseId == 0)) Issue("source", "license", licenseCheck.Message!);
 
-        // files: one install file per declared platform
+        // files: at least one install file per declared platform (several per platform are fine, e.g. .deb + .AppImage)
         var installers = version.Files.Where(f => f.Kind != FileKind.Source).ToList();
         if (installers.Count == 0) Issue("files", "installer", "Add at least one ready-to-run install file (or Docker image / web reference) for a platform.");
         if (installers.Any(f => f.PlatformId is null)) Issue("files", "installer_platform", "Every install file must be assigned to a platform.");

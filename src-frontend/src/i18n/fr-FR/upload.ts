@@ -69,7 +69,7 @@ export default {
   dupe_declare_fork: 'Déclarer comme un fork',
   dupe_continue: 'Continuer quand même',
   files_intro: "Règle d'or n° 2 : chaque plateforme déclarée doit disposer d'un fichier d'installation prêt à l'emploi — .exe / .msi, .deb / .rpm / .AppImage, .dmg, .apk, une référence d'image Docker ou un bundle web.",
-  files_rule_hint: 'Les fichiers sont analysés avec ClamAV avant publication. Un fichier par plateforme ; en téléverser un autre le remplace.',
+  files_rule_hint: 'Les fichiers sont analysés avec ClamAV avant publication. Vous pouvez ajouter plusieurs fichiers par plateforme (par ex. un .deb et un .AppImage pour Linux) ; envoyer un fichier du même nom le remplace.',
   version_info: 'Version',
   release_date: 'Date de publication',
   changelog: 'Changelog',

@@ -53,13 +53,8 @@ public sealed partial class AppEditorService
         await using (var fs = File.OpenRead(tempPath))
             await storage.PutAsync(Bucket.Installers, key, fs, string.IsNullOrWhiteSpace(contentType) ? "application/octet-stream" : contentType, info.Length, ct);
 
-        // one file per platform: replace the previous one for that platform
-        foreach (var old in version.Files.Where(f => f.Kind != FileKind.Source && f.PlatformId == platform.Id).ToList())
-        {
-            await DeleteStoredAsync(old, ct);
-            version.Files.Remove(old);
-            db.AppFiles.Remove(old);
-        }
+        // Several files per platform are allowed (e.g. .deb and .AppImage for Linux); re-uploading the same name replaces that file.
+        await ReplaceSameNameAsync(version, platform, safeName, ct);
         var entity = new AppFile
         {
             Version = version, PlatformId = platform.Id, Platform = platform, Kind = platform.Code == "web" ? FileKind.WebBundle : FileKind.Installer, FileName = safeName, StorageKey = key,
@@ -83,12 +78,7 @@ public sealed partial class AppEditorService
         if (platform.Code == "docker" && (reference.Contains(' ') || reference.StartsWith("http", StringComparison.OrdinalIgnoreCase)))
             throw ApiException.Unprocessable("Enter a Docker image reference such as ghcr.io/user/app:1.0.", "reference");
 
-        foreach (var old in version.Files.Where(f => f.Kind != FileKind.Source && f.PlatformId == platform.Id).ToList())
-        {
-            await DeleteStoredAsync(old, ct);
-            version.Files.Remove(old);
-            db.AppFiles.Remove(old);
-        }
+        await ReplaceSameNameAsync(version, platform, reference, ct);
         var entity = new AppFile
         {
             Version = version, PlatformId = platform.Id, Platform = platform, Kind = platform.Code == "docker" ? FileKind.DockerImage : FileKind.WebBundle, FileName = reference,
@@ -145,7 +135,8 @@ public sealed partial class AppEditorService
         {
             var platform = await RequirePlatformAsync(request.PlatformCode, ct);
             if (file.ExternalReference is null) ValidateInstallerName(platform, file.FileName);
-            if (version.Files.Any(f => f.Id != file.Id && f.Kind != FileKind.Source && f.PlatformId == platform.Id)) throw ApiException.Unprocessable($"There is already a file for {platform.Name}.", "platformCode");
+            if (version.Files.Any(f => f.Id != file.Id && f.Kind != FileKind.Source && f.PlatformId == platform.Id && string.Equals(f.FileName, file.FileName, StringComparison.OrdinalIgnoreCase)))
+                throw ApiException.Unprocessable($"{platform.Name} already has a file named {file.FileName}.", "platformCode");
             file.PlatformId = platform.Id;
             file.Platform = platform;
         }
@@ -166,6 +157,17 @@ public sealed partial class AppEditorService
         if (file.Kind == FileKind.Source) { app.SourceAnalyzedAt = null; app.HasLicenseFile = false; app.DetectedLicenseSpdxId = null; }
         app.UpdatedAt = Clock.Now;
         await db.SaveChangesAsync(ct);
+    }
+
+    /// <summary>Drops the file that has the same name (or reference) on the same platform, so a re-upload replaces instead of duplicating.</summary>
+    private async Task ReplaceSameNameAsync(AppVersion version, Platform platform, string fileName, CancellationToken ct)
+    {
+        foreach (var old in version.Files.Where(f => f.Kind != FileKind.Source && f.PlatformId == platform.Id && string.Equals(f.FileName, fileName, StringComparison.OrdinalIgnoreCase)).ToList())
+        {
+            await DeleteStoredAsync(old, ct);
+            version.Files.Remove(old);
+            db.AppFiles.Remove(old);
+        }
     }
 
     private async Task<Platform> RequirePlatformAsync(string code, CancellationToken ct) =>

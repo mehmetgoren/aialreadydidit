@@ -88,7 +88,8 @@ public sealed class StoreTools(AadiApiClient api)
     }
 
     [McpServerTool(Name = "download_app", Title = "Download app"), Description(
-        "Returns a time-limited download URL (plus sha256, size and install hint) for an app file. Pass the slug and either a platform code (picks the latest version's installer for that platform), " +
+        "Returns a time-limited download URL (plus sha256, size and install hint) for an app file. Pass the slug and either a platform code (picks the latest version's first installer for that platform; " +
+        "when the platform has several files, e.g. .deb and .AppImage, the result lists the others under 'alternatives' — pass their fileId to get one of those), " +
         "'source' for the source snapshot, or an explicit fileId from get_app. The download is counted for the store's savings counter.")]
     public async Task<string> DownloadApp(
         [Description("The app slug.")] string slug,
@@ -96,18 +97,24 @@ public sealed class StoreTools(AadiApiClient api)
         [Description("Explicit file id from get_app (overrides platform).")] int? fileId = null,
         CancellationToken ct = default)
     {
+        JsonArray alternatives = [];
         if (fileId is null)
         {
             var app = await api.GetAsync($"api/v1/catalog/apps/{Uri.EscapeDataString(slug)}", ct) ?? throw new McpToolException("App not found.");
             var files = app["latestVersion"]?["files"]?.AsArray() ?? throw new McpToolException("The app has no published version.");
-            JsonNode? pick = null;
-            if (string.Equals(platform, "source", StringComparison.OrdinalIgnoreCase)) pick = files.FirstOrDefault(f => f?["kind"]?.GetValue<string>() == "source");
-            else if (!string.IsNullOrWhiteSpace(platform)) pick = files.FirstOrDefault(f => string.Equals(f?["platformCode"]?.GetValue<string>(), platform, StringComparison.OrdinalIgnoreCase));
-            else pick = files.FirstOrDefault(f => f?["kind"]?.GetValue<string>() != "source") ?? files.FirstOrDefault();
+            List<JsonNode?> matches;
+            if (string.Equals(platform, "source", StringComparison.OrdinalIgnoreCase)) matches = files.Where(f => f?["kind"]?.GetValue<string>() == "source").ToList();
+            else if (!string.IsNullOrWhiteSpace(platform)) matches = files.Where(f => string.Equals(f?["platformCode"]?.GetValue<string>(), platform, StringComparison.OrdinalIgnoreCase)).ToList();
+            else matches = files.Where(f => f?["kind"]?.GetValue<string>() != "source").DefaultIfEmpty(files.FirstOrDefault()).ToList();
+            var pick = matches.FirstOrDefault(m => m is not null);
             if (pick is null) throw new McpToolException($"No file for platform '{platform}'. Available: " + string.Join(", ", files.Select(f => f?["platformCode"]?.GetValue<string>() ?? f?["kind"]?.GetValue<string>())));
             fileId = pick["id"]!.GetValue<int>();
+            // A platform may carry several installers (e.g. .deb and .AppImage): tell the agent what else it could have picked.
+            foreach (var other in matches.Skip(1).Where(m => m is not null))
+                alternatives.Add(new JsonObject { ["fileId"] = other!["id"]?.GetValue<int>(), ["fileName"] = other["fileName"]?.GetValue<string>(), ["sizeBytes"] = other["sizeBytes"]?.GetValue<long>() });
         }
         var result = await api.GetAsync($"api/v1/apps/{Uri.EscapeDataString(slug)}/download/{fileId}?json=1&source=mcp", ct);
+        if (alternatives.Count > 0 && result is JsonObject obj) obj["alternatives"] = alternatives;
         return AadiApiClient.Pretty(result);
     }
 

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import type { AppFileDto } from '@/utils/models/catalog-models'
 import { AppsService } from '@/utils/services/apps-service'
@@ -7,13 +7,29 @@ import { useSiteStore } from '@/stores/site-store'
 import { formatBytes } from '@/utils/format'
 import { copyText, notifyError, platformIcon } from '@/utils/tools'
 
-/** One button per platform file of the latest version + the source snapshot. Asks the API for a fresh link (counts the download). */
+/** One button per install file of the latest version (a platform may have several, e.g. .deb and .AppImage) + the source snapshot. Asks the API for a fresh link (counts the download). */
 const props = defineProps<{ slug: string; files: AppFileDto[]; version: string }>()
 const emit = defineEmits<{ downloaded: [] }>()
 const { t } = useI18n()
 const site = useSiteStore()
 const busy = ref<number | null>(null)
 const hint = ref<{ file: AppFileDto; hint: string | null; sha: string | null } | null>(null)
+
+/** Platforms that carry more than one file get the extension in the button label so the two "Download for Linux" buttons differ. */
+const perPlatform = computed(() => {
+  const counts = new Map<string | null, number>()
+  for (const f of props.files) if (f.kind !== 'source') counts.set(f.platformCode, (counts.get(f.platformCode) ?? 0) + 1)
+  return counts
+})
+function extensionOf(file: AppFileDto): string {
+  const m = /\.(tar\.gz|tar\.xz|[a-z0-9]+)$/i.exec(file.fileName)
+  return m ? `.${m[1]}` : ''
+}
+function label(file: AppFileDto): string {
+  const base = t('download_for', { platform: site.platformName(file.platformCode) })
+  const ext = extensionOf(file)
+  return (perPlatform.value.get(file.platformCode) ?? 0) > 1 && ext ? `${base} (${ext})` : base
+}
 
 async function download(file: AppFileDto) {
   busy.value = file.id
@@ -55,7 +71,7 @@ async function download(file: AppFileDto) {
       >
         <span class="dl__icon">{{ platformIcon(f.platformCode) }}</span>
         <span class="dl__label">
-          <span>{{ f.kind === 'dockerImage' ? t('copy_docker_ref') : f.kind === 'webBundle' && f.externalReference ? t('open_web_app') : t('download_for', { platform: site.platformName(f.platformCode) }) }}</span>
+          <span>{{ f.kind === 'dockerImage' ? t('copy_docker_ref') : f.kind === 'webBundle' && f.externalReference ? t('open_web_app') : label(f) }}</span>
           <small>{{ f.externalReference ? f.externalReference : `${f.fileName} · ${formatBytes(f.sizeBytes)}` }}</small>
         </span>
       </ElButton>

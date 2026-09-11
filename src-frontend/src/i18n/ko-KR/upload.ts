@@ -69,7 +69,7 @@ export default {
   dupe_declare_fork: '포크로 선언',
   dupe_continue: '그대로 계속',
   files_intro: '2번째 원칙: 선언한 모든 플랫폼에는 바로 실행 가능한 설치 파일이 필요합니다 — .exe / .msi, .deb / .rpm / .AppImage, .dmg, .apk, Docker 이미지 참조 또는 웹 번들.',
-  files_rule_hint: '파일은 게시 전에 ClamAV로 검사됩니다. 플랫폼당 하나의 파일만 가능하며, 다른 파일을 업로드하면 교체됩니다.',
+  files_rule_hint: '파일은 게시 전에 ClamAV로 검사됩니다. 플랫폼당 여러 파일을 추가할 수 있습니다(예: Linux용 .deb와 .AppImage). 같은 이름의 파일을 업로드하면 기존 파일이 교체됩니다.',
   version_info: '버전',
   release_date: '출시일',
   changelog: '변경 내역',
