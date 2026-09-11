@@ -466,9 +466,9 @@ the migration was regenerated after the build.
     md + html; regenerate rather than edit the html). Posting itself is the owner's (own HN/Reddit accounts).
     **Launch plan agreed (2026-09-12, 02:00 Istanbul):** Saturday 2026-09-12 16:00 UTC Show HN (owner signed in to HN in the
     Claude tab group; Claude fills title + URL, owner clicks submit, Claude pastes the maker comment for the owner to post
-    within a minute), 17:00 UTC social one-liner linking the HN thread, ~18:30 UTC r/ClaudeAI (flair "Built with Claude",
-    fold in early HN questions), then one subreddit per day from Sunday (r/opensource, r/SideProject, r/vibecoding,
-    r/coolgithubprojects). Claude watches the threads from the owner's tab and drafts replies; the owner posts them.
+    within a minute), 17:00 UTC social one-liner linking the HN thread; **Sunday 2026-09-13 16:00 UTC r/ClaudeAI** (flair
+    "Built with Claude", fold in the HN thread's questions — owner chose a 24 h gap), then one subreddit per day from Monday
+    (r/opensource, r/SideProject, r/vibecoding, r/coolgithubprojects). Claude watches the threads from the owner's tab and drafts replies; the owner posts them.
     Chrome extension note: after a Chrome restart two extension instances were "connected"; the stale one kept the old tab
     ids and a signed-out profile — use `list_connected_browsers` + `select_browser` (ask the owner which) before assuming
     the cookie is missing. Observed: "Continue with Google" rendered twice on the login page after a second SPA navigation.
