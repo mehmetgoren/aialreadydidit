@@ -457,6 +457,13 @@ the migration was regenerated after the build.
     removed; removing the last installer → 422; removing the source → 422. The wizard opens published apps on the Review step;
     the step headers are clickable. Note: while testing I deleted the local dev app 1 source snapshot before the source guard
     existed; restored it through version 1.0.1 (auto-published — admin counts as trusted).
+29. Owner (2026-09-12): "time to present the product". Pre-flight on production: 16 published apps (all Linux, all MIT, all
+    Claude-built, two uploaders), 2 apps with a single screenshot, 0 ratings, 4 members, 5 wanted requests, counter 10.0 M
+    tokens / $60; headless crawl of 9 pages clean; agent check + MCP tools/list (7 tools) + Google client id live.
+    `docs/launch/posts.md` regenerated with today's facts (16 apps, Linux-only stated openly, conservative counter in the
+    limitations) and published as the copy-ready artifact "Launch Kit"
+    (https://claude.ai/code/artifact/6545c2f0-dbe1-4dd3-a718-79911e3b12de) — generator: scratchpad `kit/build.py` (one source →
+    md + html; regenerate rather than edit the html). Posting itself is the owner's (own HN/Reddit accounts).
     Chrome extension note: after a Chrome restart two extension instances were "connected"; the stale one kept the old tab
     ids and a signed-out profile — use `list_connected_browsers` + `select_browser` (ask the owner which) before assuming
     the cookie is missing. Observed: "Continue with Google" rendered twice on the login page after a second SPA navigation.
