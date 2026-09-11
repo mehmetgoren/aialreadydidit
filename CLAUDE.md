@@ -406,6 +406,16 @@ the migration was regenerated after the build.
     queued and done. Backend 180 tests green. Commit 84cff25, **not yet deployed**. (b) Launch post drafts written to
     `docs/launch/posts.md` (Show HN title + maker comment + prepared answers, r/ClaudeAI, r/opensource, r/SideProject,
     r/vibecoding, r/coolgithubprojects, Product Hunt tagline, article outline, posting order and pre-flight checklist).
+    (c) Deployed 84cff25 (first `deploy.sh` run hung 12 min in the API image's `apt-get update` on a dead mirror connection —
+    killed the remote `docker compose`/`buildx` processes and reran; `tail` on the script hides output until exit, log to a
+    file instead). (d) **SMTP live via Brevo**: owner created the account; `.env.production` now has `EMAIL_PROVIDER=Smtp`,
+    `smtp-relay.brevo.com:587` STARTTLS, login `b8eef6001@smtp-brevo.com`, sender `no-reply@aialreadydidit.com`; deployed;
+    STARTTLS + AUTH verified from the host with openssl; admin health "E-mail" check green; "Send test e-mail" → 200 (nginx log
+    15:30 UTC). Still to do: authenticate the domain in Brevo (DKIM/DMARC/verification TXT at the registrar) — until then mail
+    may land in spam. Brevo's "Block unauthorized IP addresses" dialog is the optional IP allowlist, not key activation.
+    Chrome extension note: after a Chrome restart two extension instances were "connected"; the stale one kept the old tab
+    ids and a signed-out profile — use `list_connected_browsers` + `select_browser` (ask the owner which) before assuming
+    the cookie is missing. Observed: "Continue with Google" rendered twice on the login page after a second SPA navigation.
 
 ## 12. Where things stand (2026-09-08)
 
@@ -416,9 +426,9 @@ the migration was regenerated after the build.
 - Redeploy: `SSH_KEY=~/.ssh/LightsailDefaultKey-eu-central-1.pem deploy/deploy.sh` from the project root.
 - Production content (2026-09-08): 5 published apps — CPU-Z, HWMonitor, Audio Format Selector (all admin), Mint Paint
   (admin), AdBlock (member `hakanss`); drafts `paint` (5) and `cpuz-linux-1-0-0-source` (1). Google sign-in live.
-- Next session candidates: (1) SMTP values from the owner → deploy → "Send test e-mail"; (2) grow the catalogue to 20–30
-  apps before announcing; (3) owner reviews `docs/launch/posts.md`, then post (Show HN first); (4) deploy commit 84cff25
-  (review-page latency fix, 2026-09-11); (5) Markdown editor for changelog fields if wanted.
-- Open: SMTP values (owner; plumbing, health check, test-mail button and README guide done 2026-09-08 —
-  `.env.production` has EMAIL_* placeholders on Console; Google client id set 2026-09-08, secret unused), native-speaker review of the 9 LLM translations, per-language category names, GitHub repo topics/homepage/
+- Next session candidates: (1) ~~SMTP~~ done 2026-09-11; (2) grow the catalogue to 20–30
+  apps before announcing; (3) owner reviews `docs/launch/posts.md`, then post (Show HN first); (4) Brevo domain authentication
+  (DNS records) + check the test mail arrived; (5) duplicated Google button on /login after SPA re-navigation; (6) Markdown
+  editor for changelog fields if wanted.
+- Open: Brevo domain authentication (owner adds DNS records; SMTP itself live 2026-09-11), native-speaker review of the 9 LLM translations, per-language category names, GitHub repo topics/homepage/
   secret scanning (owner to click), the owner's stray production draft `cpuz-linux-1-0-0-source` (id 1).
