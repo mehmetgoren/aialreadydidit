@@ -411,8 +411,17 @@ the migration was regenerated after the build.
     file instead). (d) **SMTP live via Brevo**: owner created the account; `.env.production` now has `EMAIL_PROVIDER=Smtp`,
     `smtp-relay.brevo.com:587` STARTTLS, login `b8eef6001@smtp-brevo.com`, sender `no-reply@aialreadydidit.com`; deployed;
     STARTTLS + AUTH verified from the host with openssl; admin health "E-mail" check green; "Send test e-mail" → 200 (nginx log
-    15:30 UTC). Still to do: authenticate the domain in Brevo (DKIM/DMARC/verification TXT at the registrar) — until then mail
-    may land in spam. Brevo's "Block unauthorized IP addresses" dialog is the optional IP allowlist, not key activation.
+    15:30 UTC) but Brevo rejected it ("sender … is not valid") because the domain was not authenticated. Fixed the same day via
+    the Chrome extension in the owner's signed-in Brevo + Cloudflare tabs: Brevo Domains → add `aialreadydidit.com` → Manual
+    setup; four records added at Cloudflare (DNS at Cloudflare, account of the admin e-mail): TXT `@` `brevo-code:be190e12…`,
+    CNAME `brevo1._domainkey` → `b1.aialreadydidit-com.dkim.brevo.com`, CNAME `brevo2._domainkey` → `b2.…` (both **DNS only**),
+    TXT `_dmarc` `v=DMARC1; p=none; rua=mailto:rua@dmarc.brevo.com`; Verify records → all matched → Authenticate domain →
+    "Your domain has been authenticated"; sender "AI Already Did It <no-reply@aialreadydidit.com>" added. Resent the test
+    e-mail: Brevo log 18:51 local shows Sent → Delivered → opened. No MX/SPF on the domain (Brevo does not need SPF for the
+    From domain; inbound mail to @aialreadydidit.com does not exist). Brevo's "Block unauthorized IP addresses" dialog is the
+    optional IP allowlist, not key activation. Extension quirks: `navigate` to a domain the owner did not grant for that tab
+    fails with "Navigation to this domain is not allowed" — create a fresh tab instead; Cloudflare's Add-record dialog shifts
+    down when the preview sentence wraps, so re-screenshot before clicking the proxy toggle.
     Chrome extension note: after a Chrome restart two extension instances were "connected"; the stale one kept the old tab
     ids and a signed-out profile — use `list_connected_browsers` + `select_browser` (ask the owner which) before assuming
     the cookie is missing. Observed: "Continue with Google" rendered twice on the login page after a second SPA navigation.
@@ -427,8 +436,8 @@ the migration was regenerated after the build.
 - Production content (2026-09-08): 5 published apps — CPU-Z, HWMonitor, Audio Format Selector (all admin), Mint Paint
   (admin), AdBlock (member `hakanss`); drafts `paint` (5) and `cpuz-linux-1-0-0-source` (1). Google sign-in live.
 - Next session candidates: (1) ~~SMTP~~ done 2026-09-11; (2) grow the catalogue to 20–30
-  apps before announcing; (3) owner reviews `docs/launch/posts.md`, then post (Show HN first); (4) Brevo domain authentication
-  (DNS records) + check the test mail arrived; (5) duplicated Google button on /login after SPA re-navigation; (6) Markdown
+  apps before announcing; (3) owner reviews `docs/launch/posts.md`, then post (Show HN first); (4) owner confirms the test mail
+  is in the Gmail inbox (not spam) and shows "signed by aialreadydidit.com"; (5) duplicated Google button on /login after SPA re-navigation; (6) Markdown
   editor for changelog fields if wanted.
-- Open: Brevo domain authentication (owner adds DNS records; SMTP itself live 2026-09-11), native-speaker review of the 9 LLM translations, per-language category names, GitHub repo topics/homepage/
+- Open: native-speaker review of the 9 LLM translations, per-language category names, GitHub repo topics/homepage/
   secret scanning (owner to click), the owner's stray production draft `cpuz-linux-1-0-0-source` (id 1).
