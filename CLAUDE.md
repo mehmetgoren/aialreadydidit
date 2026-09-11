@@ -398,6 +398,14 @@ the migration was regenerated after the build.
     "I made this"), r/webdev (Showoff Saturday only), r/InternetIsBeautiful (no aggregators/stores), r/artificial.
     Also: Product Hunt, dev.to/Hashnode article, fosstodon, Anthropic Discord showcase, awesome-mcp-servers. Next step
     offered: draft the Show HN + r/ClaudeAI posts and import candidate apps.
+25. "Let's continue" (2026-09-11): (a) review-page latency fixed — `AdminModerationService.DetailAsync` now queries pgvector
+    with the app's stored vector (`SearchService.NearestToVectorAsync`) instead of embedding the text on every open; a missing
+    vector queues `embed_app` once (`EnqueueOnceAsync`) and the panel stays empty until the job ran; `SubmitAsync` queues
+    `embed_app` so the vector exists before a moderator opens the submission (previously only `PublishAsync` did). Verified on
+    the local compose stack: detail for CPU-Z 0.3 s with HWMonitor at 0.738, detail for a vector-less draft 0.03 s + job
+    queued and done. Backend 180 tests green. Commit 84cff25, **not yet deployed**. (b) Launch post drafts written to
+    `docs/launch/posts.md` (Show HN title + maker comment + prepared answers, r/ClaudeAI, r/opensource, r/SideProject,
+    r/vibecoding, r/coolgithubprojects, Product Hunt tagline, article outline, posting order and pre-flight checklist).
 
 ## 12. Where things stand (2026-09-08)
 
@@ -409,8 +417,8 @@ the migration was regenerated after the build.
 - Production content (2026-09-08): 5 published apps — CPU-Z, HWMonitor, Audio Format Selector (all admin), Mint Paint
   (admin), AdBlock (member `hakanss`); drafts `paint` (5) and `cpuz-linux-1-0-0-source` (1). Google sign-in live.
 - Next session candidates: (1) SMTP values from the owner → deploy → "Send test e-mail"; (2) grow the catalogue to 20–30
-  apps before announcing; (3) draft Show HN + r/ClaudeAI posts (see log 24); (4) review-page latency (reuse the stored
-  embedding in `AdminModerationService.DetailAsync`); (5) Markdown editor for changelog fields if wanted.
-- Open: review page latency, SMTP values (owner; plumbing, health check, test-mail button and README guide done 2026-09-08 —
+  apps before announcing; (3) owner reviews `docs/launch/posts.md`, then post (Show HN first); (4) deploy commit 84cff25
+  (review-page latency fix, 2026-09-11); (5) Markdown editor for changelog fields if wanted.
+- Open: SMTP values (owner; plumbing, health check, test-mail button and README guide done 2026-09-08 —
   `.env.production` has EMAIL_* placeholders on Console; Google client id set 2026-09-08, secret unused), native-speaker review of the 9 LLM translations, per-language category names, GitHub repo topics/homepage/
   secret scanning (owner to click), the owner's stray production draft `cpuz-linux-1-0-0-source` (id 1).
