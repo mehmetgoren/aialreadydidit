@@ -273,6 +273,8 @@ public sealed partial class AppEditorService(AadiDbContext db, ICurrentUser curr
         foreach (var f in version.Files.Where(f => f.ScanStatus == ScanStatus.Error)) f.ScanStatus = ScanStatus.Pending;
         jobs.Enqueue(JobTypes.ScanVersion, new { AppId = app.Id, VersionId = version.Id }, $"version:{version.Id}");
         if (suggestions.Available && app.LlmSuggestedCategoryId is null) jobs.Enqueue(JobTypes.CategorizeApp, new { AppId = app.Id }, $"app:{app.Id}");
+        // Embed now (not only on publish) so the moderation page can show similar apps from the stored vector without waiting for the LLM.
+        if (app.Embedding is null || app.EmbeddingStale) jobs.Enqueue(JobTypes.EmbedApp, new { AppId = app.Id }, $"app:{app.Id}");
         await db.SaveChangesAsync(ct);
         return await MapDraftAsync(app, ct);
     }

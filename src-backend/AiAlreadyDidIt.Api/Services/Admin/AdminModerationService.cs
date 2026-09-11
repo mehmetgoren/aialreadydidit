@@ -69,7 +69,11 @@ public sealed class AdminModerationService(AadiDbContext db, ICurrentUser curren
         var scans = await db.ScanResults.AsNoTracking().Where(s => fileIds.Contains(s.FileId)).OrderByDescending(s => s.ScannedAt).Take(50).ToListAsync(ct);
         var history = await db.ModerationActions.AsNoTracking().Where(m => m.AppId == appId).OrderByDescending(m => m.CreatedAt)
             .Join(db.Users, m => m.AdminUserId, u => u.Id, (m, u) => new ModerationActionDto { Id = m.Id, VersionId = m.VersionId, AdminUsername = u.Username, Action = m.Action, Note = m.Note, CreatedAt = m.CreatedAt }).ToListAsync(ct);
-        var similar = await search.NearestAsync(EmbeddingService.BuildAppText(app), 6, app.Id, 0.4, ct);
+        // Use the vector stored by the embed_app job (queued at submission) instead of embedding the text on every page open —
+        // that call blocked the review page for ~17 s on a CPU-only embedding server. A missing vector just (re)queues the job.
+        List<AppCardDto> similar = [];
+        if (app.Embedding is not null) similar = await search.NearestToVectorAsync(app.Embedding, 6, app.Id, 0.4, ct);
+        else if (await jobs.EnqueueOnceAsync(JobTypes.EmbedApp, new { AppId = app.Id }, $"app:{app.Id}", ct) is not null) await db.SaveChangesAsync(ct);
         var reportRows = await db.Reports.AsNoTracking().Where(r => r.AppId == appId).OrderByDescending(r => r.CreatedAt).Take(20).Select(reports.Projection()).ToListAsync(ct);
         var suggestedCategory = app.LlmSuggestedCategoryId is { } sid ? await db.Categories.AsNoTracking().FirstOrDefaultAsync(c => c.Id == sid, ct) : null;
         var licenseCheck = await lifecycle.CheckLicenseAsync(app, ct);

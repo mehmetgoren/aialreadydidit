@@ -8,6 +8,7 @@ using AiAlreadyDidIt.Api.Entities;
 using AiAlreadyDidIt.Api.Infrastructure;
 using AiAlreadyDidIt.Api.Services.Catalog;
 using Microsoft.EntityFrameworkCore;
+using Pgvector;
 using Pgvector.EntityFrameworkCore;
 
 namespace AiAlreadyDidIt.Api.Services.Search;
@@ -153,6 +154,12 @@ public sealed class SearchService(AadiDbContext db, EmbeddingService embeddings,
     {
         var vector = await embeddings.TryEmbedAsync(text, ct);
         if (vector is null) return [];
+        return await NearestToVectorAsync(vector, take, excludeAppId, minSimilarity, ct);
+    }
+
+    /// <summary>Nearest published apps to an already computed vector (e.g. the app's stored embedding) — no LLM round-trip.</summary>
+    public async Task<List<AppCardDto>> NearestToVectorAsync(Vector vector, int take, int? excludeAppId, double minSimilarity, CancellationToken ct)
+    {
         var rows = await db.Apps.AsNoTracking()
             .Where(a => a.Status == AppStatus.Published && a.Embedding != null && (excludeAppId == null || a.Id != excludeAppId))
             .Select(a => new { a.Id, Distance = a.Embedding!.CosineDistance(vector) })
