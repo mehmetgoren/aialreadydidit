@@ -70,6 +70,8 @@ export default {
   dupe_continue: 'Yine de devam et',
   files_intro: 'Altın kural 2: beyan ettiğiniz her platform için çalışmaya hazır bir kurulum dosyası gerekir — .exe / .msi, .deb / .rpm / .AppImage, .dmg, .apk, Docker imaj adresi veya web paketi.',
   files_rule_hint: 'Dosyalar yayından önce ClamAV ile taranır. Platform başına birden fazla dosya ekleyebilirsiniz (ör. Linux için hem .deb hem .AppImage); aynı adlı bir dosya yüklemek öncekinin yerine geçer.',
+  files_published_editable: 'Yayındaki {version} sürümünü düzenliyorsunuz. Yeni dosyalar antivirüs taramasından sonra indirilebilir olur; silmeler hemen uygulanır.',
+  files_published_locked: '{version} sürümü yayında. Dosyalarını değiştirmek için İnceleme adımında yeni bir sürüm oluşturun.',
   version_info: 'Sürüm',
   release_date: 'Yayın tarihi',
   changelog: 'Değişiklik notları',

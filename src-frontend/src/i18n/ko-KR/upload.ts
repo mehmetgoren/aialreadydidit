@@ -70,6 +70,8 @@ export default {
   dupe_continue: '그대로 계속',
   files_intro: '2번째 원칙: 선언한 모든 플랫폼에는 바로 실행 가능한 설치 파일이 필요합니다 — .exe / .msi, .deb / .rpm / .AppImage, .dmg, .apk, Docker 이미지 참조 또는 웹 번들.',
   files_rule_hint: '파일은 게시 전에 ClamAV로 검사됩니다. 플랫폼당 여러 파일을 추가할 수 있습니다(예: Linux용 .deb와 .AppImage). 같은 이름의 파일을 업로드하면 기존 파일이 교체됩니다.',
+  files_published_editable: '게시된 버전 {version}을(를) 편집하고 있습니다. 새 파일은 바이러스 검사 후 다운로드할 수 있으며, 삭제는 즉시 적용됩니다.',
+  files_published_locked: '버전 {version}은(는) 게시되었습니다. 파일을 변경하려면 검토 단계에서 새 버전을 만드세요.',
   version_info: '버전',
   release_date: '출시일',
   changelog: '변경 내역',

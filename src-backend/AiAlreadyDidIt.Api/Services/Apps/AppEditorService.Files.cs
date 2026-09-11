@@ -3,6 +3,7 @@ using AiAlreadyDidIt.Api.Contracts.Catalog;
 using AiAlreadyDidIt.Api.Contracts.Common;
 using AiAlreadyDidIt.Api.Entities;
 using AiAlreadyDidIt.Api.Infrastructure;
+using AiAlreadyDidIt.Api.Infrastructure.Jobs;
 using AiAlreadyDidIt.Api.Infrastructure.Import;
 using AiAlreadyDidIt.Api.Infrastructure.Storage;
 using AiAlreadyDidIt.Api.Services.Catalog;
@@ -17,7 +18,7 @@ public sealed partial class AppEditorService
     public async Task<AppFileDto> UploadInstallerAsync(int id, int versionId, string platformCode, IFormFile file, string? installHint, CancellationToken ct)
     {
         var app = await LoadOwnedAsync(id, ct);
-        var version = RequireEditableVersion(app, versionId);
+        var version = await RequireEditableVersionAsync(app, versionId, ct);
         var platform = await RequirePlatformAsync(platformCode, ct);
         ValidateInstallerName(platform, file.FileName);
         if (file.Length == 0) throw ApiException.Unprocessable("The file is empty.", "file");
@@ -30,6 +31,7 @@ public sealed partial class AppEditorService
             await using (var input = file.OpenReadStream())
                 await CopyLimitedAsync(input, fs, storageOptions.Value.MaxInstallerBytes, ct);
             var entity = await StoreInstallerFromTempAsync(app, version, platform, tempPath, file.FileName, file.ContentType, installHint, ct);
+            await QueueScanIfPublishedAsync(app, version, ct);
             await db.SaveChangesAsync(ct);
             return CatalogService.MapFile(app.Slug, entity);
         }
@@ -69,7 +71,7 @@ public sealed partial class AppEditorService
     public async Task<AppFileDto> AddExternalFileAsync(int id, int versionId, AddExternalFileRequest request, CancellationToken ct)
     {
         var app = await LoadOwnedAsync(id, ct);
-        var version = RequireEditableVersion(app, versionId);
+        var version = await RequireEditableVersionAsync(app, versionId, ct);
         var platform = await RequirePlatformAsync(request.PlatformCode, ct);
         if (!platform.AllowsExternalReference) throw ApiException.Unprocessable($"{platform.Name} needs an uploaded install file, not a reference.", "platformCode");
         var reference = request.Reference.Trim();
@@ -95,7 +97,7 @@ public sealed partial class AppEditorService
     public async Task<AppFileDto> ImportReleaseAssetAsync(int id, int versionId, ImportReleaseAssetRequest request, CancellationToken ct)
     {
         var app = await LoadOwnedAsync(id, ct);
-        var version = RequireEditableVersion(app, versionId);
+        var version = await RequireEditableVersionAsync(app, versionId, ct);
         var platform = await RequirePlatformAsync(request.PlatformCode, ct);
         if (!Uri.TryCreate(request.Url, UriKind.Absolute, out var uri) || uri.Scheme != "https") throw ApiException.Unprocessable("Asset URL must be https.", "url");
         var allowedHosts = new[] { "github.com", "objects.githubusercontent.com", "gitlab.com", "release-assets.githubusercontent.com" };
@@ -119,6 +121,7 @@ public sealed partial class AppEditorService
                 await CopyLimitedAsync(body, fs, storageOptions.Value.MaxInstallerBytes, ct);
             }
             var entity = await StoreInstallerFromTempAsync(app, version, platform, tempPath, fileName, null, request.InstallHint, ct);
+            await QueueScanIfPublishedAsync(app, version, ct);
             await db.SaveChangesAsync(ct);
             return CatalogService.MapFile(app.Slug, entity);
         }
@@ -129,7 +132,7 @@ public sealed partial class AppEditorService
     {
         var app = await LoadOwnedAsync(id, ct);
         var file = app.Versions.SelectMany(v => v.Files).FirstOrDefault(f => f.Id == fileId) ?? throw ApiException.NotFound("File not found.");
-        var version = RequireEditableVersion(app, file.VersionId);
+        var version = await RequireEditableVersionAsync(app, file.VersionId, ct);
         if (file.Kind == FileKind.Source) throw ApiException.Unprocessable("The source snapshot has no platform.");
         if (!string.IsNullOrWhiteSpace(request.PlatformCode))
         {
@@ -150,13 +153,28 @@ public sealed partial class AppEditorService
     {
         var app = await LoadOwnedAsync(id, ct);
         var file = app.Versions.SelectMany(v => v.Files).FirstOrDefault(f => f.Id == fileId) ?? throw ApiException.NotFound("File not found.");
-        var version = RequireEditableVersion(app, file.VersionId);
+        var version = await RequireEditableVersionAsync(app, file.VersionId, ct);
+        if (version.Status == VersionStatus.Published)
+        {
+            // Golden rules 1 and 2 must keep holding for a live version: the source snapshot stays, and at least one installer remains.
+            if (file.Kind == FileKind.Source) throw ApiException.Unprocessable("The source snapshot of a published version cannot be removed. Create a new version to replace the source.");
+            if (!version.Files.Any(f => f.Id != file.Id && f.Kind != FileKind.Source))
+                throw ApiException.Unprocessable("A published version must keep at least one install file. Add the replacement first.");
+        }
         await DeleteStoredAsync(file, ct);
         version.Files.Remove(file);
         db.AppFiles.Remove(file);
         if (file.Kind == FileKind.Source) { app.SourceAnalyzedAt = null; app.HasLicenseFile = false; app.DetectedLicenseSpdxId = null; }
         app.UpdatedAt = Clock.Now;
         await db.SaveChangesAsync(ct);
+    }
+
+    /// <summary>A binary added to an already-published version is scanned right away; it stays "pending" (not downloadable by the public) until then.</summary>
+    private async Task QueueScanIfPublishedAsync(App app, AppVersion version, CancellationToken ct)
+    {
+        if (version.Status != VersionStatus.Published) return;
+        await jobs.EnqueueOnceAsync(JobTypes.ScanVersion, new { AppId = app.Id, VersionId = version.Id }, $"version:{version.Id}", ct);
+        logger.LogInformation("Install file added to published version {VersionId} of app {AppId} by user {UserId}; scan queued", version.Id, app.Id, currentUser.Id);
     }
 
     /// <summary>Drops the file that has the same name (or reference) on the same platform, so a re-upload replaces instead of duplicating.</summary>
@@ -234,7 +252,7 @@ public sealed partial class AppEditorService
     public async Task<AppDraftDto> DeleteVersionAsync(int id, int versionId, CancellationToken ct)
     {
         var app = await LoadOwnedAsync(id, ct);
-        var version = RequireEditableVersion(app, versionId);
+        var version = RequireDraftVersion(app, versionId);
         if (app.Versions.Count == 1) throw ApiException.Unprocessable("An app needs at least one version. Delete the draft app instead.");
         foreach (var f in version.Files) await DeleteStoredAsync(f, ct);
         db.AppVersions.Remove(version);
@@ -250,7 +268,7 @@ public sealed partial class AppEditorService
         await EnsureCanUploadAsync(ct);
         var app = await LoadOwnedAsync(id, ct);
         if (app.PublishedAt is null) return await SubmitAsync(id, ct);
-        var version = RequireEditableVersion(app, versionId);
+        var version = RequireDraftVersion(app, versionId);
         var readiness = await GetReadinessAsync(app, version, ct);
         var blocking = readiness.Issues.Where(i => i.Blocking && i.Step is "files" or "source").ToList();
         if (blocking.Count > 0) throw ApiException.Unprocessable(blocking.Select(i => ApiErrors.Unprocessable(i.Message, i.Code)));

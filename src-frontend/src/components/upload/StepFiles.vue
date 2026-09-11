@@ -16,8 +16,10 @@ const { t } = useI18n()
 const site = useSiteStore()
 const service = new MyAppsService()
 
-const version = computed(() => props.draft.draftVersion)
-const editable = computed(() => version.value?.status === 'draft' || version.value?.status === 'rejected')
+/** The draft version when there is one; otherwise the live version (admins / trusted uploaders may still change its files). */
+const version = computed(() => props.draft.draftVersion ?? props.draft.publishedVersion)
+const isLive = computed(() => !props.draft.draftVersion && version.value?.status === 'published')
+const editable = computed(() => version.value?.status === 'draft' || version.value?.status === 'rejected' || (isLive.value && props.draft.canEditPublishedFiles))
 const installers = computed(() => version.value?.files.filter((f) => f.kind !== 'source') ?? [])
 const platform = ref(site.platforms[0]?.code ?? 'linux')
 const platformDef = computed(() => site.platforms.find((p) => p.code === platform.value))
@@ -112,6 +114,7 @@ async function importAsset(url: string, name: string, suggested: string | null) 
   <div class="step">
     <p class="step__intro">{{ t('files_intro') }}</p>
     <ElAlert type="info" :closable="false" show-icon :title="t('rule_installable')" :description="t('files_rule_hint')" style="margin-bottom: 16px" />
+    <ElAlert v-if="isLive" :type="editable ? 'warning' : 'info'" :closable="false" show-icon :title="editable ? t('files_published_editable', { version: version?.version }) : t('files_published_locked', { version: version?.version })" style="margin-bottom: 16px" />
 
     <div v-if="version" class="gm-card step__box">
       <h3>{{ t('version_info') }}</h3>

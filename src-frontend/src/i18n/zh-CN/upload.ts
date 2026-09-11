@@ -70,6 +70,8 @@ export default {
   dupe_continue: '仍然继续',
   files_intro: '黄金法则二：您声明的每个平台都需要一个可直接运行的安装文件——.exe / .msi、.deb / .rpm / .AppImage、.dmg、.apk、Docker 镜像引用或网页应用包。',
   files_rule_hint: '文件在发布前会经过 ClamAV 扫描。每个平台可以添加多个文件（例如 Linux 的 .deb 和 .AppImage）；上传同名文件会替换原文件。',
+  files_published_editable: '你正在编辑已发布的版本 {version}。新文件在病毒扫描后即可下载；删除会立即生效。',
+  files_published_locked: '版本 {version} 已发布。要更改其文件，请在“审核”步骤中创建新版本。',
   version_info: '版本',
   release_date: '发布日期',
   changelog: '更新日志',

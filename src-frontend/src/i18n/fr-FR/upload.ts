@@ -70,6 +70,8 @@ export default {
   dupe_continue: 'Continuer quand même',
   files_intro: "Règle d'or n° 2 : chaque plateforme déclarée doit disposer d'un fichier d'installation prêt à l'emploi — .exe / .msi, .deb / .rpm / .AppImage, .dmg, .apk, une référence d'image Docker ou un bundle web.",
   files_rule_hint: 'Les fichiers sont analysés avec ClamAV avant publication. Vous pouvez ajouter plusieurs fichiers par plateforme (par ex. un .deb et un .AppImage pour Linux) ; envoyer un fichier du même nom le remplace.',
+  files_published_editable: 'Vous modifiez la version publiée {version}. Les nouveaux fichiers seront téléchargeables après l\'analyse antivirus ; les suppressions s\'appliquent immédiatement.',
+  files_published_locked: 'La version {version} est publiée. Pour modifier ses fichiers, créez une nouvelle version à l\'étape Vérification.',
   version_info: 'Version',
   release_date: 'Date de publication',
   changelog: 'Changelog',

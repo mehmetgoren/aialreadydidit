@@ -224,6 +224,10 @@ public class AppDraftDto
     public List<ScreenshotDto> Screenshots { get; set; } = [];
     public List<AppVersionDto> Versions { get; set; } = [];
     public AppVersionDto? DraftVersion { get; set; }
+    /// <summary>The live version (latest published) — shown in the files step when there is no draft version.</summary>
+    public AppVersionDto? PublishedVersion { get; set; }
+    /// <summary>True when the caller may add / remove install files of the published version (admin or trusted uploader).</summary>
+    public bool CanEditPublishedFiles { get; set; }
     public long EstGenerationTokens { get; set; }
     public decimal EstGenerationCostUsd { get; set; }
     public bool EstIsOverride { get; set; }

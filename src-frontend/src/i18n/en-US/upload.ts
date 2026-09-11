@@ -70,6 +70,8 @@ export default {
   dupe_continue: 'Continue anyway',
   files_intro: 'Golden rule 2: every platform you declare needs a ready-to-run install file — .exe / .msi, .deb / .rpm / .AppImage, .dmg, .apk, a Docker image reference or a web bundle.',
   files_rule_hint: 'Files are scanned with ClamAV before publication. You can add several files per platform (e.g. a .deb and an .AppImage for Linux); uploading a file with the same name replaces it.',
+  files_published_editable: 'You are editing the live version {version}. New files become downloadable after the antivirus scan; removals apply immediately.',
+  files_published_locked: 'Version {version} is published. To change its files, create a new version in the Review step.',
   version_info: 'Version',
   release_date: 'Release date',
   changelog: 'Changelog',

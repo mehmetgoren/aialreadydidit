@@ -446,6 +446,17 @@ the migration was regenerated after the build.
     has more than one file; MCP `download_app` with a platform picks the first file and lists the rest under `alternatives`;
     `files_rule_hint` rewritten in 11 locales. Verified via the API as `demo`: two Linux .deb files coexist, re-upload of the
     same name replaced it. Rule text in the brief ("at least one file per declared platform") is unchanged.
+28. Owner (2026-09-11): Admin › Apps › Open editor › Install files showed nothing for a published app — the step only rendered
+    `draftVersion`, which is null once every version is published, and the API refused file changes on non-draft versions.
+    Now: `AppDraftDto.PublishedVersion` + `CanEditPublishedFiles`; the files step falls back to the live version and shows a
+    banner (`files_published_editable` / `files_published_locked`, 11 locales); `RequireEditableVersionAsync` accepts a
+    Published version for admins and trusted uploaders (trust ≥ 1, same rule as review-free version publishing) — a binary
+    added to a live version is `pending` (not downloadable by the public) until the queued `scan_version` job clears it; a live
+    version keeps at least one installer and its source snapshot (422 otherwise); delete/submit still require a draft
+    (`RequireDraftVersion`). Verified locally as admin: file added to live CPU-Z → scanned clean → public page lists both →
+    removed; removing the last installer → 422; removing the source → 422. The wizard opens published apps on the Review step;
+    the step headers are clickable. Note: while testing I deleted the local dev app 1 source snapshot before the source guard
+    existed; restored it through version 1.0.1 (auto-published — admin counts as trusted).
     Chrome extension note: after a Chrome restart two extension instances were "connected"; the stale one kept the old tab
     ids and a signed-out profile — use `list_connected_browsers` + `select_browser` (ask the owner which) before assuming
     the cookie is missing. Observed: "Continue with Google" rendered twice on the login page after a second SPA navigation.

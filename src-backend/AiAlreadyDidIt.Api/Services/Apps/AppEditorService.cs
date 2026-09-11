@@ -356,6 +356,8 @@ public sealed partial class AppEditorService(AadiDbContext db, ICurrentUser curr
     internal async Task<AppDraftDto> MapDraftAsync(App app, CancellationToken ct)
     {
         var draftVersion = app.Versions.OrderByDescending(v => v.Id).FirstOrDefault(v => v.Status is VersionStatus.Draft or VersionStatus.Rejected or VersionStatus.PendingScan or VersionStatus.PendingReview);
+        var publishedVersion = app.Versions.FirstOrDefault(v => v.Id == app.LatestVersionId && v.Status == VersionStatus.Published)
+                               ?? app.Versions.Where(v => v.Status == VersionStatus.Published).OrderByDescending(v => v.Id).FirstOrDefault();
         var readiness = draftVersion is null ? new ReadinessDto { CanSubmit = false } : await GetReadinessAsync(app, draftVersion, ct);
         var licenseOk = (await lifecycle.CheckLicenseAsync(app, ct)).Ok;
         return new AppDraftDto
@@ -376,6 +378,8 @@ public sealed partial class AppEditorService(AadiDbContext db, ICurrentUser curr
             Screenshots = app.Screenshots.OrderBy(s => s.SortOrder).Select(s => new ScreenshotDto { Id = s.Id, Url = FileUrls.Screenshot(s.StorageKey)!, ThumbUrl = FileUrls.Screenshot(s.ThumbStorageKey)!, Width = s.Width, Height = s.Height, Caption = s.Caption, SortOrder = s.SortOrder }).ToList(),
             Versions = app.Versions.OrderByDescending(v => v.Id).Select(v => CatalogService.MapVersion(app.Slug, v)).ToList(),
             DraftVersion = draftVersion is null ? null : CatalogService.MapVersion(app.Slug, draftVersion),
+            PublishedVersion = publishedVersion is null ? null : CatalogService.MapVersion(app.Slug, publishedVersion),
+            CanEditPublishedFiles = publishedVersion is not null && await CanEditPublishedFilesAsync(app, ct),
             EstGenerationTokens = app.EstGenerationTokens, EstGenerationCostUsd = app.EstGenerationCostUsd, EstIsOverride = app.EstIsOverride,
             Readiness = readiness,
             DownloadCount = app.DownloadCount, ViewCount = app.ViewCount, RatingCount = app.RatingCount, RatingAvg = app.RatingAvg,
@@ -408,10 +412,33 @@ public sealed partial class AppEditorService(AadiDbContext db, ICurrentUser curr
         catch (Exception ex) { logger.LogWarning(ex, "Could not delete {Key}", file.StorageKey); }
     }
 
-    private static AppVersion RequireEditableVersion(App app, int versionId)
+    /// <summary>Draft / rejected versions are always editable; a published one only by an admin or a trusted uploader (see <see cref="CanEditPublishedFilesAsync"/>).</summary>
+    private async Task<AppVersion> RequireEditableVersionAsync(App app, int versionId, CancellationToken ct)
+    {
+        var version = app.Versions.FirstOrDefault(v => v.Id == versionId) ?? throw ApiException.NotFound("Version not found.");
+        if (version.Status is VersionStatus.Draft or VersionStatus.Rejected) return version;
+        if (version.Status == VersionStatus.Published && await CanEditPublishedFilesAsync(app, ct)) return version;
+        throw ApiException.Unprocessable(version.Status == VersionStatus.Published
+            ? "This version is published. Create a new version to change its files."
+            : "Only draft versions can be changed. Create a new version instead.");
+    }
+
+    /// <summary>Only draft / rejected versions — used where a published version must never be touched (delete, submit).</summary>
+    private static AppVersion RequireDraftVersion(App app, int versionId)
     {
         var version = app.Versions.FirstOrDefault(v => v.Id == versionId) ?? throw ApiException.NotFound("Version not found.");
         if (version.Status is not (VersionStatus.Draft or VersionStatus.Rejected)) throw ApiException.Unprocessable("Only draft versions can be changed. Create a new version instead.");
         return version;
+    }
+
+    /// <summary>
+    /// Admins and trusted uploaders (trust level ≥ 1, the same people who publish new versions without review) may add or remove
+    /// install files of a published version, e.g. to add a missing .AppImage. New files are scanned before they can be downloaded.
+    /// </summary>
+    internal async Task<bool> CanEditPublishedFilesAsync(App app, CancellationToken ct)
+    {
+        if (currentUser.IsAdmin) return true;
+        if (app.UploaderUserId != currentUser.Id) return false;
+        return await db.Users.Where(u => u.Id == app.UploaderUserId).Select(u => u.TrustLevel).FirstOrDefaultAsync(ct) >= 1;
     }
 }

@@ -115,6 +115,10 @@ export interface AppDraft {
   screenshots: ScreenshotDto[]
   versions: AppVersionDto[]
   draftVersion: AppVersionDto | null
+  /** The live version — shown in the files step when there is no draft version. */
+  publishedVersion: AppVersionDto | null
+  /** Admin or trusted uploader: may add / remove install files of the published version. */
+  canEditPublishedFiles: boolean
   estGenerationTokens: number
   estGenerationCostUsd: number
   estIsOverride: boolean

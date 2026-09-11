@@ -70,6 +70,8 @@ export default {
   dupe_continue: 'Trotzdem fortfahren',
   files_intro: 'Goldene Regel 2: Jede angegebene Plattform braucht eine startbereite Installationsdatei — .exe / .msi, .deb / .rpm / .AppImage, .dmg, .apk, eine Docker-Image-Referenz oder ein Web-Bundle.',
   files_rule_hint: 'Dateien werden vor der Veröffentlichung mit ClamAV gescannt. Pro Plattform sind mehrere Dateien möglich (z. B. .deb und .AppImage für Linux); eine Datei mit demselben Namen ersetzt die vorhandene.',
+  files_published_editable: 'Sie bearbeiten die veröffentlichte Version {version}. Neue Dateien sind nach dem Virenscan herunterladbar; Löschungen gelten sofort.',
+  files_published_locked: 'Version {version} ist veröffentlicht. Um ihre Dateien zu ändern, legen Sie im Schritt Prüfung eine neue Version an.',
   version_info: 'Version',
   release_date: 'Veröffentlichungsdatum',
   changelog: 'Changelog',

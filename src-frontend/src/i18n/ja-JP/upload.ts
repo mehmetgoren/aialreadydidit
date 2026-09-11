@@ -70,6 +70,8 @@ export default {
   dupe_continue: 'そのまま続ける',
   files_intro: '黄金律2: 宣言する各プラットフォームにはすぐ実行できるインストールファイルが必要です — .exe / .msi、.deb / .rpm / .AppImage、.dmg、.apk、Dockerイメージ参照、またはウェブバンドル。',
   files_rule_hint: 'ファイルは公開前にClamAVでスキャンされます。1 つのプラットフォームに複数のファイルを追加できます（例：Linux 用の .deb と .AppImage）。同じ名前のファイルをアップロードすると置き換えられます。',
+  files_published_editable: '公開中のバージョン {version} を編集しています。新しいファイルはウイルススキャン後にダウンロード可能になり、削除はすぐに反映されます。',
+  files_published_locked: 'バージョン {version} は公開済みです。ファイルを変更するには、確認ステップで新しいバージョンを作成してください。',
   version_info: 'バージョン',
   release_date: 'リリース日',
   changelog: '変更履歴',
