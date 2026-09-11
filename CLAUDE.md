@@ -469,20 +469,32 @@ the migration was regenerated after the build.
     within a minute), 17:00 UTC social one-liner linking the HN thread; **Sunday 2026-09-13 16:00 UTC r/ClaudeAI** (flair
     "Built with Claude", fold in the HN thread's questions — owner chose a 24 h gap), then one subreddit per day from Monday
     (r/opensource, r/SideProject, r/vibecoding, r/coolgithubprojects). Claude watches the threads from the owner's tab and drafts replies; the owner posts them.
+    Before Saturday the owner looks for 4 more apps (Windows / web). Screenshots of Audio Format Selector were captured on the
+    owner's desktop (`~/Pictures/audio-format-selector-{1,2,3}.png`: dialog, format dropdown, device dropdown — dropdowns are
+    composites of the dialog + popup X windows via GdkX11 foreign windows + python-Xlib XTest clicks; scratchpad
+    `dropdown3.py`) for the owner to upload to the production app. Shot 3 shows the owner's real device names.
     Chrome extension note: after a Chrome restart two extension instances were "connected"; the stale one kept the old tab
     ids and a signed-out profile — use `list_connected_browsers` + `select_browser` (ask the owner which) before assuming
     the cookie is missing. Observed: "Continue with Google" rendered twice on the login page after a second SPA navigation.
 
-## 12. Where things stand (2026-09-08)
+## 12. Where things stand (2026-09-12)
 
 - Production live at https://aialreadydidit.com (Lightsail Frankfurt, 18.195.74.135): 2 featured apps, health 8/8,
   admin password was changed by the owner after first sign-in (initial one is burned — it was shown in chat).
 - Code on GitHub: https://github.com/mehmetgoren/aialreadydidit (`main`), everything committed and pushed. Deployed 2026-09-08
   (CSP + installer sniffing): headers live, health 200, headless-Chrome crawl of 7 production pages → zero CSP violations.
 - Redeploy: `SSH_KEY=~/.ssh/LightsailDefaultKey-eu-central-1.pem deploy/deploy.sh` from the project root.
-- Production content (2026-09-08): 5 published apps — CPU-Z, HWMonitor, Audio Format Selector (all admin), Mint Paint
-  (admin), AdBlock (member `hakanss`); drafts `paint` (5) and `cpuz-linux-1-0-0-source` (1). Google sign-in live.
-- Next session candidates: (1) ~~SMTP~~ done 2026-09-11; (2) grow the catalogue to 20–30
+- Production content (2026-09-12): 16 published apps (all Linux, all MIT, all Claude-built; 2 uploaders), 2 drafts,
+  4 members, 5 wanted requests, 0 ratings. Google sign-in live; Brevo SMTP live with authenticated domain (2026-09-11).
+- Deployed on 2026-09-11: review-page latency fix, conservative savings counter (`SavingsRealism` migration), scrollable admin
+  sidebar, several install files per platform, editable install files on published versions (admin / trusted).
+- **Launch**: Show HN Saturday 2026-09-12 16:00 UTC, r/ClaudeAI Sunday 16:00 UTC, one subreddit a day after (see log 29).
+  Copy-ready texts: `docs/launch/posts.md` and the "Launch Kit" artifact. Owner posts from own accounts; Claude fills forms
+  in the owner's signed-in Chrome tab (Claude tab group) and drafts replies.
+- Next session (Saturday): at 15:45 UTC the owner signs in to HN in the Claude tab group and says "go" → open
+  news.ycombinator.com/submit, fill title + URL from the kit, owner submits, paste the maker comment, then watch the thread.
+  Before that, if time: upload the 3 Audio Format Selector screenshots, import the owner's 4 new apps, a few ratings.
+- Older candidates: (1) ~~SMTP~~ done 2026-09-11; (2) grow the catalogue to 20–30
   apps before announcing; (3) owner reviews `docs/launch/posts.md`, then post (Show HN first); (4) owner confirms the test mail
   is in the Gmail inbox (not spam) and shows "signed by aialreadydidit.com"; (5) duplicated Google button on /login after SPA re-navigation; (6) Markdown
   editor for changelog fields if wanted; (7) tell uploaders in the wizard the capped value that will be used.
