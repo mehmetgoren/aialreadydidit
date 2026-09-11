@@ -60,7 +60,7 @@ export default {
   prompt_text_hint: 'Prompt metni…',
   add_prompt: 'Başka prompt ekle',
   cost_title: 'Üretim maliyeti',
-  cost_hint: 'Bu uygulamayı üretmenin kaç token tuttuğunu kaynak boyutundan tahmin ederiz. Oturumunuzdaki gerçek sayıları biliyorsanız girin.',
+  cost_hint: 'Bu uygulamayı üretmenin kaç token tuttuğunu kaynak boyutundan tahmin ediyoruz. Oturumunuzdaki gerçek toplamı biliyorsanız girin. Ajan oturum toplamları önbellek okumalarını da içerir; bu yüzden mağaza en fazla boyut tahmininin beş katını sayar.',
   cost_override: 'Gerçek token sayısını biliyorum',
   save_and_next: 'Kaydet & ileri',
   dupe_title: 'Bu, “{name}” ile ~%{pct} benzer görünüyor',

@@ -59,7 +59,7 @@ function onClick(item: MenuItem) {
 <style scoped>
 .left-menu {
   border-right: none;
-  height: 100%;
+  min-height: 100%;
 }
 .left-menu:not(.el-menu--collapse) {
   width: 220px;

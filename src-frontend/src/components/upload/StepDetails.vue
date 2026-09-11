@@ -38,7 +38,6 @@ const form = reactive({
   prompts: props.draft.prompts.length ? props.draft.prompts.map((p) => ({ title: p.title, promptText: p.promptText })) : ([{ title: 'Prompt 1', promptText: '' }] as PromptInput[]),
   estOverride: props.draft.estIsOverride,
   estTokens: props.draft.estIsOverride ? props.draft.estGenerationTokens : null as number | null,
-  estCost: props.draft.estIsOverride ? props.draft.estGenerationCostUsd : null as number | null,
 })
 const errors = ref<Record<string, string>>({})
 const saving = ref(false)
@@ -126,7 +125,7 @@ async function save(next: boolean) {
         derivationKind: form.derivedFromAppId ? form.derivationKind : null,
         prompts: form.prompts.filter((p) => p.promptText.trim()),
         estGenerationTokens: form.estOverride ? form.estTokens : 0,
-        estGenerationCostUsd: form.estOverride ? form.estCost : null,
+        estGenerationCostUsd: null, // always derived from the (capped) tokens on the server
       })
       emit('updated', d)
       notifyS(t('saved'))
@@ -227,7 +226,6 @@ async function save(next: boolean) {
     <ElCheckbox v-model="form.estOverride">{{ t('cost_override') }}</ElCheckbox>
     <div v-if="form.estOverride" class="cat-row" style="margin-top: 8px; max-width: 480px">
       <ElInputNumber v-model="form.estTokens" :min="0" :step="1000" :placeholder="t('tokens')" style="flex: 1" />
-      <ElInputNumber v-model="form.estCost" :min="0" :step="0.5" :precision="2" placeholder="USD" style="flex: 1" />
     </div>
 
     <div class="step__nav">

@@ -152,7 +152,7 @@ public sealed class CatalogService(AadiDbContext db, CategoryIndexService catego
         var derivatives = await db.Apps.AsNoTracking().Where(a => a.DerivedFromAppId == app.Id && a.Status == AppStatus.Published)
             .Select(a => new LineageNodeDto { Id = a.Id, Slug = a.Slug, Name = a.Name, IconUrl = a.IconStorageKey == null ? null : "/files/icons/" + a.IconStorageKey, DerivationKind = a.DerivationKind })
             .ToListAsync(ct);
-        var savedTokens = app.EstGenerationTokens * app.DownloadCount;
+        var savedTokens = (await settings.SavingsAsync(ct)).Saved(app.EstGenerationTokens, app.DownloadCount);
 
         return new AppDetailDto
         {

@@ -33,7 +33,7 @@ async function maintenance(task: string) {
     <template #actions>
       <ElDropdown trigger="click" @command="maintenance">
         <ElButton>{{ t('adm_maintenance') }} <ElIcon><ArrowDown /></ElIcon></ElButton>
-        <template #dropdown><ElDropdownMenu><ElDropdownItem command="reembed_all">{{ t('adm_reembed_all') }}</ElDropdownItem><ElDropdownItem command="recompute_stats">{{ t('adm_recompute_stats') }}</ElDropdownItem><ElDropdownItem command="rescan_pending">{{ t('adm_rescan_pending') }}</ElDropdownItem><ElDropdownItem command="purge_done_jobs">{{ t('adm_purge_done') }}</ElDropdownItem></ElDropdownMenu></template>
+        <template #dropdown><ElDropdownMenu><ElDropdownItem command="reembed_all">{{ t('adm_reembed_all') }}</ElDropdownItem><ElDropdownItem command="recompute_stats">{{ t('adm_recompute_stats') }}</ElDropdownItem><ElDropdownItem command="recompute_estimates">{{ t('adm_recompute_estimates') }}</ElDropdownItem><ElDropdownItem command="rescan_pending">{{ t('adm_rescan_pending') }}</ElDropdownItem><ElDropdownItem command="purge_done_jobs">{{ t('adm_purge_done') }}</ElDropdownItem></ElDropdownMenu></template>
       </ElDropdown>
     </template>
     <AdminDataTable ref="tableRef" :fetch="fetchPage" :params="params" :search-placeholder="t('adm_job_type_or_subject')">

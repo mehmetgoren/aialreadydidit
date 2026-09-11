@@ -64,7 +64,7 @@ async function onCommand(cmd: string) {
         <ElIcon :size="22"><Setting /></ElIcon>
         <span v-show="!collapsed">{{ t('admin_panel') }}</span>
       </div>
-      <LeftMenu :items="menu" :collapsed="collapsed" />
+      <div class="admin__menu"><LeftMenu :items="menu" :collapsed="collapsed" /></div>
     </ElAside>
     <ElContainer>
       <ElHeader class="admin__header">
@@ -105,10 +105,19 @@ async function onCommand(cmd: string) {
 .admin {
   height: 100%;
   &__aside {
+    display: flex;
+    flex-direction: column;
     background: var(--gm-card-bg);
     border-right: 1px solid var(--gm-border);
     transition: width 0.2s;
-    overflow: hidden;
+    overflow: hidden; // the brand row stays put; only the menu below scrolls
+  }
+  &__menu {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+    scrollbar-width: thin;
   }
   &__brand {
     display: flex;

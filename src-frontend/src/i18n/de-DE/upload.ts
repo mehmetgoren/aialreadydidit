@@ -60,7 +60,7 @@ export default {
   prompt_text_hint: 'Der Prompt-Text…',
   add_prompt: 'Weiteren Prompt hinzufügen',
   cost_title: 'Generierungskosten',
-  cost_hint: 'Wir schätzen die Token, die zur Generierung dieser App nötig waren, anhand der Größe des Quellcodes. Wenn Sie die echten Zahlen aus Ihrer Sitzung kennen, geben Sie sie ein.',
+  cost_hint: 'Wir schätzen die für diese App verbrauchten Tokens aus der Größe des Quellcodes. Wenn Sie die echte Summe Ihrer Sitzung kennen, tragen Sie sie ein. Sitzungssummen von Agenten enthalten Cache-Lesevorgänge, daher zählt der Store höchstens das Fünffache der Größenschätzung.',
   cost_override: 'Ich kenne die tatsächliche Token-Anzahl',
   save_and_next: 'Speichern & weiter',
   dupe_title: 'Das sieht zu ~{pct}% ähnlich aus wie „{name}“',

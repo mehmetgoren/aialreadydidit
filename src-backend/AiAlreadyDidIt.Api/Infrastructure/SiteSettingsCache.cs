@@ -46,15 +46,38 @@ public sealed class SiteSettingsCache(IServiceScopeFactory scopeFactory, IMemory
     public async Task<SavingsCoefficients> SavingsAsync(CancellationToken ct = default) => new(
         await GetDecimalAsync(SettingKeys.TokensPerLine, 12, ct),
         await GetDecimalAsync(SettingKeys.IterationFactor, 3, ct),
-        await GetDecimalAsync(SettingKeys.PricePerMillionTokens, 15, ct),
-        await GetDecimalAsync(SettingKeys.KwhPerMillionTokens, 0.4m, ct),
+        await GetDecimalAsync(SettingKeys.PricePerMillionTokens, 6, ct),
+        await GetDecimalAsync(SettingKeys.KwhPerMillionTokens, 0.3m, ct),
         await GetDecimalAsync(SettingKeys.Co2GramsPerKwh, 400, ct),
-        await GetIntAsync(SettingKeys.SavingsBaseTokens, 0, ct));
+        await GetIntAsync(SettingKeys.SavingsBaseTokens, 0, ct),
+        await GetDecimalAsync(SettingKeys.OverrideCapFactor, 5, ct),
+        await GetDecimalAsync(SettingKeys.ReuseShare, 0.5m, ct));
 }
 
-public sealed record SavingsCoefficients(decimal TokensPerLine, decimal IterationFactor, decimal PricePerMillionTokens, decimal KwhPerMillionTokens, decimal Co2GramsPerKwh, long BaseTokens)
+/// <summary>
+/// Coefficients of the savings counter. Deliberately conservative: uploader-supplied token totals are capped at
+/// <see cref="OverrideCapFactor"/> × the size heuristic (agent session totals include cheap cache reads), and only
+/// <see cref="ReuseShare"/> of the downloads are assumed to have replaced a fresh generation.
+/// </summary>
+public sealed record SavingsCoefficients(decimal TokensPerLine, decimal IterationFactor, decimal PricePerMillionTokens, decimal KwhPerMillionTokens, decimal Co2GramsPerKwh, long BaseTokens,
+    decimal OverrideCapFactor = 5, decimal ReuseShare = 0.5m)
 {
+    /// <summary>Smallest source size the cap is computed from, so a tiny script cannot claim zero-based nonsense either way.</summary>
+    public const int MinLinesForCap = 200;
+
     public long EstimateTokens(int lineCount) => (long)Math.Round(lineCount * TokensPerLine * IterationFactor);
+
+    /// <summary>Tokens the counter uses for an uploader-supplied total: never more than the heuristic × <see cref="OverrideCapFactor"/>.</summary>
+    public long CapOverride(long claimedTokens, int lineCount)
+    {
+        if (claimedTokens <= 0) return 0;
+        var ceiling = (long)Math.Round(EstimateTokens(Math.Max(lineCount, MinLinesForCap)) * Math.Max(OverrideCapFactor, 1));
+        return Math.Min(claimedTokens, ceiling);
+    }
+
+    /// <summary>Tokens saved by <paramref name="downloads"/> downloads of an app that costs <paramref name="tokensPerGeneration"/> to generate.</summary>
+    public long Saved(long tokensPerGeneration, long downloads) => (long)Math.Round(tokensPerGeneration * downloads * Math.Clamp(ReuseShare, 0, 1));
+
     public decimal Cost(long tokens) => Math.Round(tokens / 1_000_000m * PricePerMillionTokens, 4);
     public decimal Kwh(long tokens) => Math.Round(tokens / 1_000_000m * KwhPerMillionTokens, 4);
     public decimal Co2Kg(long tokens) => Math.Round(Kwh(tokens) * Co2GramsPerKwh / 1000m, 4);

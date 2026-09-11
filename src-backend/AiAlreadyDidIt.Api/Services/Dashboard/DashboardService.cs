@@ -19,8 +19,8 @@ public sealed class DashboardService(AadiDbContext db, ICurrentUser currentUser,
     public async Task<DashboardOverviewDto> OverviewAsync(CancellationToken ct)
     {
         var apps = await db.Apps.AsNoTracking().Where(a => a.UploaderUserId == Uid && a.Status != AppStatus.Removed).Select(a => new { a.Status, a.DownloadCount, a.EstGenerationTokens }).ToListAsync(ct);
-        var tokens = apps.Where(a => a.Status == AppStatus.Published).Sum(a => a.EstGenerationTokens * a.DownloadCount);
         var c = await settings.SavingsAsync(ct);
+        var tokens = apps.Where(a => a.Status == AppStatus.Published).Sum(a => c.Saved(a.EstGenerationTokens, a.DownloadCount));
         return new DashboardOverviewDto
         {
             AppCount = apps.Count,

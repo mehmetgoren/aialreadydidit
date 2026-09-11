@@ -126,14 +126,9 @@ public sealed partial class AppEditorService(AadiDbContext db, ICurrentUser curr
         }
         if (r.EstGenerationTokens is { } tokens)
         {
-            if (tokens <= 0) { app.EstIsOverride = false; }
-            else
-            {
-                var c = await settings.SavingsAsync(ct);
-                app.EstIsOverride = true;
-                app.EstGenerationTokens = tokens;
-                app.EstGenerationCostUsd = r.EstGenerationCostUsd is { } cost && cost > 0 ? cost : c.Cost(tokens);
-            }
+            // The claimed total is kept as-is; RefreshEstimateAsync stores the capped value the counter uses (cost is always derived).
+            if (tokens <= 0) { app.EstIsOverride = false; app.EstClaimedTokens = null; }
+            else { app.EstIsOverride = true; app.EstClaimedTokens = tokens; }
             await lifecycle.RefreshEstimateAsync(app, ct);
         }
         bag.ThrowIfAny();
@@ -324,7 +319,7 @@ public sealed partial class AppEditorService(AadiDbContext db, ICurrentUser curr
             .GroupBy(c => c ?? "source").Select(g => new { Key = g.Key, Count = g.Count() }).ToListAsync(ct);
         var bySource = await db.Downloads.AsNoTracking().Where(d => d.AppId == id).GroupBy(d => d.Source).Select(g => new { g.Key, Count = g.Count() }).ToListAsync(ct);
         var c = await settings.SavingsAsync(ct);
-        var saved = app.EstGenerationTokens * app.DownloadCount;
+        var saved = c.Saved(app.EstGenerationTokens, app.DownloadCount);
         return new MyAppStatsDto
         {
             AppId = id,

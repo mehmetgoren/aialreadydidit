@@ -316,6 +316,10 @@ public class SavingsDto
     public decimal KwhSaved { get; set; }
     public decimal Co2SavedKg { get; set; }
     public long TotalDownloads { get; set; }
+    /// <summary>Distinct (user, IP) downloaders summed over apps — what the counter actually multiplies.</summary>
+    public long UniqueDownloads { get; set; }
+    /// <summary>Share of downloads assumed to replace a fresh generation (admin setting).</summary>
+    public decimal ReuseShare { get; set; }
     public int PublishedApps { get; set; }
     public DateTime ComputedAt { get; set; }
 }

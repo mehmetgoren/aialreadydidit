@@ -60,7 +60,7 @@ export default {
   prompt_text_hint: 'El texto del prompt…',
   add_prompt: 'Añadir otro prompt',
   cost_title: 'Coste de generación',
-  cost_hint: 'Estimamos los tokens que costó generar esta aplicación a partir del tamaño del código fuente. Si conoces las cifras reales de tu sesión, introdúcelas.',
+  cost_hint: 'Estimamos los tokens que costó generar esta aplicación a partir del tamaño del código. Si conoces el total real de tu sesión, introdúcelo. Los totales de sesión de los agentes incluyen lecturas de caché, así que la tienda cuenta como máximo cinco veces la estimación por tamaño.',
   cost_override: 'Conozco el número real de tokens',
   save_and_next: 'Guardar y continuar',
   dupe_title: 'Esto se parece un ~{pct}% a “{name}”',

@@ -260,6 +260,10 @@ export interface SavingsDto {
   kwhSaved: number
   co2SavedKg: number
   totalDownloads: number
+  /** Distinct (user, IP) downloaders summed over apps — what the counter multiplies. */
+  uniqueDownloads: number
+  /** Share of downloads assumed to replace a fresh generation (admin setting, 0–1). */
+  reuseShare: number
   publishedApps: number
   computedAt: string
 }

@@ -60,7 +60,7 @@ export default {
   prompt_text_hint: '提示词内容…',
   add_prompt: '添加另一条提示词',
   cost_title: '生成成本',
-  cost_hint: '我们会根据源代码大小估算生成此应用所需的 token 数。如果您知道会话中的真实数据，请填写。',
+  cost_hint: '我们根据源代码体量估算生成此应用所用的 token。如果你知道会话中的真实总量，请填写。智能体会话总量包含缓存读取，因此商店最多按体量估算的五倍计入。',
   cost_override: '我知道真实的 token 数量',
   save_and_next: '保存并继续',
   dupe_title: '这看起来与 “{name}” 约有 {pct}% 相似',

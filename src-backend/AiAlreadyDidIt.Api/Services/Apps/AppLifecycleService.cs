@@ -29,9 +29,10 @@ public sealed class AppLifecycleService(AadiDbContext db, CategoryIndexService c
     /// <summary>Recomputes the heuristic token / cost estimate unless the uploader supplied real numbers.</summary>
     public async Task RefreshEstimateAsync(App app, CancellationToken ct)
     {
-        if (app.EstIsOverride) return;
         var c = await settings.SavingsAsync(ct);
-        app.EstGenerationTokens = c.EstimateTokens(app.SourceLineCount);
+        app.EstGenerationTokens = app.EstIsOverride && app.EstClaimedTokens is { } claimed
+            ? c.CapOverride(claimed, app.SourceLineCount)
+            : c.EstimateTokens(app.SourceLineCount);
         app.EstGenerationCostUsd = c.Cost(app.EstGenerationTokens);
     }
 

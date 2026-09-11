@@ -24,7 +24,7 @@ namespace AiAlreadyDidIt.Api.Services.Admin;
 public sealed class AdminSystemService(AadiDbContext db, ICurrentUser currentUser, SavingsService savings, SiteSettingsCache settings, AuditService audit, JobQueue jobs,
     IObjectStorage storage, IVirusScanner scanner, ILlmProviderFactory providers, IOptions<AiOptions> ai, IOptions<StorageOptions> storageOptions, IOptions<ClamAvOptions> clam,
     IOptions<SiteOptions> site, IOptions<RateLimitingOptions> rateLimits, IHostEnvironment env, IMemoryCache cache, AdminModerationService moderation, AdminReportsService reports,
-    IOptions<EmailOptions> email, IEmailSender emailSender)
+    IOptions<EmailOptions> email, IEmailSender emailSender, Services.Apps.AppLifecycleService lifecycle)
 {
     private static readonly DateTime StartedAt = DateTime.UtcNow;
 
@@ -136,9 +136,10 @@ public sealed class AdminSystemService(AadiDbContext db, ICurrentUser currentUse
         var since = Clock.Now.AddDays(-30).Date;
         var daily = await db.Downloads.AsNoTracking().Where(d => d.CreatedAt >= since).Join(db.Apps, d => d.AppId, a => a.Id, (d, a) => new { d.CreatedAt.Date, a.EstGenerationTokens })
             .GroupBy(x => x.Date).Select(g => new { g.Key, Tokens = g.Sum(x => x.EstGenerationTokens) }).ToListAsync(ct);
+        daily = daily.Select(d => new { d.Key, Tokens = c.Saved(d.Tokens, 1) }).ToList();
         var apps = await db.Apps.AsNoTracking().Where(a => a.Status == AppStatus.Published).OrderByDescending(a => a.EstGenerationTokens * (long)a.DownloadCount).Take(20)
             .Select(a => new AppSavingsDto { AppId = a.Id, Slug = a.Slug, Name = a.Name, Downloads = a.DownloadCount, TokensPerDownload = a.EstGenerationTokens, TokensSaved = a.EstGenerationTokens * a.DownloadCount, IsOverride = a.EstIsOverride }).ToListAsync(ct);
-        foreach (var a in apps) a.CostSavedUsd = c.Cost(a.TokensSaved);
+        foreach (var a in apps) { a.TokensSaved = c.Saved(a.TokensPerDownload, a.Downloads); a.CostSavedUsd = c.Cost(a.TokensSaved); }
         return new SavingsBreakdownDto
         {
             Totals = await savings.GetAsync(ct),
@@ -217,6 +218,11 @@ public sealed class AdminSystemService(AadiDbContext db, ICurrentUser currentUse
             case "recompute_stats": jobs.Enqueue(JobTypes.RecomputeStats, new { AppId = 0 }, "maintenance"); foreach (var id in await db.Apps.Select(a => a.Id).ToListAsync(ct)) jobs.Enqueue(JobTypes.RecomputeStats, new { AppId = id }, $"app:{id}"); break;
             case "rescan_pending":
                 foreach (var v in await db.AppVersions.Where(v => v.Status == VersionStatus.PendingScan).Select(v => new { v.Id, v.AppId }).ToListAsync(ct)) jobs.Enqueue(JobTypes.ScanVersion, new { v.AppId, VersionId = v.Id }, $"version:{v.Id}");
+                break;
+            case "recompute_estimates":
+                // Re-applies the current savings coefficients (heuristic, override cap) to every app and refreshes the counter.
+                foreach (var app in await db.Apps.Where(a => a.Status != AppStatus.Removed).ToListAsync(ct)) await lifecycle.RefreshEstimateAsync(app, ct);
+                savings.Invalidate();
                 break;
             case "purge_done_jobs": await db.BackgroundJobs.Where(j => j.Status == JobStatus.Done && j.FinishedAt < Clock.Now.AddDays(-7)).ExecuteDeleteAsync(ct); break;
             default: throw ApiException.BadRequest("Unknown maintenance task.");

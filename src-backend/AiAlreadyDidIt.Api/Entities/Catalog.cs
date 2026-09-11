@@ -79,6 +79,8 @@ public class App
     public decimal EstGenerationCostUsd { get; set; }
     /// <summary>The uploader entered real numbers from their session instead of the heuristic.</summary>
     public bool EstIsOverride { get; set; }
+    /// <summary>What the uploader claimed the generation cost; <see cref="EstGenerationTokens"/> holds the capped value used by the counter.</summary>
+    public long? EstClaimedTokens { get; set; }
     public int SourceLineCount { get; set; }
     public int SourceFileCount { get; set; }
     public long SourceBytes { get; set; }

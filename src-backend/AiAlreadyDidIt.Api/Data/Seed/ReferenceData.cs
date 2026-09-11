@@ -343,10 +343,12 @@ public static class ReferenceData
         new(SettingKeys.SearchMinSimilarity, "0.45", "search", "decimal", "Semantic results below this cosine similarity are dropped (bge-m3: unrelated text scores ~0.35)."),
         new(SettingKeys.TokensPerLine, "12", "savings", "decimal", "Estimated tokens an LLM emits per source line (heuristic)."),
         new(SettingKeys.IterationFactor, "3", "savings", "decimal", "Multiplier for the back-and-forth (planning, fixes, re-reads) around the final code."),
-        new(SettingKeys.PricePerMillionTokens, "15", "savings", "decimal", "Blended USD price per million tokens used for the savings counter."),
-        new(SettingKeys.KwhPerMillionTokens, "0.4", "savings", "decimal", "Estimated kWh per million generated tokens."),
+        new(SettingKeys.PricePerMillionTokens, "6", "savings", "decimal", "Blended USD price per million tokens used for the savings counter (agent sessions are mostly cheap cached input)."),
+        new(SettingKeys.KwhPerMillionTokens, "0.3", "savings", "decimal", "Estimated kWh per million generated tokens."),
         new(SettingKeys.Co2GramsPerKwh, "400", "savings", "decimal", "Grid CO₂ intensity (g/kWh) used for the savings counter."),
         new(SettingKeys.SavingsBaseTokens, "0", "savings", "int", "Tokens saved before this store existed (added to the counter)."),
+        new(SettingKeys.OverrideCapFactor, "5", "savings", "decimal", "Uploader-supplied token totals count at most this × the size heuristic (session totals include cache reads)."),
+        new(SettingKeys.ReuseShare, "0.5", "savings", "decimal", "Share of downloads assumed to have replaced a fresh generation (0–1)."),
         new(SettingKeys.HomeFeaturedCount, "8", "content", "int", "Featured apps shown on the home page."),
         new(SettingKeys.HomeTrendingDays, "7", "content", "int", "Window (days) for the trending list."),
         new(SettingKeys.SeoDefaultDescription, "A free repository of applications written by LLMs. Search before you generate — someone (or some model) may already have built it.", "seo", "text", "Default meta description."),
@@ -378,6 +380,8 @@ public static class SettingKeys
     public const string KwhPerMillionTokens = "savings.kwh_per_million_tokens";
     public const string Co2GramsPerKwh = "savings.co2_grams_per_kwh";
     public const string SavingsBaseTokens = "savings.base_tokens";
+    public const string OverrideCapFactor = "savings.override_cap_factor";
+    public const string ReuseShare = "savings.reuse_share";
     public const string HomeFeaturedCount = "content.home_featured_count";
     public const string HomeTrendingDays = "content.home_trending_days";
     public const string SeoDefaultDescription = "seo.default_description";

@@ -422,6 +422,23 @@ the migration was regenerated after the build.
     optional IP allowlist, not key activation. Extension quirks: `navigate` to a domain the owner did not grant for that tab
     fails with "Navigation to this domain is not allowed" — create a fresh tab instead; Cloudflare's Add-record dialog shifts
     down when the preview sentence wraps, so re-screenshot before clicking the proxy toggle.
+26. Owner (2026-09-11): (1) admin left panel had no scrollbar — `.admin__aside` was `overflow: hidden` with the menu taller than
+    the viewport; the aside is now a flex column with a scrollable `.admin__menu` wrapper (brand row fixed), `LeftMenu`
+    `min-height: 100%`. (2) Savings counter "too optimistic": the 728 M tokens on production came almost entirely from
+    uploader-typed totals (`est_is_override`) — Mint Paint alone claimed 151 531 580 tokens (a Claude Code session total incl.
+    cache reads) × 4 downloads ≈ 606 M; the size heuristic (36 tokens/line) was already modest. Changes ("savings realism"):
+    new `apps.est_claimed_tokens` keeps the claim, `est_generation_tokens` holds the value the counter uses =
+    `min(claim, heuristic(max(lines,200)) × savings.override_cap_factor)` (default 5); cost is always derived (wizard USD input
+    removed); the counter multiplies **distinct (user, IP) downloaders** per app (not raw downloads) by `savings.reuse_share`
+    (default 0.5 — half of the downloads assumed to replace a generation); defaults `price_per_million_tokens` 15 → 6 and
+    `kwh_per_million_tokens` 0.4 → 0.3 (migration `SavingsRealism` moves them only if still at the old default, caps existing
+    overrides and recomputes every cost); per-app "saved so far", dashboard and admin stats use the same `Saved()`; new
+    maintenance task `recompute_estimates` (Admin › Jobs) re-applies the coefficients to all apps. `SavingsDto` gained
+    `uniqueDownloads` + `reuseShare`; copy updated in 11 locales (`savings_hint`, `about_how_counter_text`, `adm_formula`,
+    `cost_hint`, new `adm_recompute_estimates`). Verified locally: migration applied, claim 151 531 580 on a 4 147-line app →
+    746 460 stored, counter 301 698 tokens from 5 unique of 8 downloads. Tests: backend 183, frontend 116. Headless
+    verification trick: `scratchpad/cdp-shot.mjs` (Node 24 built-in WebSocket + CDP) signs in through the API and writes
+    `localStorage.aadi_user` the way the SPA does, then screenshots any admin page — no Playwright needed.
     Chrome extension note: after a Chrome restart two extension instances were "connected"; the stale one kept the old tab
     ids and a signed-out profile — use `list_connected_browsers` + `select_browser` (ask the owner which) before assuming
     the cookie is missing. Observed: "Continue with Google" rendered twice on the login page after a second SPA navigation.
@@ -438,6 +455,6 @@ the migration was regenerated after the build.
 - Next session candidates: (1) ~~SMTP~~ done 2026-09-11; (2) grow the catalogue to 20–30
   apps before announcing; (3) owner reviews `docs/launch/posts.md`, then post (Show HN first); (4) owner confirms the test mail
   is in the Gmail inbox (not spam) and shows "signed by aialreadydidit.com"; (5) duplicated Google button on /login after SPA re-navigation; (6) Markdown
-  editor for changelog fields if wanted.
+  editor for changelog fields if wanted; (7) tell uploaders in the wizard the capped value that will be used.
 - Open: native-speaker review of the 9 LLM translations, per-language category names, GitHub repo topics/homepage/
   secret scanning (owner to click), the owner's stray production draft `cpuz-linux-1-0-0-source` (id 1).

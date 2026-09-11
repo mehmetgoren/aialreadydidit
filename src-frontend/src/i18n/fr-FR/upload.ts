@@ -60,7 +60,7 @@ export default {
   prompt_text_hint: 'Le texte du prompt…',
   add_prompt: 'Ajouter un autre prompt',
   cost_title: 'Coût de génération',
-  cost_hint: 'Nous estimons les tokens nécessaires à la génération de cette application à partir de la taille de la source. Si vous connaissez les chiffres réels de votre session, saisissez-les.',
+  cost_hint: 'Nous estimons les tokens nécessaires à la génération de cette application d\'après la taille du code source. Si vous connaissez le total réel de votre session, saisissez-le. Les totaux de session des agents incluent les lectures de cache : la boutique compte donc au plus cinq fois l\'estimation par taille.',
   cost_override: 'Je connais le nombre réel de tokens',
   save_and_next: 'Enregistrer et continuer',
   dupe_title: 'Cela ressemble à ~{pct} % à « {name} »',

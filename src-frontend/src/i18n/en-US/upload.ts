@@ -60,7 +60,7 @@ export default {
   prompt_text_hint: 'The prompt text…',
   add_prompt: 'Add another prompt',
   cost_title: 'Generation cost',
-  cost_hint: 'We estimate the tokens it took to generate this app from the source size. If you know the real numbers from your session, enter them.',
+  cost_hint: 'We estimate the tokens it took to generate this app from the source size. If you know the real total from your session, enter it. Agent session totals include cache reads, so the store counts at most five times the size estimate.',
   cost_override: 'I know the real token count',
   save_and_next: 'Save & next',
   dupe_title: 'This looks ~{pct}% similar to “{name}”',
