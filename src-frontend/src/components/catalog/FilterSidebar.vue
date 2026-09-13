@@ -1,10 +1,10 @@
 <script setup lang="ts">
+import PlatformIcon from '@/components/common/PlatformIcon.vue'
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useCategoryStore, useCategoryName } from '@/stores/category-store'
 import { useSiteStore } from '@/stores/site-store'
 import type { AppQuery, CategoryNode, FacetItem } from '@/utils/models/catalog-models'
-import { platformIcon } from '@/utils/tools'
 
 /**
  * sahibinden.com-style left sidebar: category tree first, then platform / license / model / rating / tags refinements.
@@ -59,7 +59,7 @@ function removeTag(tag: string) {
       <div class="filters__title">{{ t('platform') }}</div>
       <ul class="filters__list">
         <li v-for="p in platforms" :key="p.code" :class="{ 'is-active': query.platform === p.code }">
-          <a @click="set('platform', p.code)">{{ platformIcon(p.code) }} {{ p.name }}</a>
+          <a @click="set('platform', p.code)"><PlatformIcon :code="p.code" /> {{ p.name }}</a>
           <span class="filters__count">{{ p.count }}</span>
         </li>
       </ul>

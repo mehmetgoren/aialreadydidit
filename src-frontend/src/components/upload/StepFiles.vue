@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import PlatformIcon from '@/components/common/PlatformIcon.vue'
 import { computed, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import type { AppDraft, RepositoryInspection } from '@/utils/models/apps-models'
@@ -6,7 +7,7 @@ import type { AppFileDto } from '@/utils/models/catalog-models'
 import { MyAppsService } from '@/utils/services/my-apps-service'
 import { useSiteStore } from '@/stores/site-store'
 import StatusTag from '@/components/common/StatusTag.vue'
-import { confirmX, enableAfter, notifyError, notifyS, platformIcon } from '@/utils/tools'
+import { confirmX, enableAfter, notifyError, notifyS } from '@/utils/tools'
 import { formatBytes } from '@/utils/format'
 
 /** Step 3 — ready-to-run install files (or references) per declared platform (several per platform are fine, e.g. .deb + .AppImage), plus version info. */
@@ -128,7 +129,7 @@ async function importAsset(url: string, name: string, suggested: string | null) 
 
     <h3 class="step__h3">{{ t('install_files') }}</h3>
     <ElTable :data="installers" class="gm-table" size="small">
-      <ElTableColumn :label="t('platform')" width="150"><template #default="{ row }">{{ platformIcon(row.platformCode) }} {{ site.platformName(row.platformCode) }}</template></ElTableColumn>
+      <ElTableColumn :label="t('platform')" width="150"><template #default="{ row }"><PlatformIcon :code="row.platformCode" /> {{ site.platformName(row.platformCode) }}</template></ElTableColumn>
       <ElTableColumn :label="t('file')" min-width="220"><template #default="{ row }"><span style="word-break: break-all">{{ row.fileName }}</span><div v-if="row.installHint" class="sub">{{ row.installHint }}</div></template></ElTableColumn>
       <ElTableColumn :label="t('size')" width="100"><template #default="{ row }">{{ row.externalReference ? '—' : formatBytes(row.sizeBytes) }}</template></ElTableColumn>
       <ElTableColumn :label="t('scan')" width="110"><template #default="{ row }"><StatusTag :value="row.scanStatus" /></template></ElTableColumn>
@@ -140,7 +141,7 @@ async function importAsset(url: string, name: string, suggested: string | null) 
       <h3>{{ t('add_install_file') }}</h3>
       <div class="add-row">
         <ElSelect v-model="platform" style="width: 200px">
-          <ElOption v-for="p in site.platforms" :key="p.code" :value="p.code" :label="`${platformIcon(p.code)} ${p.name}`" />
+          <ElOption v-for="p in site.platforms" :key="p.code" :value="p.code" :label="p.name"><PlatformIcon :code="p.code" /> {{ p.name }}</ElOption>
         </ElSelect>
         <ElInput v-model="installHint" :placeholder="t('install_hint_placeholder')" style="flex: 1" />
       </div>
@@ -163,7 +164,7 @@ async function importAsset(url: string, name: string, suggested: string | null) 
           <div v-for="r in inspection.releases.filter((x) => x.assets.length)" :key="r.tag" class="releases__item">
             <strong>{{ r.tag }}</strong> <span class="gm-muted">{{ r.name }}</span>
             <div v-for="a in r.assets" :key="a.url" class="releases__asset">
-              <span>{{ platformIcon(a.suggestedPlatform) }} {{ a.name }} <small class="gm-muted">{{ formatBytes(a.size) }}</small></span>
+              <span><PlatformIcon :code="a.suggestedPlatform" /> {{ a.name }} <small class="gm-muted">{{ formatBytes(a.size) }}</small></span>
               <ElButton size="small" :loading="importing === a.url" @click="importAsset(a.url, a.name, a.suggestedPlatform)">{{ t('import') }} → {{ site.platformName(a.suggestedPlatform ?? platform) }}</ElButton>
             </div>
           </div>

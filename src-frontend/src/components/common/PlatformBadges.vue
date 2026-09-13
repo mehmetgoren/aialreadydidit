@@ -1,6 +1,6 @@
 <script setup lang="ts">
+import PlatformIcon from '@/components/common/PlatformIcon.vue'
 import { useSiteStore } from '@/stores/site-store'
-import { platformIcon } from '@/utils/tools'
 
 withDefaults(defineProps<{ platforms: string[]; max?: number; size?: 'small' | 'default' }>(), { max: 8, size: 'small' })
 const site = useSiteStore()
@@ -9,7 +9,7 @@ const site = useSiteStore()
 <template>
   <span class="platforms">
     <ElTooltip v-for="p in platforms.slice(0, max)" :key="p" :content="site.platformName(p)">
-      <span class="platforms__badge" :class="`is-${size}`">{{ platformIcon(p) }}</span>
+      <span class="platforms__badge" :class="`is-${size}`"><PlatformIcon :code="p" /></span>
     </ElTooltip>
     <span v-if="platforms.length > max" class="gm-muted">+{{ platforms.length - max }}</span>
   </span>

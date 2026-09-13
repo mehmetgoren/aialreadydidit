@@ -1,11 +1,12 @@
 <script setup lang="ts">
+import PlatformIcon from '@/components/common/PlatformIcon.vue'
 import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import type { AppFileDto } from '@/utils/models/catalog-models'
 import { AppsService } from '@/utils/services/apps-service'
 import { useSiteStore } from '@/stores/site-store'
 import { formatBytes } from '@/utils/format'
-import { copyText, notifyError, platformIcon } from '@/utils/tools'
+import { copyText, notifyError } from '@/utils/tools'
 
 /** One button per install file of the latest version (a platform may have several, e.g. .deb and .AppImage) + the source snapshot. Asks the API for a fresh link (counts the download). */
 const props = defineProps<{ slug: string; files: AppFileDto[]; version: string }>()
@@ -69,7 +70,7 @@ async function download(file: AppFileDto) {
         class="dl__btn"
         @click="download(f)"
       >
-        <span class="dl__icon">{{ platformIcon(f.platformCode) }}</span>
+        <span class="dl__icon"><PlatformIcon :code="f.platformCode" /></span>
         <span class="dl__label">
           <span>{{ f.kind === 'dockerImage' ? t('copy_docker_ref') : f.kind === 'webBundle' && f.externalReference ? t('open_web_app') : label(f) }}</span>
           <small>{{ f.externalReference ? f.externalReference : `${f.fileName} · ${formatBytes(f.sizeBytes)}` }}</small>
@@ -109,6 +110,7 @@ async function download(file: AppFileDto) {
     }
   }
   &__icon {
+    --platform-icon-fill: currentColor;
     font-size: 22px;
     margin-right: 10px;
   }

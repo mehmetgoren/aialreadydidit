@@ -1,10 +1,11 @@
 <script setup lang="ts">
+import PlatformIcon from '@/components/common/PlatformIcon.vue'
 import { onMounted, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import AdminPage from '@/components/admin/AdminPage.vue'
 import { AdminCatalogService } from '@/utils/services/admin-service'
 import type { AdminPlatformDto } from '@/utils/models/admin-models'
-import { enableAfter, notifyError, notifyS, platformIcon } from '@/utils/tools'
+import { enableAfter, notifyError, notifyS } from '@/utils/tools'
 
 const { t } = useI18n()
 const service = new AdminCatalogService()
@@ -42,7 +43,7 @@ async function save() {
   <AdminPage :title="t('adm_platforms')" :subtitle="t('adm_platforms_subtitle')" :loading="loading">
     <template #actions><ElButton type="primary" @click="open()"><ElIcon><Plus /></ElIcon>{{ t('create') }}</ElButton></template>
     <ElTable :data="rows" class="gm-table" size="small" stripe>
-      <ElTableColumn :label="t('platform')" width="160"><template #default="{ row }">{{ platformIcon(row.code) }} {{ row.name }} <code class="sub">{{ row.code }}</code></template></ElTableColumn>
+      <ElTableColumn :label="t('platform')" width="160"><template #default="{ row }"><PlatformIcon :code="row.code" /> {{ row.name }} <code class="sub">{{ row.code }}</code></template></ElTableColumn>
       <ElTableColumn prop="allowedExtensions" :label="t('accepted_extensions')" min-width="260" />
       <ElTableColumn :label="t('adm_external_ref')" width="110" align="center"><template #default="{ row }">{{ row.allowsExternalReference ? '✔' : '—' }}</template></ElTableColumn>
       <ElTableColumn prop="installHint" :label="t('install_hint')" min-width="240" show-overflow-tooltip />

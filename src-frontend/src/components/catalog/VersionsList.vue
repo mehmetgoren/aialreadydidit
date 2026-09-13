@@ -1,9 +1,9 @@
 <script setup lang="ts">
+import PlatformIcon from '@/components/common/PlatformIcon.vue'
 import type { AppVersionDto } from '@/utils/models/catalog-models'
 import MarkdownView from '@/components/common/MarkdownView.vue'
 import StatusTag from '@/components/common/StatusTag.vue'
 import { formatBytes, formatDate } from '@/utils/format'
-import { platformIcon } from '@/utils/tools'
 
 withDefaults(defineProps<{ versions: AppVersionDto[]; showStatus?: boolean }>(), { showStatus: false })
 </script>
@@ -19,7 +19,7 @@ withDefaults(defineProps<{ versions: AppVersionDto[]; showStatus?: boolean }>(),
       </div>
       <MarkdownView v-if="v.changelog" :source="v.changelog" class="versions__changelog" />
       <div class="versions__files">
-        <span v-for="f in v.files" :key="f.id" class="versions__file">{{ platformIcon(f.platformCode) }} {{ f.fileName }} <small class="gm-muted">{{ formatBytes(f.sizeBytes) }}</small></span>
+        <span v-for="f in v.files" :key="f.id" class="versions__file"><PlatformIcon :code="f.platformCode" /> {{ f.fileName }} <small class="gm-muted">{{ formatBytes(f.sizeBytes) }}</small></span>
       </div>
     </ElTimelineItem>
   </ElTimeline>

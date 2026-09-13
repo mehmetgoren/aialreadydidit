@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import PlatformIcon from '@/components/common/PlatformIcon.vue'
 import { computed, onMounted, reactive, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
@@ -14,7 +15,7 @@ import PromptBlock from '@/components/catalog/PromptBlock.vue'
 import AppCard from '@/components/catalog/AppCard.vue'
 import { useCategoryStore, useCategoryName } from '@/stores/category-store'
 import type { CategoryNode } from '@/utils/models/catalog-models'
-import { confirmX, enableAfter, notifyError, notifyS, platformIcon } from '@/utils/tools'
+import { confirmX, enableAfter, notifyError, notifyS } from '@/utils/tools'
 import { formatBytes, formatDateTime, formatNumber } from '@/utils/format'
 
 /** Moderation review: everything an admin needs to approve or reject on one page. */
@@ -89,7 +90,7 @@ const addNote = () => run(() => service.note(appId, decision.note, pendingVersio
           <ElTabPane :label="`${t('tab_prompts')} (${data.preview.prompts.length})`"><PromptBlock :prompts="data.preview.prompts" :app-name="data.preview.name" :repo-url="data.preview.repoUrl" /></ElTabPane>
           <ElTabPane :label="`${t('files')} (${pendingVersion?.files.length ?? 0})`">
             <ElTable :data="pendingVersion?.files ?? []" size="small" class="gm-table">
-              <ElTableColumn :label="t('file')" min-width="220"><template #default="{ row }">{{ platformIcon(row.platformCode) }} {{ row.fileName }}</template></ElTableColumn>
+              <ElTableColumn :label="t('file')" min-width="220"><template #default="{ row }"><PlatformIcon :code="row.platformCode" /> {{ row.fileName }}</template></ElTableColumn>
               <ElTableColumn :label="t('adm_kind')" prop="kind" width="110" />
               <ElTableColumn :label="t('size')" width="100"><template #default="{ row }">{{ formatBytes(row.sizeBytes) }}</template></ElTableColumn>
               <ElTableColumn :label="t('scan')" width="140"><template #default="{ row }"><StatusTag :value="row.scanStatus" /> <small v-if="row.scanSignature" class="gm-muted">{{ row.scanSignature }}</small></template></ElTableColumn>

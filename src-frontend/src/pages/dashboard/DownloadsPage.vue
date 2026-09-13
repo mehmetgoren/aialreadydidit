@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import PlatformIcon from '@/components/common/PlatformIcon.vue'
 import { onMounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import type { DownloadHistoryDto } from '@/utils/models/dashboard-models'
@@ -6,7 +7,7 @@ import { DashboardService } from '@/utils/services/dashboard-service'
 import { useCommonStore } from '@/stores/common-store'
 import PagePagination from '@/components/common/PagePagination.vue'
 import EmptyState from '@/components/common/EmptyState.vue'
-import { assetUrl, notifyError, platformIcon } from '@/utils/tools'
+import { assetUrl, notifyError } from '@/utils/tools'
 import { formatDateTime } from '@/utils/format'
 
 const { t } = useI18n()
@@ -45,7 +46,7 @@ watch(page, load)
         <div class="dl-row__letter" v-else>{{ d.app.name.slice(0, 1) }}</div>
         <div class="dl-row__body">
           <RouterLink :to="`/app/${d.app.slug}`" class="gm-link"><strong>{{ d.app.name }}</strong></RouterLink>
-          <div class="sub">{{ platformIcon(d.platformCode) }} {{ d.fileName }} · v{{ d.version }} · {{ formatDateTime(d.createdAt) }}</div>
+          <div class="sub"><PlatformIcon :code="d.platformCode" /> {{ d.fileName }} · v{{ d.version }} · {{ formatDateTime(d.createdAt) }}</div>
         </div>
         <RouterLink v-if="!d.rated" :to="`/app/${d.app.slug}#reviews`"><ElButton size="small" type="primary" plain>{{ t('rate_this_app') }}</ElButton></RouterLink>
         <ElTag v-else type="success" size="small">{{ t('rated') }}</ElTag>
