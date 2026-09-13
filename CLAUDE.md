@@ -476,6 +476,18 @@ the migration was regenerated after the build.
     Chrome extension note: after a Chrome restart two extension instances were "connected"; the stale one kept the old tab
     ids and a signed-out profile — use `list_connected_browsers` + `select_browser` (ask the owner which) before assuming
     the cookie is missing. Observed: "Continue with Google" rendered twice on the login page after a second SPA navigation.
+30. Owner (2026-09-13): "Windows icon is not correct" — the 🪟 emoji draws a house window and is missing on Windows 10; the
+    owner also wanted a real Apple mark instead of 🍎. Options rendered side by side (emoji, ⊞ glyph, SVG in text colour, SVG
+    in Windows blue); owner chose **Windows blue**. `components/common/PlatformIcon.vue` renders the Simple Icons (CC0)
+    silhouettes for `windows` (fill `#0078D4`, overridable through `--platform-icon-fill`; `DownloadButtons.vue` sets it to
+    `currentColor` so the logo stays white on the blue button) and `macos` (currentColor); other platforms keep their emoji.
+    All nine template usages of `platformIcon()` switched to the component (the helper stays for text/tests). Verified on the
+    local stack with dummy .exe/.dmg files on CPU-Z (removed afterwards; ClamAV marks such stubs `error`) and on production
+    after deploy (3dda106): blue Windows logo on cards and in the platform filter. Production catalogue on 2026-09-13:
+    18 apps, 3 with Windows builds (Ollama Bench, Easy RAG, …) — the launch-kit texts still say "all Linux" and must be
+    regenerated (`kit/build.py` facts + copy) before posting. Note: `catalog/apps?platform=windows` is not the filter's query
+    name — check `AppQuery` before scripting against it. The scratchpad was empty at the start of this session
+    (`cdp-shot.mjs` recreated; `kit/build.py`, `dropdown3.py` are gone — regenerate from the descriptions in this log if needed).
 
 ## 12. Where things stand (2026-09-12)
 
@@ -484,16 +496,18 @@ the migration was regenerated after the build.
 - Code on GitHub: https://github.com/mehmetgoren/aialreadydidit (`main`), everything committed and pushed. Deployed 2026-09-08
   (CSP + installer sniffing): headers live, health 200, headless-Chrome crawl of 7 production pages → zero CSP violations.
 - Redeploy: `SSH_KEY=~/.ssh/LightsailDefaultKey-eu-central-1.pem deploy/deploy.sh` from the project root.
-- Production content (2026-09-12): 16 published apps (all Linux, all MIT, all Claude-built; 2 uploaders), 2 drafts,
-  4 members, 5 wanted requests, 0 ratings. Google sign-in live; Brevo SMTP live with authenticated domain (2026-09-11).
+- Production content (2026-09-13): 18 published apps (3 with Windows builds, rest Linux; all MIT, all Claude-built), 2 drafts,
+  4 members, 5 wanted requests, 0 ratings. Platform icons: real Windows (blue) / Apple logos since 2026-09-13. Google sign-in live; Brevo SMTP live with authenticated domain (2026-09-11).
 - Deployed on 2026-09-11: review-page latency fix, conservative savings counter (`SavingsRealism` migration), scrollable admin
   sidebar, several install files per platform, editable install files on published versions (admin / trusted).
 - **Launch**: Show HN Saturday 2026-09-12 16:00 UTC, r/ClaudeAI Sunday 16:00 UTC, one subreddit a day after (see log 29).
   Copy-ready texts: `docs/launch/posts.md` and the "Launch Kit" artifact. Owner posts from own accounts; Claude fills forms
   in the owner's signed-in Chrome tab (Claude tab group) and drafts replies.
-- Next session (Saturday): at 15:45 UTC the owner signs in to HN in the Claude tab group and says "go" → open
-  news.ycombinator.com/submit, fill title + URL from the kit, owner submits, paste the maker comment, then watch the thread.
-  Before that, if time: upload the 3 Audio Format Selector screenshots, import the owner's 4 new apps, a few ratings.
+- Next session (launch day, owner signed in to HN in the Claude tab group, says "go"): **first regenerate the launch kit**
+  (`docs/launch/posts.md` + artifact 6545c2f0…) with the live counts — 18 apps, Windows present, so drop "all Linux desktop
+  tools" from every post — then open news.ycombinator.com/submit, fill title + URL, owner submits, paste the maker comment,
+  watch the thread. The Saturday 16:00 UTC slot passed without posting (icon fix came first); pick the next good slot with
+  the owner. Still open before posting: upload the 3 Audio Format Selector screenshots (`~/Pictures`), a few ratings.
 - Older candidates: (1) ~~SMTP~~ done 2026-09-11; (2) grow the catalogue to 20–30
   apps before announcing; (3) owner reviews `docs/launch/posts.md`, then post (Show HN first); (4) owner confirms the test mail
   is in the Gmail inbox (not spam) and shows "signed by aialreadydidit.com"; (5) duplicated Google button on /login after SPA re-navigation; (6) Markdown
