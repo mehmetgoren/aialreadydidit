@@ -488,6 +488,13 @@ the migration was regenerated after the build.
     regenerated (`kit/build.py` facts + copy) before posting. Note: `catalog/apps?platform=windows` is not the filter's query
     name — check `AppQuery` before scripting against it. The scratchpad was empty at the start of this session
     (`cdp-shot.mjs` recreated; `kit/build.py`, `dropdown3.py` are gone — regenerate from the descriptions in this log if needed).
+31. Owner (2026-09-13, 23:30 Istanbul): "should we post HN now or wait?" → wait (Sunday evening, owner would be up until 3 AM).
+    **Agreed: Show HN Monday 2026-09-14 14:30 UTC (17:30 Istanbul)**, social 15:30 UTC, r/ClaudeAI Tuesday 14:30 UTC, then
+    r/opensource Wed, r/SideProject Thu, r/vibecoding Fri, r/coolgithubprojects Sat. Launch kit regenerated from production
+    facts (17 published apps — 6 with Windows builds, 1 Android; 41 unique downloaders; counter 16.1 M / $97; AdBlock still
+    1 screenshot; 0 ratings): generator now lives in the repo as `docs/launch/build.py` (writes `docs/launch/posts.md` and the
+    HTML; run `python3 docs/launch/build.py <html-out>` then republish the artifact with `url`). Artifact "Launch Kit" is
+    Version 2. Posts now say "17 apps today: Linux desktop tools, six of them with Windows builds too, and one Android app".
 
 ## 12. Where things stand (2026-09-12)
 
@@ -500,14 +507,14 @@ the migration was regenerated after the build.
   4 members, 5 wanted requests, 0 ratings. Platform icons: real Windows (blue) / Apple logos since 2026-09-13. Google sign-in live; Brevo SMTP live with authenticated domain (2026-09-11).
 - Deployed on 2026-09-11: review-page latency fix, conservative savings counter (`SavingsRealism` migration), scrollable admin
   sidebar, several install files per platform, editable install files on published versions (admin / trusted).
-- **Launch**: Show HN Saturday 2026-09-12 16:00 UTC, r/ClaudeAI Sunday 16:00 UTC, one subreddit a day after (see log 29).
+- **Launch**: Show HN **Monday 2026-09-14 14:30 UTC**, social 15:30 UTC, r/ClaudeAI Tuesday 14:30 UTC, one subreddit a day
+  after (see logs 29 and 31).
   Copy-ready texts: `docs/launch/posts.md` and the "Launch Kit" artifact. Owner posts from own accounts; Claude fills forms
   in the owner's signed-in Chrome tab (Claude tab group) and drafts replies.
-- Next session (launch day, owner signed in to HN in the Claude tab group, says "go"): **first regenerate the launch kit**
-  (`docs/launch/posts.md` + artifact 6545c2f0…) with the live counts — 18 apps, Windows present, so drop "all Linux desktop
-  tools" from every post — then open news.ycombinator.com/submit, fill title + URL, owner submits, paste the maker comment,
-  watch the thread. The Saturday 16:00 UTC slot passed without posting (icon fix came first); pick the next good slot with
-  the owner. Still open before posting: upload the 3 Audio Format Selector screenshots (`~/Pictures`), a few ratings.
+- Next session (Monday 14:15 UTC, owner signed in to HN in the Claude tab group, says "go"): kit is current (Version 2) —
+  re-check the app count against the kit's "17"; if it moved, edit `FACTS`/`STATE` in `docs/launch/build.py`, rerun,
+  republish. Then open news.ycombinator.com/submit, fill title + URL, owner submits, paste the maker comment, watch the
+  thread and draft replies. Still open before posting: AdBlock screenshot (owner, phone), a few ratings.
 - Older candidates: (1) ~~SMTP~~ done 2026-09-11; (2) grow the catalogue to 20–30
   apps before announcing; (3) owner reviews `docs/launch/posts.md`, then post (Show HN first); (4) owner confirms the test mail
   is in the Gmail inbox (not spam) and shows "signed by aialreadydidit.com"; (5) duplicated Google button on /login after SPA re-navigation; (6) Markdown
