@@ -495,6 +495,18 @@ the migration was regenerated after the build.
     1 screenshot; 0 ratings): generator now lives in the repo as `docs/launch/build.py` (writes `docs/launch/posts.md` and the
     HTML; run `python3 docs/launch/build.py <html-out>` then republish the artifact with `url`). Artifact "Launch Kit" is
     Version 2. Posts now say "17 apps today: Linux desktop tools, six of them with Windows builds too, and one Android app".
+32. **Launch day (2026-09-14).** 15:05 UTC: kit facts matched production (17 apps). HN: the owner had no account, created
+    `mehmetgoren`; the submit form (title + URL filled by Claude, text box empty) was refused with HN's notice "We're
+    temporarily restricting Show HNs because of a massive influx…" — new-account brake, not a judgement. Owner: "forget HN".
+    Drafted an exception e-mail to hn@ycombinator.com (in chat; owner may send). r/ClaudeAI: the submit page warns that
+    showcase posts need **OP karma > 50** for the feed (else megathread); owner's Reddit account `u/ionian_Gamer` is 4 years
+    old with 1 karma → held back; the filled form was left open in the Claude tab group. **Posted to r/SideProject at
+    ~15:40 UTC** (owner said "continue with r/SideProject"; Claude filled title + Markdown body and clicked Post):
+    https://www.reddit.com/r/SideProject/comments/1wg6ucf/ — live, not filtered, 7 views in the first minute; the
+    "repost to other communities" dialog was dismissed. Kit regenerated (Version 3): schedule now r/coolgithubprojects Tue,
+    r/opensource Wed, r/ClaudeAI once karma > 50, Show HN once HN allows it, r/vibecoding only after mod approval; the social
+    post links the Reddit thread. Reddit notes: the new submit page's body is a contenteditable DIV (`form_input` fails) —
+    click "Switch to Markdown" first, then click into the field and `type`; `rules.json` returns [] for some subs.
 
 ## 12. Where things stand (2026-09-12)
 
@@ -507,14 +519,13 @@ the migration was regenerated after the build.
   4 members, 5 wanted requests, 0 ratings. Platform icons: real Windows (blue) / Apple logos since 2026-09-13. Google sign-in live; Brevo SMTP live with authenticated domain (2026-09-11).
 - Deployed on 2026-09-11: review-page latency fix, conservative savings counter (`SavingsRealism` migration), scrollable admin
   sidebar, several install files per platform, editable install files on published versions (admin / trusted).
-- **Launch**: Show HN **Monday 2026-09-14 14:30 UTC**, social 15:30 UTC, r/ClaudeAI Tuesday 14:30 UTC, one subreddit a day
-  after (see logs 29 and 31).
+- **Launch**: r/SideProject posted 2026-09-14 15:40 UTC (https://www.reddit.com/r/SideProject/comments/1wg6ucf/); HN
+  blocked (new-account brake), r/ClaudeAI waits for karma > 50; rest of the schedule in the kit (log 32).
   Copy-ready texts: `docs/launch/posts.md` and the "Launch Kit" artifact. Owner posts from own accounts; Claude fills forms
   in the owner's signed-in Chrome tab (Claude tab group) and drafts replies.
-- Next session (Monday 14:15 UTC, owner signed in to HN in the Claude tab group, says "go"): kit is current (Version 2) —
-  re-check the app count against the kit's "17"; if it moved, edit `FACTS`/`STATE` in `docs/launch/build.py`, rerun,
-  republish. Then open news.ycombinator.com/submit, fill title + URL, owner submits, paste the maker comment, watch the
-  thread and draft replies. Still open before posting: AdBlock screenshot (owner, phone), a few ratings.
+- Next: watch the r/SideProject thread and draft replies (owner posts them); social one-liner ~16:45 UTC;
+  r/coolgithubprojects Tuesday; owner comments in r/ClaudeAI to reach 50 karma; HN exception e-mail (owner). Still open:
+  AdBlock screenshot (owner, phone), a few ratings.
 - Older candidates: (1) ~~SMTP~~ done 2026-09-11; (2) grow the catalogue to 20–30
   apps before announcing; (3) owner reviews `docs/launch/posts.md`, then post (Show HN first); (4) owner confirms the test mail
   is in the Gmail inbox (not spam) and shows "signed by aialreadydidit.com"; (5) duplicated Google button on /login after SPA re-navigation; (6) Markdown

@@ -6,7 +6,7 @@ Refresh FACTS / PREFLIGHT / SCHEDULE from production before a launch day, run, p
 import html, json, pathlib, sys
 
 FACTS = {
-    "date": "13 September 2026",
+    "date": "14 September 2026",
     "apps": 17, "windows_apps": 6, "android_apps": 1, "unique_downloaders": 41, "members": 4, "wanted": 5, "ratings": 0,
     "tokens_saved": "16.1 M", "money_saved": "$97",
 }
@@ -26,15 +26,14 @@ PREFLIGHT = [
 ]
 
 SCHEDULE = [
-    ("Mon 14 Sep, 14:30 UTC (17:30 Istanbul)", "Show HN", "Post the link, then the maker comment within a minute. Do not ask anyone to upvote."),
-    ("Mon 14 Sep, 15:30 UTC", "Mastodon (fosstodon), X, LinkedIn", "Short version with the screenshot. Link to the HN thread, not only the site."),
-    ("Tue 15 Sep, 14:30 UTC", "r/ClaudeAI", "Flair “Built with Claude”. Fold in what the HN thread asked about."),
-    ("Wed 16 Sep", "r/opensource", "Lead with the license verification, not the site."),
-    ("Thu 17 Sep", "r/SideProject", "Broad audience, ask for uploads."),
-    ("Fri 18 Sep", "r/vibecoding", "Same body as r/SideProject plus the how-it-was-built paragraph."),
-    ("Sat 19 Sep", "r/coolgithubprojects", "Title carries the repo link; flair C# / Vue."),
+    ("Mon 14 Sep, 15:40 UTC — done", "r/SideProject", "Posted: https://www.reddit.com/r/SideProject/comments/1wg6ucf/ — answer every comment for the first hours."),
+    ("Mon 14 Sep, ~16:45 UTC", "Mastodon (fosstodon), X, LinkedIn", "Short version with the screenshot. Link to the Reddit thread."),
+    ("Tue 15 Sep", "r/coolgithubprojects", "Title carries the repo link; flair C#. No karma gate seen."),
+    ("Wed 16 Sep", "r/opensource", "Lead with the license verification, not the site. Rule: engage in the thread, drive-by posts are removed."),
+    ("When the account has > 50 karma", "r/ClaudeAI", "Its showcase posts need OP karma > 50 for the feed, else they go to the megathread. Answer Claude Code questions there for a week to get past it. Text is ready in the kit."),
+    ("When HN lifts the new-account brake", "Show HN", "HN blocks Show HN from new accounts (2026 influx notice); exception request to hn@ycombinator.com sent/drafted 14 Sep. Otherwise comment for a couple of weeks first."),
+    ("Later", "r/vibecoding", "Rule: vibe-coding dev tools must be approved by the mods first — message them before posting."),
     ("Week of 21 Sep", "Product Hunt, dev.to article, r/selfhosted megathread, awesome-mcp-servers PR", "After the first wave of feedback is folded into the site."),
-    ("Later", "r/LocalLLaMA, r/mcp", "Only with a local-model angle (bge-m3 on Ollama) and a short technical post."),
 ]
 
 STATE = "There are 17 apps today: Linux desktop tools, six of them with Windows builds too, and one Android app. Most are mine."
@@ -152,7 +151,7 @@ Feedback on the license-verification approach is welcome — in particular which
     },
     {
         "id": "social", "channel": "Mastodon / X / LinkedIn", "where": "your own accounts", "flair": None,
-        "rules": "Post one hour after Show HN, attach docs/screenshots/home.png, link the HN thread.",
+        "rules": "Post about an hour after the r/SideProject post, attach docs/screenshots/home.png, link the Reddit thread.",
         "url": None,
         "title": "Before you ask an AI to build it, check whether AI already did it.",
         "alt_titles": [],
@@ -162,7 +161,7 @@ I built a free, open-source store for apps written by LLMs: source + installer +
 
 Site: https://aialreadydidit.com
 Code (MIT): https://github.com/mehmetgoren/aialreadydidit
-Discussion on HN: <paste the thread link>
+Discussion on Reddit: https://www.reddit.com/r/SideProject/comments/1wg6ucf/
 
 #opensource #mcp #claudecode""",
         "body_label": "Post text", "qa": [],
