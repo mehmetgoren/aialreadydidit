@@ -508,14 +508,14 @@ the migration was regenerated after the build.
     post links the Reddit thread. Reddit notes: the new submit page's body is a contenteditable DIV (`form_input` fails) —
     click "Switch to Markdown" first, then click into the field and `type`; `rules.json` returns [] for some subs.
 
-## 12. Where things stand (2026-09-12)
+## 12. Where things stand (2026-09-14)
 
 - Production live at https://aialreadydidit.com (Lightsail Frankfurt, 18.195.74.135): 2 featured apps, health 8/8,
   admin password was changed by the owner after first sign-in (initial one is burned — it was shown in chat).
 - Code on GitHub: https://github.com/mehmetgoren/aialreadydidit (`main`), everything committed and pushed. Deployed 2026-09-08
   (CSP + installer sniffing): headers live, health 200, headless-Chrome crawl of 7 production pages → zero CSP violations.
 - Redeploy: `SSH_KEY=~/.ssh/LightsailDefaultKey-eu-central-1.pem deploy/deploy.sh` from the project root.
-- Production content (2026-09-13): 18 published apps (3 with Windows builds, rest Linux; all MIT, all Claude-built), 2 drafts,
+- Production content (2026-09-14): 17 published apps (6 with Windows builds, 1 Android, rest Linux; all MIT, all Claude-built), 3 drafts,
   4 members, 5 wanted requests, 0 ratings. Platform icons: real Windows (blue) / Apple logos since 2026-09-13. Google sign-in live; Brevo SMTP live with authenticated domain (2026-09-11).
 - Deployed on 2026-09-11: review-page latency fix, conservative savings counter (`SavingsRealism` migration), scrollable admin
   sidebar, several install files per platform, editable install files on published versions (admin / trusted).
