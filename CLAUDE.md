@@ -507,6 +507,12 @@ the migration was regenerated after the build.
     r/opensource Wed, r/ClaudeAI once karma > 50, Show HN once HN allows it, r/vibecoding only after mod approval; the social
     post links the Reddit thread. Reddit notes: the new submit page's body is a contenteditable DIV (`form_input` fails) —
     click "Switch to Markdown" first, then click into the field and `type`; `rules.json` returns [] for some subs.
+33. Thread watch (2026-09-14, ~16:45 UTC): r/SideProject post at score 6 / 88 % upvoted after one hour; one commenter
+    ("So you made a slop generator?" → "Sorry sorry a place for ai generated slop.") — Claude drafted two short replies
+    (the site generates nothing; example of modifying an existing Android ad blocker; "these are the tools I was missing
+    when I moved from Windows to Linux … if they're slop, they're the useful kind") and advised the owner to stop after
+    the second exchange. Thread JSON is readable from the owner's tab with `fetch('/r/SideProject/comments/1wg6ucf.json')`
+    (author names are redacted by the classifier — harmless). Social one-liner not yet confirmed posted.
 
 ## 12. Where things stand (2026-09-14)
 
@@ -523,7 +529,7 @@ the migration was regenerated after the build.
   blocked (new-account brake), r/ClaudeAI waits for karma > 50; rest of the schedule in the kit (log 32).
   Copy-ready texts: `docs/launch/posts.md` and the "Launch Kit" artifact. Owner posts from own accounts; Claude fills forms
   in the owner's signed-in Chrome tab (Claude tab group) and drafts replies.
-- Next: watch the r/SideProject thread and draft replies (owner posts them); social one-liner ~16:45 UTC;
+- Next: keep watching the r/SideProject thread (say "check"); social one-liner (owner); 
   r/coolgithubprojects Tuesday; owner comments in r/ClaudeAI to reach 50 karma; HN exception e-mail (owner). Still open:
   AdBlock screenshot (owner, phone), a few ratings.
 - Older candidates: (1) ~~SMTP~~ done 2026-09-11; (2) grow the catalogue to 20–30
