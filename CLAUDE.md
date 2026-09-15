@@ -576,6 +576,12 @@ the migration was regenerated after the build.
     was `position: static`, transparent. Fix: `@use 'element-plus/theme-chalk/src/overlay.scss'` next to the message-box /
     message / notification / loading imports in `styles/index.scss`. Reproduced and verified with the headless CDP script
     (`PRE_JS` clicks Actions → Remove, `POST_JS` reads computed styles + `elementFromPoint`). Deployed.
+39. Owner (2026-09-15): handoff UX — the card must be visible as soon as the Source step opens, and a handed-off app must
+    reassure the uploader afterwards. Done: the "Short on time?" card renders from the first second (checkboxes disabled +
+    hint `handoff_attach_first` until a repo/archive is attached; `hasSource` computed); the editor shows a green
+    "We're working on it" banner (`handoff_in_progress_title/_text`) while `handoffRequested && status ∈ {pendingScan,
+    pendingReview}`; My apps shows a "Team is on it" tag (`handoff_tag`; `AppCardDto.HandoffRequested` from the projection,
+    always false for published apps because approval clears the flag). Verified with headless screenshots; deployed.
 
 ## 12. Where things stand (2026-09-14)
 
