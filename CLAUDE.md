@@ -557,6 +557,18 @@ the migration was regenerated after the build.
     down during the test (scan job retrying) — unrelated. Follow-ups from the same analysis, not built yet: install-command
     references (pip/npm/brew/winget) as an install-file kind, README images → screenshots, prompt optional, agent-side
     `publish_app`, stalled-draft reminder e-mail.
+37. Owner (2026-09-15): attaching https://github.com/mehmetgoren/feniks said "No source files were found". Cause: **umbrella
+    repository** — the code lives in six git submodules and a GitHub tarball ships submodules as empty folders (the snapshot
+    had README + LICENSE + 23 images, 18.6 MB). Fix: `Infrastructure/Import/GitSubmodules` parses `.gitmodules` (path/url;
+    https, scp-like `git@host:o/r.git`, `ssh://`, `git://`, relative `../r.git` resolved against the parent owner; only
+    github.com / gitlab.com), `IRepositoryImporter.ResolveSubmoduleCommitAsync` (GitHub `contents/{path}?ref=` → type
+    "submodule" sha; GitLab returns null → default branch), `TarballUrl` (codeload / gitlab archive), `MergeAsync` re-roots
+    each submodule tarball under `{rootFolder}{path}/` with `System.Formats.Tar` (files + dirs only; symlinks and global
+    headers dropped). `ImportRepositorySnapshotAsync` merges up to 12 submodules within `MaxSourceArchiveBytes`, then
+    analyses the merged tarball and appends "Included N git submodules: …" / "Could not import submodule …" to
+    `SourceWarnings`; the readiness message for 0 source files now mentions submodules. Verified locally: feniks → 366 files,
+    53 754 lines, Go, 6 submodules, ~10 s. 12 new tests (parser, URL spellings, re-rooting, merge + analyzer) → backend 198.
+    Deployed. The owner's production draft 29 still holds the old empty snapshot — re-attach the repository to re-import.
 
 ## 12. Where things stand (2026-09-14)
 
