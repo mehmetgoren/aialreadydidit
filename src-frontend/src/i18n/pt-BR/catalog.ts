@@ -131,7 +131,7 @@ export default {
   about_how_counter_title: 'Como funciona o contador de economia',
   about_how_counter_text: 'Para cada app estimamos quantos tokens seriam necessários para gerá-lo de novo: linhas de código × tokens por linha × um fator de iteração. Quem publica pode informar o total real da sessão, mas ele conta no máximo cinco vezes a estimativa por tamanho, porque os totais de sessão dos agentes incluem leituras de cache baratas. Cada baixador distinto de um app publicado conta uma vez, e apenas metade desses downloads é considerada como tendo substituído uma geração nova. Dinheiro e energia vêm de coeficientes configuráveis pelo administrador. É uma estimativa deliberadamente conservadora, feita para tornar a missão visível.',
   about_contact_title: 'Contato',
-  about_contact_text: 'Dúvidas, pedidos de remoção ou ideias de parceria:',
+  about_contact_text: 'Dúvidas, comentários ou pedidos de remoção:',
   agents_title: 'Para agentes e desenvolvedores',
   agents_lead: 'Uma chamada antes de gerar: "alguém já construiu isso?" — via REST ou MCP.',
   agents_try: 'Experimente',

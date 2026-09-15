@@ -131,7 +131,7 @@ export default {
   about_how_counter_title: "Comment fonctionne le compteur d'économies",
   about_how_counter_text: 'Pour chaque application, nous estimons le nombre de tokens qu\'il faudrait pour la régénérer : lignes de code × tokens par ligne × un facteur d\'itération. L\'auteur peut saisir le total réel de sa session, mais il compte au plus cinq fois l\'estimation par taille, car les totaux de session des agents incluent des lectures de cache peu coûteuses. Chaque téléchargeur distinct d\'une application publiée compte une fois, et seule la moitié de ces téléchargements est supposée avoir remplacé une nouvelle génération. L\'argent et l\'énergie découlent de coefficients réglables par l\'administrateur. C\'est une estimation volontairement prudente, destinée à rendre la mission visible.',
   about_contact_title: 'Contact',
-  about_contact_text: 'Questions, demandes de retrait ou idées de partenariat :',
+  about_contact_text: 'Questions, retours ou demandes de retrait :',
   agents_title: 'Pour les agents et les développeurs',
   agents_lead: "Un appel avant de générer : « quelqu'un a-t-il déjà créé cela ? » — via REST ou MCP.",
   agents_try: 'Essayez-le',

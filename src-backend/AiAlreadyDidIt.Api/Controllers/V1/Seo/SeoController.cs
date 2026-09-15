@@ -242,7 +242,7 @@ public class SeoController(AadiDbContext db, CatalogService catalog, CategoryInd
         sb.AppendLine().AppendLine("## Authentication").AppendLine().AppendLine(docs.Authentication).AppendLine().AppendLine("## Rate limits").AppendLine().AppendLine(docs.RateLimits);
         sb.AppendLine().AppendLine($"Published apps right now: {docs.PublishedApps}. Default description: {await settings.GetStringAsync(SettingKeys.SeoDefaultDescription, "", ct)}");
         var contact = NullIfEmpty(await settings.GetStringAsync(SettingKeys.ContactEmail, "", ct)) ?? NullIfEmpty(site.Value.SupportEmail);
-        if (contact is not null) sb.AppendLine().AppendLine($"## Contact").AppendLine().AppendLine($"Questions, takedown requests, partnership: {contact}");
+        if (contact is not null) sb.AppendLine().AppendLine($"## Contact").AppendLine().AppendLine($"Questions, feedback, takedown requests: {contact}");
         return Content(sb.ToString(), "text/plain; charset=utf-8");
     }
 

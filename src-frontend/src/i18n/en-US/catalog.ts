@@ -131,7 +131,7 @@ export default {
   about_how_counter_title: 'How the savings counter works',
   about_how_counter_text: 'For each app we estimate how many tokens it would take to generate it again: lines of source × tokens per line × an iteration factor. Uploaders may enter the real total from their session, but it counts at most five times the size estimate, because agent session totals include cheap cached input. Each distinct downloader of a published app counts once, and only half of those downloads are assumed to have replaced a fresh generation. Money and energy come from admin-configurable coefficients. It is a deliberately conservative estimate, meant to make the mission visible.',
   about_contact_title: 'Contact',
-  about_contact_text: 'Questions, takedown requests or partnership ideas:',
+  about_contact_text: 'Questions, feedback or takedown requests:',
   agents_title: 'For agents & developers',
   agents_lead: 'One call before you generate: "has someone already built this?" — via REST or MCP.',
   agents_try: 'Try it',
