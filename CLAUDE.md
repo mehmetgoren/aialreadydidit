@@ -582,6 +582,14 @@ the migration was regenerated after the build.
     "We're working on it" banner (`handoff_in_progress_title/_text`) while `handoffRequested && status ∈ {pendingScan,
     pendingReview}`; My apps shows a "Team is on it" tag (`handoff_tag`; `AppCardDto.HandoffRequested` from the projection,
     always false for published apps because approval clears the flag). Verified with headless screenshots; deployed.
+40. Owner (2026-09-15): contact address **aialreadydidit@gmail.com**. The footer already showed `SiteConfigDto.ContactEmail`
+    (admin setting `general.contact_email`, seeded empty, fallback `Site:SupportEmail` = compose `SUPPORT_EMAIL` → was the
+    owner's personal ADMIN_EMAIL), but an empty setting hid the address entirely. Now: setting set on production (SQL),
+    `.env.production` `SUPPORT_EMAIL=aialreadydidit@gmail.com`, `SiteService` falls back to SupportEmail when the setting is
+    empty; the address also appears on the About page ("Contact" section), under the handoff "We're working on it" banner
+    ("Questions? Write to …"), on the crawler-rendered home page and in `llms.txt` ("## Contact"). Keys `about_contact_*`,
+    `handoff_contact` in 11 locales. Verified live: `site/config.contactEmail`, llms.txt and the bot home page all show it.
+    Change it later in Admin › Settings › General › contact e-mail (no deploy needed).
 
 ## 12. Where things stand (2026-09-14)
 
