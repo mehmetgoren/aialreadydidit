@@ -513,6 +513,20 @@ the migration was regenerated after the build.
     when I moved from Windows to Linux … if they're slop, they're the useful kind") and advised the owner to stop after
     the second exchange. Thread JSON is readable from the owner's tab with `fetch('/r/SideProject/comments/1wg6ucf.json')`
     (author names are redacted by the classifier — harmless). Social one-liner not yet confirmed posted.
+34. 2026-09-15: replies drafted for the r/SideProject thread ("How do you get the prompts?" → user-submitted, caveat that
+    they cannot be verified and a few early ones are reconstructed from READMEs). r/TurkDev (18k): rules need **mod approval
+    for self-promotion** (rule 3) and the "Proje" flair; owner wrote a personal Turkish body (Windows→Linux angle, "çakmaları"),
+    Claude polished it (added the site link, prompt line, closing ask) and drafted the modmail. r/ClaudeCode (413k) weekly
+    showcase sticky (1wg0ux6): Claude switched the composer to Markdown via a shadow-DOM button, but the follow-up click
+    missed the editor and the typed text hit Reddit's single-key shortcuts (post got saved + hidden, "too many requests"
+    toast, and a "You can't contribute in this community yet … Total karma" modal). Reverted save/hide with
+    `POST /api/unhide` + `/api/unsave` (`uh` = modhash from `/api/me.json`). **The modal was not a hard block**: the owner
+    posted a trimmed three-bullet version of the comment himself at 18:29 UTC (id `pa0c30u`, live, not removed). Lesson: before
+    `type` into a Reddit composer, confirm `document.activeElement` (through shadow roots) is the editor; otherwise keys
+    become shortcuts. Anonymous JSON fetches (curl / `credentials:'omit'`) get Reddit's HTML challenge — read thread data
+    only from the signed-in tab. Karma gates confirmed so far: r/ClaudeAI (mod note, > 50 for the feed). r/ClaudeCode
+    standalone "Built with Claude Code" post (detailed write-up: what / how Claude Code was used / lessons) is a good
+    follow-up in a few days.
 
 ## 12. Where things stand (2026-09-14)
 
@@ -529,7 +543,7 @@ the migration was regenerated after the build.
   blocked (new-account brake), r/ClaudeAI waits for karma > 50; rest of the schedule in the kit (log 32).
   Copy-ready texts: `docs/launch/posts.md` and the "Launch Kit" artifact. Owner posts from own accounts; Claude fills forms
   in the owner's signed-in Chrome tab (Claude tab group) and drafts replies.
-- Next: keep watching the r/SideProject thread (say "check"); social one-liner (owner); 
+- Next: watch r/SideProject + the r/ClaudeCode showcase comment (say "check"); r/TurkDev after modmail approval; social one-liner (owner); r/ClaudeCode standalone write-up in a few days; 
   r/coolgithubprojects Tuesday; owner comments in r/ClaudeAI to reach 50 karma; HN exception e-mail (owner). Still open:
   AdBlock screenshot (owner, phone), a few ratings.
 - Older candidates: (1) ~~SMTP~~ done 2026-09-11; (2) grow the catalogue to 20–30
