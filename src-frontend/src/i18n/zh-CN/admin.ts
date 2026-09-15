@@ -52,6 +52,7 @@ export default {
   adm_handoff: '移交',
   adm_handoff_title: '上传者请求商店团队完成此上架信息',
   adm_handoff_no_note: '上传者未留言。请在审批前于编辑器中补全详情、安装文件和截图。',
+  adm_handoff_pending: '移交给团队',
   adm_no_reports: '暂无举报。',
   adm_top_apps: '热门应用',
   adm_moderation_subtitle: '新应用和新版本会在此等待管理员批准。',

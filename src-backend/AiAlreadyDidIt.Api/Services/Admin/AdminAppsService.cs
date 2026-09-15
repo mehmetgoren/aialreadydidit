@@ -37,7 +37,7 @@ public sealed class AdminAppsService(AadiDbContext db, ICurrentUser currentUser,
             CoverUrl = a.Screenshots.OrderBy(s => s.SortOrder).Select(s => "/files/screenshots/" + s.ThumbStorageKey).FirstOrDefault(),
             CategorySlug = a.Category.Slug, CategoryNameEn = a.Category.NameEn, CategoryNameTr = a.Category.NameTr, LicenseSpdxId = a.License.SpdxId,
             LlmModelName = a.LlmModel == null ? null : a.LlmModel.Vendor + " " + a.LlmModel.Name, RatingAvg = a.RatingAvg, RatingCount = a.RatingCount, DownloadCount = a.DownloadCount,
-            PublishedAt = a.PublishedAt, UpdatedAt = a.UpdatedAt, UploaderUsername = a.Uploader.Username, UploaderEmail = a.Uploader.Email, IsFeatured = a.IsFeatured, Status = a.Status,
+            PublishedAt = a.PublishedAt, UpdatedAt = a.UpdatedAt, HandoffRequested = a.HandoffRequestedAt != null, UploaderUsername = a.Uploader.Username, UploaderEmail = a.Uploader.Email, IsFeatured = a.IsFeatured, Status = a.Status,
             EstGenerationTokens = a.EstGenerationTokens, EstGenerationCostUsd = a.EstGenerationCostUsd, VersionCount = a.Versions.Count, CreatedAt = a.CreatedAt, SubmittedAt = a.SubmittedAt,
             OpenReports = db.Reports.Count(r => r.AppId == a.Id && r.Status == ReportStatus.Open), EmbeddingStale = a.EmbeddingStale, HasEmbedding = a.Embedding != null, ViewCount = a.ViewCount,
             LatestVersion = a.Versions.Where(v => v.Id == a.LatestVersionId).Select(v => v.Version).FirstOrDefault()

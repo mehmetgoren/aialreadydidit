@@ -31,6 +31,7 @@ onMounted(async () => {
     <template v-if="data">
       <div class="dash__stats">
         <AdminStatCard :label="t('adm_pending_review')" :value="data.pendingReview" icon="Checked" :tone="data.pendingReview ? 'warning' : 'default'" to="/admin/moderation" />
+        <AdminStatCard :label="t('adm_handoff_pending')" :value="data.handoffPending" icon="Promotion" :tone="data.handoffPending ? 'warning' : 'default'" to="/admin/moderation?status=handoff" />
         <AdminStatCard :label="t('adm_pending_scan')" :value="data.pendingScan" icon="Loading" to="/admin/moderation?status=scan" />
         <AdminStatCard :label="t('adm_open_reports')" :value="data.openReports" icon="WarningFilled" :tone="data.openReports ? 'danger' : 'default'" to="/admin/reports" />
         <AdminStatCard :label="t('adm_open_requests')" :value="data.openRequests" icon="QuestionFilled" to="/admin/requests" />

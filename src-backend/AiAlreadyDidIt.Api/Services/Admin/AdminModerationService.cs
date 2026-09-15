@@ -25,6 +25,7 @@ public sealed class AdminModerationService(AadiDbContext db, ICurrentUser curren
             "review" or null or "" => q.Where(a => a.Status == AppStatus.PendingReview || a.Versions.Any(v => v.Status == VersionStatus.PendingReview)),
             "scan" => q.Where(a => a.Status == AppStatus.PendingScan || a.Versions.Any(v => v.Status == VersionStatus.PendingScan)),
             "rejected" => q.Where(a => a.Status == AppStatus.Rejected || a.Versions.Any(v => v.Status == VersionStatus.Rejected)),
+            "handoff" => q.Where(a => a.HandoffRequestedAt != null && a.Status != AppStatus.Draft),
             "all" => q.Where(a => a.Status != AppStatus.Draft),
             _ => q
         };

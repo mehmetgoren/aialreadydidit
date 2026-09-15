@@ -26,6 +26,7 @@ function fetchPage(query: Record<string, unknown>) {
       <template #filters>
         <ElRadioGroup v-model="status" size="small">
           <ElRadioButton value="review">{{ t('adm_pending_review') }}</ElRadioButton>
+          <ElRadioButton value="handoff">{{ t('adm_handoff') }}</ElRadioButton>
           <ElRadioButton value="scan">{{ t('adm_pending_scan') }}</ElRadioButton>
           <ElRadioButton value="rejected">{{ t('status_rejected') }}</ElRadioButton>
           <ElRadioButton value="all">{{ t('all') }}</ElRadioButton>
@@ -37,12 +38,13 @@ function fetchPage(query: Record<string, unknown>) {
             <img v-if="row.coverUrl" :src="assetUrl(row.coverUrl)" alt="" />
             <div>
               <RouterLink :to="`/admin/moderation/${row.appId}`" class="gm-link"><strong>{{ row.name }}</strong></RouterLink>
+              <ElTag v-if="row.handoff" type="warning" effect="dark" size="small" style="margin-left: 8px">{{ t('adm_handoff_pending') }}</ElTag>
               <div class="sub">{{ row.shortDescription }}</div>
             </div>
           </div>
         </template>
       </ElTableColumn>
-      <ElTableColumn :label="t('adm_kind')" width="110"><template #default="{ row }">{{ row.kind === 'version' ? `v${row.version}` : t('adm_new_app') }} <ElTag v-if="row.handoff" type="warning" size="small" effect="dark">{{ t('adm_handoff') }}</ElTag></template></ElTableColumn>
+      <ElTableColumn :label="t('adm_kind')" width="110"><template #default="{ row }">{{ row.kind === 'version' ? `v${row.version}` : t('adm_new_app') }}</template></ElTableColumn>
       <ElTableColumn :label="t('status')" width="130"><template #default="{ row }"><StatusTag :value="row.versionStatus ?? row.appStatus" /></template></ElTableColumn>
       <ElTableColumn :label="t('uploader')" width="150"><template #default="{ row }">{{ row.uploaderUsername }} <ElTag v-if="row.uploaderTrustLevel" size="small" type="success">T{{ row.uploaderTrustLevel }}</ElTag></template></ElTableColumn>
       <ElTableColumn :label="t('category')" prop="categoryName" width="160" show-overflow-tooltip />

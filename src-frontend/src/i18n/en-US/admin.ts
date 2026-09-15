@@ -52,6 +52,7 @@ export default {
   adm_handoff: 'Handoff',
   adm_handoff_title: 'The uploader asked the store team to finish this listing',
   adm_handoff_no_note: 'No note from the uploader. Complete the details, install files and screenshots in the editor before approving.',
+  adm_handoff_pending: 'Handed to the team',
   adm_no_reports: 'No reports.',
   adm_top_apps: 'Top apps',
   adm_moderation_subtitle: 'New apps and new versions wait here until a moderator approves them.',

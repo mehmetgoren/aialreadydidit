@@ -329,6 +329,7 @@ export interface ControllerActionsDto {
 
 export interface AdminDashboard {
   pendingReview: number
+  handoffPending: number
   pendingScan: number
   openReports: number
   openRequests: number

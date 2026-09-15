@@ -52,6 +52,7 @@ export default {
   adm_handoff: 'Devir',
   adm_handoff_title: 'Yükleyen, ilanın mağaza ekibi tarafından tamamlanmasını istedi',
   adm_handoff_no_note: 'Yükleyenden not yok. Onaylamadan önce ayrıntıları, kurulum dosyalarını ve ekran görüntülerini düzenleyicide tamamlayın.',
+  adm_handoff_pending: 'Ekibe devredilen',
   adm_no_reports: 'Şikâyet yok.',
   adm_top_apps: 'En çok indirilenler',
   adm_moderation_subtitle: 'Yeni uygulamalar ve yeni sürümler moderatör onayına kadar burada bekler.',

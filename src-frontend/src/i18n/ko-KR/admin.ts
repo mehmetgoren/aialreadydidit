@@ -52,6 +52,7 @@ export default {
   adm_handoff: '위임',
   adm_handoff_title: '업로더가 스토어 팀에 이 등록 정보의 완성을 요청했습니다',
   adm_handoff_no_note: '업로더의 메모가 없습니다. 승인 전에 편집기에서 세부 정보, 설치 파일, 스크린샷을 완성하세요.',
+  adm_handoff_pending: '팀에 위임됨',
   adm_no_reports: '신고가 없습니다.',
   adm_top_apps: '인기 앱',
   adm_moderation_subtitle: '새 앱과 새 버전은 운영자가 승인할 때까지 여기서 대기합니다.',

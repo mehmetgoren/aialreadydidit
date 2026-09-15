@@ -9,6 +9,8 @@ public class AdminMenuItemDto { public string Label { get; set; } = string.Empty
 public class AdminDashboardDto
 {
     public int PendingReview { get; set; }
+    /// <summary>Submissions the uploader handed to the store team (details / files / screenshots still to be completed by a moderator).</summary>
+    public int HandoffPending { get; set; }
     public int PendingScan { get; set; }
     public int OpenReports { get; set; }
     public int OpenRequests { get; set; }

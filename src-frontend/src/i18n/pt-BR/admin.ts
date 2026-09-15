@@ -52,6 +52,7 @@ export default {
   adm_handoff: 'Repasse',
   adm_handoff_title: 'Quem enviou pediu que a equipe da loja conclua esta listagem',
   adm_handoff_no_note: 'Sem nota de quem enviou. Complete os detalhes, arquivos de instalação e capturas no editor antes de aprovar.',
+  adm_handoff_pending: 'Repassadas à equipe',
   adm_no_reports: 'Nenhuma denúncia.',
   adm_top_apps: 'Melhores apps',
   adm_moderation_subtitle: 'Novos apps e novas versões aguardam aqui até que um moderador os aprove.',

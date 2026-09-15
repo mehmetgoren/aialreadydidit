@@ -52,6 +52,7 @@ export default {
   adm_handoff: '委任',
   adm_handoff_title: '投稿者はストアチームによる掲載情報の仕上げを希望しています',
   adm_handoff_no_note: '投稿者からのメモはありません。承認前にエディターで詳細、インストールファイル、スクリーンショットを完成させてください。',
+  adm_handoff_pending: 'チームに委任',
   adm_no_reports: '報告はありません。',
   adm_top_apps: '上位アプリ',
   adm_moderation_subtitle: '新しいアプリと新しいバージョンは、モデレーターが承認するまでここで待機します。',

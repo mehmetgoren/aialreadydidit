@@ -52,6 +52,7 @@ public sealed class AdminSystemService(AadiDbContext db, ICurrentUser currentUse
         var recentReports = await reports.ListAsync(new AdminListQuery { PageSize = 5 }, ct);
         return new AdminDashboardDto
         {
+            HandoffPending = await db.Apps.CountAsync(a => a.HandoffRequestedAt != null && a.Status != AppStatus.Draft && a.Status != AppStatus.Removed),
             PendingReview = await db.Apps.CountAsync(a => a.Status == AppStatus.PendingReview || a.Versions.Any(v => v.Status == VersionStatus.PendingReview), ct),
             PendingScan = await db.Apps.CountAsync(a => a.Status == AppStatus.PendingScan || a.Versions.Any(v => v.Status == VersionStatus.PendingScan), ct),
             OpenReports = await db.Reports.CountAsync(r => r.Status == ReportStatus.Open || r.Status == ReportStatus.Reviewing, ct),

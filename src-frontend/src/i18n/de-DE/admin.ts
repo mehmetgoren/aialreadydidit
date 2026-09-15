@@ -52,6 +52,7 @@ export default {
   adm_handoff: 'Übergabe',
   adm_handoff_title: 'Die hochladende Person hat das Store-Team gebeten, diesen Eintrag fertigzustellen',
   adm_handoff_no_note: 'Keine Notiz der hochladenden Person. Vor der Freigabe Details, Installationsdateien und Screenshots im Editor vervollständigen.',
+  adm_handoff_pending: 'An das Team übergeben',
   adm_no_reports: 'Keine Meldungen.',
   adm_top_apps: 'Top-Apps',
   adm_moderation_subtitle: 'Neue Apps und neue Versionen warten hier, bis ein Moderator sie freigibt.',

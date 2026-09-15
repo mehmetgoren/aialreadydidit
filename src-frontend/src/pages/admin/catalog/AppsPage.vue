@@ -43,7 +43,7 @@ async function action(row: AdminAppRow, a: 'unlist' | 'restore' | 'remove' | 'fe
           <div class="a-row"><img v-if="row.iconUrl" :src="assetUrl(row.iconUrl)" alt="" /><div><RouterLink :to="`/admin/apps/${row.id}`" class="gm-link"><strong>{{ row.name }}</strong></RouterLink> <ElTag v-if="row.isFeatured" type="warning" size="small">★</ElTag><div class="sub">{{ row.slug }} · {{ row.categoryNameEn }}</div></div></div>
         </template>
       </ElTableColumn>
-      <ElTableColumn :label="t('status')" width="120"><template #default="{ row }"><StatusTag :value="row.status" /></template></ElTableColumn>
+      <ElTableColumn :label="t('status')" width="170"><template #default="{ row }"><StatusTag :value="row.status" /><ElTag v-if="row.handoffRequested" type="warning" effect="dark" size="small" style="margin-left: 6px">{{ t('adm_handoff') }}</ElTag></template></ElTableColumn>
       <ElTableColumn :label="t('uploader')" width="140"><template #default="{ row }"><RouterLink to="/admin/users" class="gm-link">{{ row.uploaderUsername }}</RouterLink></template></ElTableColumn>
       <ElTableColumn :label="t('license')" prop="licenseSpdxId" width="110" />
       <ElTableColumn :label="t('generated_by')" prop="llmModelName" width="150" show-overflow-tooltip />

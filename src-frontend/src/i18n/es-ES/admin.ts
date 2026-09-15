@@ -52,6 +52,7 @@ export default {
   adm_handoff: 'Delegado',
   adm_handoff_title: 'Quien subió la app pidió que el equipo de la tienda complete esta ficha',
   adm_handoff_no_note: 'Sin nota de quien la subió. Completa los detalles, los archivos de instalación y las capturas en el editor antes de aprobar.',
+  adm_handoff_pending: 'Delegadas al equipo',
   adm_no_reports: 'No hay denuncias.',
   adm_top_apps: 'Aplicaciones principales',
   adm_moderation_subtitle: 'Las nuevas aplicaciones y versiones esperan aquí hasta que un moderador las aprueba.',
