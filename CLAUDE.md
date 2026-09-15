@@ -527,6 +527,17 @@ the migration was regenerated after the build.
     only from the signed-in tab. Karma gates confirmed so far: r/ClaudeAI (mod note, > 50 for the feed). r/ClaudeCode
     standalone "Built with Claude Code" post (detailed write-up: what / how Claude Code was used / lessons) is a good
     follow-up in a few days.
+35. SEO (2026-09-15, owner: "do we need seo optimization?"): app pages were already server-rendered for bots, but `/` and
+    `/category/*` (128 sitemap URLs) gave crawlers the bare SPA shell. Added `GET /seo/home` (headline, mission, category
+    list, featured / newest / trending app lists, JSON-LD WebSite + SearchAction) and `GET /seo/category/{slug}` (breadcrumb
+    path, sub-categories, every published app in the subtree via `DescendantIdsById` + `AppCardProjection`, JSON-LD
+    CollectionPage + BreadcrumbList; 404 for unknown slugs); nginx routes `$is_bot` on `location = /` and
+    `^/category/(?<slug>…)$` to them. **nginx gotcha:** `proxy_pass` with a literal URI inside `if` is refused in an exact
+    location ("cannot have URI part…") — the app route only works because `$slug` is a variable; `set $seo_home /seo/home`
+    fixes it. `index.html` now has meta description, Open Graph + Twitter tags and `public/og.png` (1200×630, cropped from
+    `docs/screenshots/home.png` with PIL). Verified locally and on production after deploy (6011cec): Googlebot UA gets the
+    rendered home/category pages, humans the SPA, og.png 200. Still the owner's: Google Search Console + Bing Webmaster
+    (DNS TXT at Cloudflare, or the HTML-tag method via index.html) and submitting the sitemap.
 
 ## 12. Where things stand (2026-09-14)
 
