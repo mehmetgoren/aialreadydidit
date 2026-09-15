@@ -592,6 +592,11 @@ the migration was regenerated after the build.
     Change it later in Admin › Settings › General › contact e-mail (no deploy needed).
     Owner (2026-09-16): **no "partnership" wording anywhere — this is a non-commercial project.** Contact copy is now
     "Questions, feedback or takedown requests" (11 locales + llms.txt). Keep all copy free of business / monetisation framing.
+41. Owner (2026-09-16): "in the admin panel I can't tell which app is for review and which was handed to the team" — the
+    only marker was a small tag in the narrow Kind column. Now: moderation queue has a **Handoff** filter (`?status=handoff`,
+    backend `"handoff"` case), an orange dark "Handed to the team" tag right next to the app name, Admin › Apps shows a
+    "Handoff" tag beside the status (`AdminAppsService` projection sets `HandoffRequested`), and the dashboard has a
+    "Handed to the team" counter card (`HandoffPending`, links to the filter). Key `adm_handoff_pending` ×11. Deployed.
 
 ## 12. Where things stand (2026-09-14)
 
