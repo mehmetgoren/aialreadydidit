@@ -143,4 +143,7 @@ public sealed class GitLabRepositoryImporter(IHttpClientFactory httpClientFactor
         "zlib" => "Zlib",
         _ => key
     };
+
+    /// <summary>Not resolved for GitLab yet — the caller falls back to the submodule's default branch.</summary>
+    public Task<string?> ResolveSubmoduleCommitAsync(RepositoryInspection repo, string path, string gitRef, CancellationToken ct = default) => Task.FromResult<string?>(null);
 }

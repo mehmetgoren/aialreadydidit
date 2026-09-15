@@ -36,6 +36,8 @@ public interface IRepositoryImporter
     Task<RepositoryInspection> InspectAsync(Uri url, CancellationToken ct = default);
     /// <summary>Tarball URL for a specific ref (tag / branch / commit).</summary>
     string TarballUrlFor(RepositoryInspection repo, string gitRef);
+    /// <summary>The commit a git submodule at <paramref name="path"/> is pinned to in <paramref name="gitRef"/>, or null when unknown.</summary>
+    Task<string?> ResolveSubmoduleCommitAsync(RepositoryInspection repo, string path, string gitRef, CancellationToken ct = default);
 }
 
 public static class RepositoryUrl

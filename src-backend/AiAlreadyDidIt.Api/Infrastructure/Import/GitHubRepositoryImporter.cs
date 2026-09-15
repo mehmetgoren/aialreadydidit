@@ -136,6 +136,18 @@ public sealed class GitHubRepositoryImporter(IHttpClientFactory httpClientFactor
 
     public string TarballUrlFor(RepositoryInspection repo, string gitRef) =>
         $"https://api.github.com/repos/{repo.Owner}/{repo.Name}/tarball/{Uri.EscapeDataString(gitRef)}";
+
+    /// <summary>GET /repos/{o}/{r}/contents/{path}?ref= answers with type "submodule" and the pinned commit sha.</summary>
+    public async Task<string?> ResolveSubmoduleCommitAsync(RepositoryInspection repo, string path, string gitRef, CancellationToken ct = default)
+    {
+        using var client = Client();
+        using var response = await client.GetAsync($"repos/{repo.Owner}/{repo.Name}/contents/{Uri.EscapeDataString(path).Replace("%2F", "/")}?ref={Uri.EscapeDataString(gitRef)}", ct);
+        if (!response.IsSuccessStatusCode) return null;
+        using var doc = JsonDocument.Parse(await response.Content.ReadAsStringAsync(ct));
+        var root = doc.RootElement;
+        if (root.ValueKind != JsonValueKind.Object || !root.TryGetProperty("type", out var type) || type.GetString() != "submodule") return null;
+        return root.TryGetProperty("sha", out var sha) ? sha.GetString() : null;
+    }
 }
 
 public sealed class RepositoryImportException(string message) : Exception(message);

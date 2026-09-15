@@ -240,7 +240,7 @@ public sealed partial class AppEditorService(AadiDbContext db, ICurrentUser curr
             else if (sourceFile is null) Issue("source", "repo_import", app.SourceWarnings?.StartsWith("Import failed") == true ? app.SourceWarnings : "The repository snapshot is still being imported. Wait a moment and refresh.");
         }
         else if (sourceFile is null) Issue("source", "archive", "Upload the source code archive (.zip / .tar.gz) or attach a repository.");
-        if (sourceFile is not null && app.SourceAnalyzedAt is not null && app.SourceFileCount == 0) Issue("source", "no_source_files", "No source files were found in the source — the archive must contain readable source code.");
+        if (sourceFile is not null && app.SourceAnalyzedAt is not null && app.SourceFileCount == 0) Issue("source", "no_source_files", "No source files were found in the source. The archive must contain readable source code; if the code lives in git submodules, they must be public GitHub/GitLab repositories so we can include them.");
         var licenseCheck = await lifecycle.CheckLicenseAsync(app, ct);
         if (!licenseCheck.Ok && (sourceFile is not null || app.LicenseId == 0)) Issue("source", "license", licenseCheck.Message!);
 

@@ -137,8 +137,18 @@ public sealed partial class AppEditorService
                     await using var body = await response.Content.ReadAsStreamAsync(ct);
                     await CopyLimitedAsync(body, fs, storageOptions.Value.MaxSourceArchiveBytes, ct);
                 }
+                // Umbrella repositories: the code sits in git submodules, which the tarball ships as empty folders. Pull them in.
+                string? submoduleNote = null;
+                var gitmodules = await GitSubmodules.ReadRootFileAsync(tempPath, ".gitmodules", ct);
+                if (gitmodules is not null)
+                {
+                    var (merged, note) = await ImportSubmodulesAsync(repo, importer, gitRef, tempPath, gitmodules, ct);
+                    if (merged is not null) { TryDelete(tempPath); tempPath = merged; }
+                    submoduleNote = note;
+                }
                 var fileName = $"{TextUtil.Slugify(repo.Name)}-{TextUtil.Slugify(gitRef)}-source.tar.gz";
                 await StoreSourceFromTempAsync(app, version, tempPath, fileName, ct);
+                if (submoduleNote is not null) app.SourceWarnings = TextUtil.Truncate(string.Join(" ", new[] { app.SourceWarnings, submoduleNote }.Where(x => !string.IsNullOrWhiteSpace(x))), 2000);
                 app.RepoStars = repo.Stars;
                 app.RepoSyncedAt = Clock.Now;
                 if (string.IsNullOrWhiteSpace(version.SourceRef)) version.SourceRef = repo.DefaultBranch;
@@ -152,6 +162,64 @@ public sealed partial class AppEditorService
             await db.SaveChangesAsync(ct);
             throw;
         }
+    }
+
+    private const int MaxSubmodules = 12;
+
+    /// <summary>
+    /// Downloads every public GitHub / GitLab submodule listed in <c>.gitmodules</c> (pinned commit when the host tells us,
+    /// default branch otherwise) and merges them into the parent tarball. Returns the merged path (or null when nothing
+    /// could be merged) and a human-readable note for <see cref="App.SourceWarnings"/>.
+    /// </summary>
+    private async Task<(string? Merged, string? Note)> ImportSubmodulesAsync(RepositoryInspection repo, IRepositoryImporter importer, string gitRef, string rootTarGz, string gitmodulesText, CancellationToken ct)
+    {
+        var subs = GitSubmodules.Parse(gitmodulesText);
+        if (subs.Count == 0) return (null, null);
+        var parentHost = new Uri(repo.Url).Host;
+        var downloaded = new List<(string Path, string TarGz)>();
+        var included = new List<string>();
+        var failed = new List<string>();
+        long budget = storageOptions.Value.MaxSourceArchiveBytes - new FileInfo(rootTarGz).Length;
+        try
+        {
+            foreach (var sub in subs.Take(MaxSubmodules))
+            {
+                var url = GitSubmodules.ResolveUrl(sub.Url, parentHost, repo.Owner);
+                if (url is null) { failed.Add($"{sub.Path} (not a public GitHub/GitLab URL)"); continue; }
+                string? commit = null;
+                try { commit = await importer.ResolveSubmoduleCommitAsync(repo, sub.Path, gitRef, ct); } catch (Exception ex) when (ex is not OperationCanceledException) { logger.LogDebug(ex, "submodule commit lookup failed for {Path}", sub.Path); }
+                var tarballUrl = GitSubmodules.TarballUrl(url, commit ?? "HEAD");
+                if (tarballUrl is null) { failed.Add(sub.Path); continue; }
+                var temp = Path.Combine(TempDir(), $"sub-{Guid.NewGuid():N}.tar.gz");
+                try
+                {
+                    using var client = httpClientFactory.CreateClient("download");
+                    client.Timeout = TimeSpan.FromMinutes(5);
+                    client.DefaultRequestHeaders.UserAgent.ParseAdd("AiAlreadyDidIt/1.0");
+                    using var response = await client.GetAsync(tarballUrl, HttpCompletionOption.ResponseHeadersRead, ct);
+                    if (!response.IsSuccessStatusCode) { failed.Add($"{sub.Path} ({(int)response.StatusCode})"); TryDelete(temp); continue; }
+                    await using (var fs = File.Create(temp))
+                    await using (var body = await response.Content.ReadAsStreamAsync(ct))
+                        await CopyLimitedAsync(body, fs, Math.Max(budget, 1), ct);
+                    budget -= new FileInfo(temp).Length;
+                    downloaded.Add((sub.Path, temp));
+                    included.Add(sub.Path);
+                }
+                catch (ApiException) { failed.Add($"{sub.Path} (too large)"); TryDelete(temp); break; }
+                catch (Exception ex) when (ex is not OperationCanceledException) { failed.Add($"{sub.Path} ({ex.GetType().Name})"); TryDelete(temp); }
+            }
+            if (subs.Count > MaxSubmodules) failed.Add($"{subs.Count - MaxSubmodules} more (limit {MaxSubmodules})");
+            string? merged = null;
+            if (downloaded.Count > 0)
+            {
+                merged = Path.Combine(TempDir(), $"merged-{Guid.NewGuid():N}.tar.gz");
+                await GitSubmodules.MergeAsync(rootTarGz, downloaded, merged, ct);
+            }
+            var note = (included.Count > 0 ? $"Included {included.Count} git submodule{(included.Count == 1 ? "" : "s")}: {string.Join(", ", included)}." : null)
+                       + (failed.Count > 0 ? $" Could not import submodule{(failed.Count == 1 ? "" : "s")}: {string.Join(", ", failed)} — only public GitHub/GitLab submodules can be included." : null);
+            return (merged, note?.Trim());
+        }
+        finally { foreach (var (_, t) in downloaded) TryDelete(t); }
     }
 
     // ---------------------------------------------------------------- archive upload
