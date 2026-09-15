@@ -154,7 +154,10 @@ void pending
         </div>
       </header>
 
-      <ElAlert v-if="draft?.handoffRequested && (draft.status === 'pendingScan' || draft.status === 'pendingReview')" type="success" :closable="false" show-icon :title="t('handoff_in_progress_title')" :description="t('handoff_in_progress_text')" class="editor__handoff" />
+      <ElAlert v-if="draft?.handoffRequested && (draft.status === 'pendingScan' || draft.status === 'pendingReview')" type="success" :closable="false" show-icon :title="t('handoff_in_progress_title')" class="editor__handoff">
+        <p style="margin: 0">{{ t('handoff_in_progress_text') }}</p>
+        <p v-if="site.config?.contactEmail" style="margin: 6px 0 0">{{ t('handoff_contact') }} <a :href="`mailto:${site.config.contactEmail}`" class="gm-link">{{ site.config.contactEmail }}</a></p>
+      </ElAlert>
 
       <ElSteps :active="step" finish-status="success" align-center class="editor__steps">
         <ElStep v-for="(s, i) in steps" :key="s" :title="t(`step_${s}`)" :status="stepIssues[s] ? 'error' : i < step ? 'success' : i === step ? 'process' : 'wait'" @click="step = i" />

@@ -46,6 +46,7 @@ export default {
   handoff_in_progress_title: 'Üzerinde çalışıyoruz',
   handoff_in_progress_text: 'Bu uygulamayı mağaza ekibine devrettiniz. Açıklamayı yazıp dosyaları ve ekran görüntülerini ekleyerek sizin adınıza yayınlayacağız; yayına girdiğinde bildirim alacaksınız. Sizden başka bir şey gerekmiyor.',
   handoff_tag: 'Ekip üzerinde',
+  handoff_contact: 'Sorunuz mu var? Yazın:',
   handoff_submitted: 'Teşekkürler! Mağaza ekibi ilanı tamamlayacak; yayınlandığında size bildirilecek.',
   add_mit_license: 'Benim için MIT LICENSE ekle',
   add_mit_license_hint: 'Arşivde LICENSE dosyası yok. Kod size ait olduğu için standart MIT lisansını biz ekleyebiliriz.',

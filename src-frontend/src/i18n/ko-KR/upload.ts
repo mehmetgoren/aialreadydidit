@@ -46,6 +46,7 @@ export default {
   handoff_in_progress_title: '처리 중입니다',
   handoff_in_progress_text: '이 앱을 스토어 팀에 맡기셨습니다. 설명을 작성하고 파일과 스크린샷을 추가한 뒤 회원님 이름으로 게시합니다. 게시되면 알림을 보내드립니다. 더 이상 하실 일은 없습니다.',
   handoff_tag: '팀 처리 중',
+  handoff_contact: '질문이 있으신가요? 이메일:',
   handoff_submitted: '감사합니다! 스토어 팀이 등록 정보를 완성하며, 게시되면 알림을 보내드립니다.',
   add_mit_license: 'MIT LICENSE 추가해 주기',
   add_mit_license_hint: '아카이브에 LICENSE 파일이 없습니다. 코드가 회원님의 것이므로 표준 MIT 라이선스를 추가해 드릴 수 있습니다.',

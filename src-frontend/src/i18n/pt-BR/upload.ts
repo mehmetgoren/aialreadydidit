@@ -46,6 +46,7 @@ export default {
   handoff_in_progress_title: 'Estamos cuidando disso',
   handoff_in_progress_text: 'Você entregou este app à equipe da loja. Vamos escrever a descrição, adicionar os arquivos e capturas e publicá-lo em seu nome; você receberá uma notificação quando estiver no ar. Nada mais é necessário de você.',
   handoff_tag: 'Equipe cuidando',
+  handoff_contact: 'Dúvidas? Escreva para',
   handoff_submitted: 'Obrigado! A equipe da loja vai concluir a listagem e você será avisado quando for publicada.',
   add_mit_license: 'Adicionar uma LICENSE MIT para mim',
   add_mit_license_hint: 'O arquivo não tem LICENSE. Como o código é seu, podemos adicionar a licença MIT padrão.',

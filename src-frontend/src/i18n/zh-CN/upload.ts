@@ -46,6 +46,7 @@ export default {
   handoff_in_progress_title: '我们正在处理',
   handoff_in_progress_text: '你已将此应用交给商店团队。我们会撰写描述、添加文件和截图，并以你的名义发布；上线后会通知你。你无需再做任何事。',
   handoff_tag: '团队处理中',
+  handoff_contact: '有疑问？请写信至',
   handoff_submitted: '谢谢！商店团队将完成上架信息，发布后会通知你。',
   add_mit_license: '帮我添加 MIT LICENSE',
   add_mit_license_hint: '压缩包中没有 LICENSE 文件。由于代码属于你，我们可以为其添加标准的 MIT 许可证。',

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useSiteStore } from '@/stores/site-store'
 import { onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import type { SavingsDto } from '@/utils/models/catalog-models'
@@ -7,6 +8,7 @@ import { useCommonStore } from '@/stores/common-store'
 import SavingsCounter from '@/components/common/SavingsCounter.vue'
 
 const { t } = useI18n()
+const site = useSiteStore()
 const common = useCommonStore()
 const savings = ref<SavingsDto | null>(null)
 onMounted(async () => {
@@ -41,6 +43,10 @@ onMounted(async () => {
     <section class="gm-card about__box">
       <h2>{{ t('about_how_counter_title') }}</h2>
       <p>{{ t('about_how_counter_text') }}</p>
+    </section>
+    <section v-if="site.config?.contactEmail" class="gm-card about__box">
+      <h2>{{ t('about_contact_title') }}</h2>
+      <p>{{ t('about_contact_text') }} <a :href="`mailto:${site.config.contactEmail}`" class="gm-link">{{ site.config.contactEmail }}</a></p>
     </section>
   </div>
 </template>

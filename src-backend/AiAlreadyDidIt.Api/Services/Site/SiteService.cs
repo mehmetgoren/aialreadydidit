@@ -29,7 +29,7 @@ public sealed class SiteService(CatalogService catalog, SiteSettingsCache settin
             CategorySuggestionsAvailable = ai.Value.EnableCategorySuggestions && providers.Chat.SupportsChat,
             AnnouncementText = NullIfEmpty(await settings.GetStringAsync(SettingKeys.AnnouncementText, "", ct)),
             AnnouncementLink = NullIfEmpty(await settings.GetStringAsync(SettingKeys.AnnouncementLink, "", ct)),
-            ContactEmail = NullIfEmpty(await settings.GetStringAsync(SettingKeys.ContactEmail, s.SupportEmail, ct)),
+            ContactEmail = NullIfEmpty(await settings.GetStringAsync(SettingKeys.ContactEmail, "", ct)) ?? NullIfEmpty(s.SupportEmail),
             AllowAnonymousReports = await settings.GetBoolAsync(SettingKeys.AllowAnonymousReports, true, ct),
             UploadLimits = new UploadLimitsDto
             {

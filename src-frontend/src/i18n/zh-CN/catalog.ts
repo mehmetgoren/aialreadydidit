@@ -130,6 +130,8 @@ export default {
   rule_free_why: '这是一个公共资源，而不是一个交易市场。',
   about_how_counter_title: '节省计数器是如何计算的',
   about_how_counter_text: '我们为每个应用估算再次生成它需要多少 token：源代码行数 × 每行 token 数 × 迭代系数。上传者可以填写会话中的真实总量，但最多只按体量估算的五倍计入，因为智能体会话总量包含廉价的缓存读取。已发布应用的每位不同下载者只计一次，并且只假定其中一半的下载替代了一次新的生成。金额和能耗由管理员可配置的系数推算。这是一个刻意保守的估算，用于让使命可见。',
+  about_contact_title: '联系我们',
+  about_contact_text: '问题、下架请求或合作想法请联系：',
   agents_title: '面向智能体与开发者',
   agents_lead: '生成之前先调用一次："有没有人已经做过这个？"——通过 REST 或 MCP。',
   agents_try: '试一试',

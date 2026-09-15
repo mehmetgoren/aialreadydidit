@@ -46,6 +46,7 @@ export default {
   handoff_in_progress_title: 'Wir arbeiten daran',
   handoff_in_progress_text: 'Sie haben diese App an das Store-Team übergeben. Wir schreiben die Beschreibung, ergänzen Dateien und Screenshots und veröffentlichen sie unter Ihrem Namen; Sie werden benachrichtigt, sobald sie live ist. Von Ihnen ist nichts weiter nötig.',
   handoff_tag: 'Team arbeitet daran',
+  handoff_contact: 'Fragen? Schreiben Sie an',
   handoff_submitted: 'Danke! Das Store-Team stellt den Eintrag fertig; Sie werden bei der Veröffentlichung benachrichtigt.',
   add_mit_license: 'MIT-LICENSE für mich hinzufügen',
   add_mit_license_hint: 'Das Archiv enthält keine LICENSE-Datei. Da der Code Ihnen gehört, können wir die Standard-MIT-Lizenz hinzufügen.',

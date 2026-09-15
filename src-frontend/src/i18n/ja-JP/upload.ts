@@ -46,6 +46,7 @@ export default {
   handoff_in_progress_title: '対応中です',
   handoff_in_progress_text: 'このアプリはストアチームに委任されました。説明文を書き、ファイルとスクリーンショットを追加して、あなたの名前で公開します。公開時に通知が届きます。これ以上の作業は不要です。',
   handoff_tag: 'チームが対応中',
+  handoff_contact: 'ご質問はこちらへ：',
   handoff_submitted: 'ありがとうございます。ストアチームが掲載情報を仕上げ、公開時に通知します。',
   add_mit_license: 'MIT LICENSE を追加してもらう',
   add_mit_license_hint: 'アーカイブに LICENSE ファイルがありません。コードはあなたのものなので、標準の MIT ライセンスを追加できます。',

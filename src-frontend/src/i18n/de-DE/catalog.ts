@@ -130,6 +130,8 @@ export default {
   rule_free_why: 'dies ist ein Gemeingut, kein Marktplatz.',
   about_how_counter_title: 'Wie der Einsparungszähler funktioniert',
   about_how_counter_text: 'Für jede App schätzen wir, wie viele Tokens eine erneute Generierung kosten würde: Quellzeilen × Tokens pro Zeile × ein Iterationsfaktor. Hochladende können die echte Summe ihrer Sitzung eingeben, sie zählt aber höchstens das Fünffache der Größenschätzung, weil Sitzungssummen von Agenten günstige Cache-Lesevorgänge enthalten. Jede Person, die eine veröffentlichte App herunterlädt, zählt einmal, und nur die Hälfte dieser Downloads gilt als Ersatz für eine neue Generierung. Geld und Energie ergeben sich aus vom Administrator einstellbaren Koeffizienten. Es ist eine bewusst vorsichtige Schätzung, die die Mission sichtbar machen soll.',
+  about_contact_title: 'Kontakt',
+  about_contact_text: 'Fragen, Löschanfragen oder Partnerschaftsideen:',
   agents_title: 'Für Agenten & Entwickler',
   agents_lead: 'Ein Aufruf, bevor Sie generieren: "Hat das schon jemand gebaut?" — über REST oder MCP.',
   agents_try: 'Ausprobieren',

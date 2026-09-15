@@ -130,6 +130,8 @@ export default {
   rule_free_why: 'esto es un bien común, no un mercado.',
   about_how_counter_title: 'Cómo funciona el contador de ahorro',
   about_how_counter_text: 'Para cada aplicación estimamos cuántos tokens haría falta para generarla de nuevo: líneas de código × tokens por línea × un factor de iteración. Quien la sube puede introducir el total real de su sesión, pero cuenta como máximo cinco veces la estimación por tamaño, porque los totales de sesión de los agentes incluyen lecturas de caché baratas. Cada descargador distinto de una aplicación publicada cuenta una vez, y solo se asume que la mitad de esas descargas sustituyó a una generación nueva. El dinero y la energía provienen de coeficientes configurables por el administrador. Es una estimación deliberadamente conservadora, pensada para hacer visible la misión.',
+  about_contact_title: 'Contacto',
+  about_contact_text: 'Preguntas, solicitudes de retirada o ideas de colaboración:',
   agents_title: 'Para agentes y desarrolladores',
   agents_lead: 'Una llamada antes de generar: "¿ya ha construido alguien esto?", vía REST o MCP.',
   agents_try: 'Pruébalo',

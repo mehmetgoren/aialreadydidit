@@ -130,6 +130,8 @@ export default {
   rule_free_why: 'burası bir pazar yeri değil, ortak bir havuz.',
   about_how_counter_title: 'Tasarruf sayacı nasıl çalışır?',
   about_how_counter_text: 'Her uygulama için yeniden üretmenin kaç token tutacağını tahmin ederiz: kaynak satırı × satır başına token × bir yineleme katsayısı. Yükleyenler oturumlarındaki gerçek toplamı girebilir, ancak ajan oturum toplamları ucuz önbellek okumalarını da içerdiği için bu değer en fazla boyut tahmininin beş katı sayılır. Yayınlanmış bir uygulamayı indiren her farklı kişi bir kez sayılır ve bu indirmelerin yalnızca yarısının yeni bir üretimin yerini aldığı varsayılır. Para ve enerji, yönetici tarafından ayarlanabilen katsayılardan türetilir. Bu, misyonu görünür kılmak için bilinçli olarak temkinli tutulmuş bir tahmindir.',
+  about_contact_title: 'İletişim',
+  about_contact_text: 'Sorular, kaldırma talepleri veya iş birliği fikirleri için:',
   agents_title: 'Ajanlar ve geliştiriciler için',
   agents_lead: 'Üretmeden önce tek çağrı: "biri bunu zaten yaptı mı?" — REST ya da MCP ile.',
   agents_try: 'Dene',

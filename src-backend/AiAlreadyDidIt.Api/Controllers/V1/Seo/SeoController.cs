@@ -134,9 +134,12 @@ public class SeoController(AadiDbContext db, CatalogService catalog, CategoryInd
         AppendAppList(sb, "Featured apps", home.Featured);
         AppendAppList(sb, "New in the store", home.Newest.Where(n => home.Featured.All(f => f.Id != n.Id)).ToList());
         AppendAppList(sb, "Trending this week", home.Trending.Where(n => home.Featured.All(f => f.Id != n.Id)).ToList());
-        sb.Append($"<p><a href=\"{PublicUrl}/search\">Browse all apps</a></p></body></html>");
+        var contact = NullIfEmpty(await settings.GetStringAsync(SettingKeys.ContactEmail, "", ct)) ?? NullIfEmpty(site.Value.SupportEmail);
+        sb.Append($"<p><a href=\"{PublicUrl}/search\">Browse all apps</a>{(contact is null ? "" : $" · Contact: <a href=\"mailto:{E(contact)}\">{E(contact)}</a>")}</p></body></html>");
         return Content(sb.ToString(), "text/html; charset=utf-8");
     }
+
+    private static string? NullIfEmpty(string? s) => string.IsNullOrWhiteSpace(s) ? null : s.Trim();
 
     /// <summary>Category page for crawlers: the category path, its sub-categories and every published app in the subtree.</summary>
     [HttpGet("seo/category/{slug}")]
@@ -238,6 +241,8 @@ public class SeoController(AadiDbContext db, CatalogService catalog, CategoryInd
         sb.AppendLine().AppendLine($"- OpenAPI: {docs.OpenApiUrl}").AppendLine($"- MCP server (Streamable HTTP): {docs.McpUrl} — tools: check_before_building, search_apps, get_app, list_categories, download_app, submit_app_request");
         sb.AppendLine().AppendLine("## Authentication").AppendLine().AppendLine(docs.Authentication).AppendLine().AppendLine("## Rate limits").AppendLine().AppendLine(docs.RateLimits);
         sb.AppendLine().AppendLine($"Published apps right now: {docs.PublishedApps}. Default description: {await settings.GetStringAsync(SettingKeys.SeoDefaultDescription, "", ct)}");
+        var contact = NullIfEmpty(await settings.GetStringAsync(SettingKeys.ContactEmail, "", ct)) ?? NullIfEmpty(site.Value.SupportEmail);
+        if (contact is not null) sb.AppendLine().AppendLine($"## Contact").AppendLine().AppendLine($"Questions, takedown requests, partnership: {contact}");
         return Content(sb.ToString(), "text/plain; charset=utf-8");
     }
 
