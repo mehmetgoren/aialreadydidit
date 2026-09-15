@@ -40,6 +40,8 @@ export default {
   handoff_note_placeholder: 'Anything we should know: platform, how to run it, the model you used, where the prompt is…',
   handoff_attest: 'This is my own work and it is open source under {license}.',
   handoff_submit: 'Submit for the team',
+  handoff_waiting: 'Waiting for the repository import to finish…',
+  handoff_tick_first: 'Tick the confirmation above first.',
   handoff_submitted: 'Thanks! The store team will finish the listing and you will be notified when it is published.',
   add_mit_license: 'Add an MIT LICENSE for me',
   add_mit_license_hint: 'The archive has no LICENSE file. Since the code is yours, we can add the standard MIT license to it.',

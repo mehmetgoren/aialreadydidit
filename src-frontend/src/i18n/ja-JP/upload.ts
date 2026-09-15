@@ -40,6 +40,8 @@ export default {
   handoff_note_placeholder: '知っておくべきこと：プラットフォーム、実行方法、使用したモデル、プロンプトの場所など…',
   handoff_attest: 'これは私自身の作品で、{license} ライセンスのオープンソースです。',
   handoff_submit: 'チームに送信',
+  handoff_waiting: 'リポジトリのインポート完了を待っています…',
+  handoff_tick_first: '先に上の確認にチェックを入れてください。',
   handoff_submitted: 'ありがとうございます。ストアチームが掲載情報を仕上げ、公開時に通知します。',
   add_mit_license: 'MIT LICENSE を追加してもらう',
   add_mit_license_hint: 'アーカイブに LICENSE ファイルがありません。コードはあなたのものなので、標準の MIT ライセンスを追加できます。',

@@ -40,6 +40,8 @@ export default {
   handoff_note_placeholder: 'Bilmemiz gereken bir şey varsa: platform, nasıl çalıştırılır, kullandığınız model, prompt nerede…',
   handoff_attest: 'Bu benim kendi çalışmam ve {license} lisansıyla açık kaynak.',
   handoff_submit: 'Ekibe gönder',
+  handoff_waiting: 'Depo içe aktarımının bitmesi bekleniyor…',
+  handoff_tick_first: 'Önce yukarıdaki onay kutusunu işaretleyin.',
   handoff_submitted: 'Teşekkürler! Mağaza ekibi ilanı tamamlayacak; yayınlandığında size bildirilecek.',
   add_mit_license: 'Benim için MIT LICENSE ekle',
   add_mit_license_hint: 'Arşivde LICENSE dosyası yok. Kod size ait olduğu için standart MIT lisansını biz ekleyebiliriz.',

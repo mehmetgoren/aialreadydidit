@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, reactive, ref } from 'vue'
+import { computed, onUnmounted, reactive, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import type { AppDraft, RepositoryInspection } from '@/utils/models/apps-models'
 import { MyAppsService } from '@/utils/services/my-apps-service'
@@ -20,6 +20,29 @@ const handingOff = ref(false)
 const addingLicense = ref(false)
 const licenseLabel = computed(() => props.draft.source.detectedLicenseSpdxId || props.draft.licenseSpdxId || 'MIT')
 const canHandoff = computed(() => Boolean(props.draft.source.analyzedAt || props.draft.repoUrl) && !props.draft.publishedAt)
+const importPending = computed(() => Boolean(props.draft.repoUrl) && !props.draft.source.analyzedAt)
+/** Why "Submit for the team" is disabled, so nobody stares at a grey button. */
+const handoffBlocker = computed(() => (importPending.value ? t('handoff_waiting') : !handoff.attest ? t('handoff_tick_first') : ''))
+
+// The repository snapshot is imported by a background job: poll the draft until the analysis lands, then the card unlocks itself.
+let pollTimer = 0
+watch(
+  importPending,
+  (pending) => {
+    window.clearInterval(pollTimer)
+    if (!pending) return
+    pollTimer = window.setInterval(async () => {
+      try {
+        const fresh = await service.getDraft(props.draft.id)
+        if (fresh.source.analyzedAt || fresh.source.warnings) emit('updated', fresh)
+      } catch {
+        /* transient; try again on the next tick */
+      }
+    }, 4000)
+  },
+  { immediate: true },
+)
+onUnmounted(() => window.clearInterval(pollTimer))
 
 async function addMitLicense() {
   addingLicense.value = true
@@ -137,7 +160,10 @@ async function removeSource() {
       <ElCheckbox v-model="handoff.requested">{{ t('handoff_label') }}</ElCheckbox>
       <template v-if="handoff.requested">
         <ElInput v-model="handoff.note" type="textarea" :rows="3" maxlength="2000" :placeholder="t('handoff_note_placeholder')" style="margin: 8px 0" />
-        <ElButton type="primary" :disabled="!handoff.attest || !draft.source.analyzedAt" :loading="handingOff" @click="submitHandoff">{{ t('handoff_submit') }}</ElButton>
+        <div class="step__mit">
+          <ElButton type="primary" :disabled="!handoff.attest || !draft.source.analyzedAt" :loading="handingOff" @click="submitHandoff">{{ t('handoff_submit') }}</ElButton>
+          <span v-if="handoffBlocker">{{ handoffBlocker }}</span>
+        </div>
       </template>
     </div>
 

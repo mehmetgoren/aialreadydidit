@@ -40,6 +40,8 @@ export default {
   handoff_note_placeholder: 'Ce que nous devons savoir : plateforme, comment l\'exécuter, le modèle utilisé, où se trouve le prompt…',
   handoff_attest: 'C\'est mon propre travail et il est open source sous licence {license}.',
   handoff_submit: 'Envoyer à l\'équipe',
+  handoff_waiting: 'En attente de la fin de l\'import du dépôt…',
+  handoff_tick_first: 'Cochez d\'abord la confirmation ci-dessus.',
   handoff_submitted: 'Merci ! L\'équipe de la boutique terminera la fiche et vous serez prévenu à la publication.',
   add_mit_license: 'Ajouter une LICENSE MIT pour moi',
   add_mit_license_hint: 'L\'archive ne contient pas de fichier LICENSE. Le code étant le vôtre, nous pouvons y ajouter la licence MIT standard.',

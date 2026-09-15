@@ -40,6 +40,8 @@ export default {
   handoff_note_placeholder: 'Was wir wissen sollten: Plattform, wie man es startet, das verwendete Modell, wo der Prompt liegt…',
   handoff_attest: 'Das ist meine eigene Arbeit und sie ist Open Source unter {license}.',
   handoff_submit: 'An das Team übergeben',
+  handoff_waiting: 'Warten, bis der Repository-Import abgeschlossen ist…',
+  handoff_tick_first: 'Bitte zuerst die Bestätigung oben ankreuzen.',
   handoff_submitted: 'Danke! Das Store-Team stellt den Eintrag fertig; Sie werden bei der Veröffentlichung benachrichtigt.',
   add_mit_license: 'MIT-LICENSE für mich hinzufügen',
   add_mit_license_hint: 'Das Archiv enthält keine LICENSE-Datei. Da der Code Ihnen gehört, können wir die Standard-MIT-Lizenz hinzufügen.',

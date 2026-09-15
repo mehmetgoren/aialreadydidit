@@ -40,6 +40,8 @@ export default {
   handoff_note_placeholder: '알아야 할 사항: 플랫폼, 실행 방법, 사용한 모델, 프롬프트 위치 등…',
   handoff_attest: '이것은 제 작업물이며 {license} 라이선스의 오픈 소스입니다.',
   handoff_submit: '팀에 제출',
+  handoff_waiting: '리포지토리 가져오기가 끝나기를 기다리는 중…',
+  handoff_tick_first: '먼저 위의 확인란을 선택하세요.',
   handoff_submitted: '감사합니다! 스토어 팀이 등록 정보를 완성하며, 게시되면 알림을 보내드립니다.',
   add_mit_license: 'MIT LICENSE 추가해 주기',
   add_mit_license_hint: '아카이브에 LICENSE 파일이 없습니다. 코드가 회원님의 것이므로 표준 MIT 라이선스를 추가해 드릴 수 있습니다.',

@@ -40,6 +40,8 @@ export default {
   handoff_note_placeholder: '需要我们了解的信息：平台、如何运行、使用的模型、提示词在哪里……',
   handoff_attest: '这是我本人的作品，并以 {license} 许可证开源。',
   handoff_submit: '提交给团队',
+  handoff_waiting: '正在等待仓库导入完成……',
+  handoff_tick_first: '请先勾选上面的确认框。',
   handoff_submitted: '谢谢！商店团队将完成上架信息，发布后会通知你。',
   add_mit_license: '帮我添加 MIT LICENSE',
   add_mit_license_hint: '压缩包中没有 LICENSE 文件。由于代码属于你，我们可以为其添加标准的 MIT 许可证。',

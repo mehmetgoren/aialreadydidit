@@ -40,6 +40,8 @@ export default {
   handoff_note_placeholder: 'ما ينبغي أن نعرفه: المنصة، طريقة التشغيل، النموذج المستخدم، مكان الـ prompt…',
   handoff_attest: 'هذا عملي الخاص وهو مفتوح المصدر بترخيص {license}.',
   handoff_submit: 'إرسال إلى الفريق',
+  handoff_waiting: 'في انتظار انتهاء استيراد المستودع…',
+  handoff_tick_first: 'ضع علامة على التأكيد أعلاه أولاً.',
   handoff_submitted: 'شكراً! سيكمل فريق المتجر القائمة وسيتم إشعارك عند النشر.',
   add_mit_license: 'أضِف ترخيص MIT من أجلي',
   add_mit_license_hint: 'لا يحتوي الأرشيف على ملف LICENSE. بما أن الكود لك، يمكننا إضافة ترخيص MIT القياسي إليه.',
