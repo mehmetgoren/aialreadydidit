@@ -16,6 +16,7 @@ export interface DailyPoint {
 
 export interface ModerationQueueItem {
   appId: number
+  handoff: boolean
   versionId: number | null
   slug: string
   name: string

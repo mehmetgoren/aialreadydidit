@@ -124,6 +124,9 @@ public sealed partial class AppEditorService(AadiDbContext db, ICurrentUser curr
             }
             else { app.DerivedFromAppId = null; app.DerivationKind = null; }
         }
+        if (r.HandoffRequested is { } handoff) app.HandoffRequestedAt = handoff ? app.HandoffRequestedAt ?? Clock.Now : null;
+        if (r.HandoffNote is not null) app.HandoffNote = string.IsNullOrWhiteSpace(r.HandoffNote) ? null : r.HandoffNote.Trim();
+        if (r.AttestAuthorship is { } attest) app.AuthorshipAttestedAt = attest ? app.AuthorshipAttestedAt ?? Clock.Now : null;
         if (r.EstGenerationTokens is { } tokens)
         {
             // The claimed total is kept as-is; RefreshEstimateAsync stores the capped value the counter uses (cost is always derived).
@@ -194,10 +197,18 @@ public sealed partial class AppEditorService(AadiDbContext db, ICurrentUser curr
 
     // ---------------------------------------------------------------- submission
 
-    public async Task<ReadinessDto> GetReadinessAsync(App app, AppVersion version, CancellationToken ct)
+    /// <param name="forPublish">Moderators publishing a handed-off listing: every rule applies again, the handoff no longer relaxes anything.</param>
+    public async Task<ReadinessDto> GetReadinessAsync(App app, AppVersion version, CancellationToken ct, bool forPublish = false)
     {
         var issues = new List<ReadinessIssueDto>();
-        void Issue(string step, string code, string message, bool blocking = true) => issues.Add(new ReadinessIssueDto { Step = step, Code = code, Message = message, Blocking = blocking });
+        // "Let the store team finish my listing": only the source step (and the authorship attestation) blocks submission.
+        var handoff = app.HandoffRequestedAt is not null && !forPublish;
+        void Issue(string step, string code, string message, bool blocking = true)
+        {
+            var relaxed = handoff && blocking && step != "source";
+            issues.Add(new ReadinessIssueDto { Step = step, Code = code, Message = relaxed ? message + " (the store team will do this for you)" : message, Blocking = blocking && !relaxed });
+        }
+        if (handoff && app.AuthorshipAttestedAt is null) Issue("source", "attest", "Confirm that this is your own work and that it is open source under the license shown.");
 
         // details
         if (app.Name.Length < 3 || app.Name == "Untitled app") Issue("details", "name", "Give the app a name.");
@@ -246,7 +257,7 @@ public sealed partial class AppEditorService(AadiDbContext db, ICurrentUser curr
         if (app.Screenshots.Count < min) Issue("screenshots", "screenshots", $"Upload at least {min} screenshot{(min == 1 ? "" : "s")}.");
         else if (app.Screenshots.Count < recommended) Issue("screenshots", "screenshots_recommended", $"{recommended}+ screenshots are recommended.", blocking: false);
 
-        return new ReadinessDto { CanSubmit = issues.All(i => !i.Blocking), Issues = issues };
+        return new ReadinessDto { CanSubmit = issues.All(i => !i.Blocking), Handoff = handoff, Issues = issues };
     }
 
     public async Task<AppDraftDto> SubmitAsync(int id, CancellationToken ct)
@@ -381,6 +392,7 @@ public sealed partial class AppEditorService(AadiDbContext db, ICurrentUser curr
             PublishedVersion = publishedVersion is null ? null : CatalogService.MapVersion(app.Slug, publishedVersion),
             CanEditPublishedFiles = publishedVersion is not null && await CanEditPublishedFilesAsync(app, ct),
             EstGenerationTokens = app.EstGenerationTokens, EstGenerationCostUsd = app.EstGenerationCostUsd, EstIsOverride = app.EstIsOverride,
+            HandoffRequested = app.HandoffRequestedAt is not null, HandoffNote = app.HandoffNote, AuthorshipAttested = app.AuthorshipAttestedAt is not null,
             Readiness = readiness,
             DownloadCount = app.DownloadCount, ViewCount = app.ViewCount, RatingCount = app.RatingCount, RatingAvg = app.RatingAvg,
             CreatedAt = app.CreatedAt, UpdatedAt = app.UpdatedAt, SubmittedAt = app.SubmittedAt, PublishedAt = app.PublishedAt, LlmSuggestedCategoryId = app.LlmSuggestedCategoryId

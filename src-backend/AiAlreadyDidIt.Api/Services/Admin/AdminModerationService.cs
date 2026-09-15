@@ -31,7 +31,7 @@ public sealed class AdminModerationService(AadiDbContext db, ICurrentUser curren
         if (!string.IsNullOrWhiteSpace(query.Q)) q = q.Where(a => EF.Functions.ILike(a.Name, $"%{query.Q}%") || EF.Functions.ILike(a.Uploader.Username, $"%{query.Q}%"));
         var rows = await q.OrderBy(a => a.SubmittedAt ?? a.UpdatedAt).Select(a => new
         {
-            a.Id, a.Slug, a.Name, a.ShortDescription, a.IconStorageKey, a.Status, a.SubmittedAt, a.UpdatedAt, a.PublishedAt,
+            a.Id, a.Slug, a.Name, a.ShortDescription, a.IconStorageKey, a.Status, a.SubmittedAt, a.UpdatedAt, a.PublishedAt, Handoff = a.HandoffRequestedAt != null,
             Cover = a.Screenshots.OrderBy(s => s.SortOrder).Select(s => s.ThumbStorageKey).FirstOrDefault(),
             Uploader = a.Uploader.Username, a.Uploader.TrustLevel, Category = a.Category.NameEn, License = a.License.SpdxId,
             a.HasLicenseFile, a.DetectedLicenseSpdxId, a.LicenseVerifiedByAdmin, LicenseFamily = a.License.Family, a.LicenseId,
@@ -48,7 +48,7 @@ public sealed class AdminModerationService(AadiDbContext db, ICurrentUser curren
             var licenseOk = a.LicenseVerifiedByAdmin || (a.HasLicenseFile && a.DetectedLicenseSpdxId != null && Infrastructure.Import.LicenseDetector.SameFamily(a.License, a.DetectedLicenseSpdxId));
             return new ModerationQueueItemDto
             {
-                AppId = a.Id, VersionId = pendingVersion.Id, Slug = a.Slug, Name = a.Name, ShortDescription = a.ShortDescription, IconUrl = FileUrls.Icon(a.IconStorageKey), CoverUrl = FileUrls.Screenshot(a.Cover),
+                AppId = a.Id, Handoff = a.Handoff, VersionId = pendingVersion.Id, Slug = a.Slug, Name = a.Name, ShortDescription = a.ShortDescription, IconUrl = FileUrls.Icon(a.IconStorageKey), CoverUrl = FileUrls.Screenshot(a.Cover),
                 Kind = a.PublishedAt is null ? "app" : "version", Version = pendingVersion.Version, AppStatus = a.Status, VersionStatus = pendingVersion.Status,
                 UploaderUsername = a.Uploader, UploaderTrustLevel = a.TrustLevel, CategoryName = a.Category, LicenseSpdxId = a.License, LicenseOk = licenseOk,
                 FileCount = files.Count, InfectedCount = files.Count(s => s == ScanStatus.Infected), PendingScanCount = files.Count(s => s == ScanStatus.Pending),
@@ -105,6 +105,14 @@ public sealed class AdminModerationService(AadiDbContext db, ICurrentUser curren
         if (version.Files.Any(f => f.StorageKey != null && f.ScanStatus == ScanStatus.Pending)) throw ApiException.Unprocessable("Files are still waiting for the antivirus scan.");
         var license = await lifecycle.CheckLicenseAsync(app, ct);
         if (!license.Ok) throw ApiException.Unprocessable("License check failed: " + license.Message + " Use 'verify license' to override.");
+        if (app.HandoffRequestedAt is not null)
+        {
+            // A handed-off listing was submitted with only the source; the moderator must have completed the rest before it goes live.
+            var readiness = await editor.GetReadinessAsync(app, version, ct, forPublish: true);
+            var blocking = readiness.Issues.Where(i => i.Blocking && !(i.Step == "details" && i.Code == "category" && request.CategoryId is not null)).ToList();
+            if (blocking.Count > 0) throw ApiException.Unprocessable(blocking.Select(i => ApiErrors.Unprocessable("Complete the listing first: " + i.Message, i.Code)));
+            app.HandoffRequestedAt = null;
+        }
         if (request.CategoryId is { } cid)
         {
             var cat = await db.Categories.FirstOrDefaultAsync(c => c.Id == cid, ct) ?? throw ApiException.Unprocessable("Category not found.", "categoryId");

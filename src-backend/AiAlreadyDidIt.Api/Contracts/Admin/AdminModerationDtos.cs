@@ -8,6 +8,8 @@ namespace AiAlreadyDidIt.Api.Contracts.Admin;
 public class ModerationQueueItemDto
 {
     public int AppId { get; set; }
+    /// <summary>The uploader asked the store team to complete the listing before publishing.</summary>
+    public bool Handoff { get; set; }
     public int? VersionId { get; set; }
     public string Slug { get; set; } = string.Empty;
     public string Name { get; set; } = string.Empty;

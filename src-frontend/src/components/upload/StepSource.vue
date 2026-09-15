@@ -14,6 +14,39 @@ const { t } = useI18n()
 const site = useSiteStore()
 const service = new MyAppsService()
 
+/** "Let the store team finish my listing": only the source + the authorship attestation are needed to submit. */
+const handoff = reactive({ requested: props.draft.handoffRequested, note: props.draft.handoffNote ?? '', attest: props.draft.authorshipAttested })
+const handingOff = ref(false)
+const addingLicense = ref(false)
+const licenseLabel = computed(() => props.draft.source.detectedLicenseSpdxId || props.draft.licenseSpdxId || 'MIT')
+const canHandoff = computed(() => Boolean(props.draft.source.analyzedAt || props.draft.repoUrl) && !props.draft.publishedAt)
+
+async function addMitLicense() {
+  addingLicense.value = true
+  try {
+    emit('updated', await service.addLicenseFile(props.draft.id, 'MIT', true))
+    handoff.attest = true
+    notifyS(t('add_mit_license_done'))
+  } catch (err) {
+    notifyError(err)
+  } finally {
+    addingLicense.value = false
+  }
+}
+
+async function submitHandoff() {
+  handingOff.value = true
+  try {
+    await service.update(props.draft.id, { handoffRequested: true, handoffNote: handoff.note || null, attestAuthorship: handoff.attest })
+    emit('updated', await service.submit(props.draft.id))
+    notifyS(t('handoff_submitted'))
+  } catch (err) {
+    notifyError(err)
+  } finally {
+    handingOff.value = false
+  }
+}
+
 const mode = ref<'repository' | 'archive'>(props.draft.repoUrl ? 'repository' : props.draft.source.analyzedAt ? 'archive' : 'repository')
 const repo = reactive({ url: props.draft.repoUrl ?? '', sourceRef: props.draft.draftVersion?.sourceRef ?? '', prefill: !props.draft.publishedAt })
 const inspecting = ref(false)
@@ -93,6 +126,21 @@ async function removeSource() {
       <ElAlert v-if="draft.source.warnings && draft.source.analyzedAt" type="warning" :closable="false" :title="draft.source.warnings" style="margin-top: 8px" />
     </div>
 
+    <div v-if="editable && canHandoff" class="gm-card step__handoff">
+      <h3>{{ t('handoff_title') }}</h3>
+      <p class="gm-muted">{{ t('handoff_help') }}</p>
+      <div v-if="draft.sourceKind === 'archive' && draft.source.analyzedAt && !draft.source.hasLicenseFile" class="step__mit">
+        <span>{{ t('add_mit_license_hint') }}</span>
+        <ElButton size="small" :loading="addingLicense" @click="addMitLicense">{{ t('add_mit_license') }}</ElButton>
+      </div>
+      <ElCheckbox v-model="handoff.attest">{{ t('handoff_attest', { license: licenseLabel }) }}</ElCheckbox>
+      <ElCheckbox v-model="handoff.requested">{{ t('handoff_label') }}</ElCheckbox>
+      <template v-if="handoff.requested">
+        <ElInput v-model="handoff.note" type="textarea" :rows="3" maxlength="2000" :placeholder="t('handoff_note_placeholder')" style="margin: 8px 0" />
+        <ElButton type="primary" :disabled="!handoff.attest || !draft.source.analyzedAt" :loading="handingOff" @click="submitHandoff">{{ t('handoff_submit') }}</ElButton>
+      </template>
+    </div>
+
     <template v-if="editable">
       <ElRadioGroup v-model="mode" class="step__mode">
         <ElRadioButton value="repository">{{ t('source_repository') }}</ElRadioButton>
@@ -137,6 +185,8 @@ async function removeSource() {
 </template>
 
 <style scoped lang="scss">
+.step__handoff { padding: 14px 16px; margin: 14px 0; display: flex; flex-direction: column; gap: 6px; border-color: var(--gm-primary); h3 { margin: 0; font-size: 15px; } }
+.step__mit { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; color: var(--gm-text-muted); font-size: 13px; }
 .step {
   &__intro { color: var(--gm-text-muted); margin: 0 0 12px; }
   &__current { padding: 14px 16px; margin-bottom: 16px; &-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; } }

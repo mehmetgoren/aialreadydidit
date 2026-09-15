@@ -59,6 +59,9 @@ public class MyAppsController(AppEditorService editor, CategorySuggestionService
     [RequestFormLimits(MultipartBodyLengthLimit = 220L * 1024 * 1024)]
     public async Task<ActionResult<ApiResponse<AppDraftDto>>> UploadArchive(int id, IFormFile file, CancellationToken ct) => Ok(ApiResponse.Ok(await editor.UploadSourceArchiveAsync(id, file, ct)));
 
+    [HttpPost("{id:int}/source/license")]
+    public async Task<ActionResult<ApiResponse<AppDraftDto>>> AddLicenseFile(int id, [FromBody] AddLicenseFileRequest request, CancellationToken ct) => Ok(ApiResponse.Ok(await editor.AddLicenseFileAsync(id, request, ct)));
+
     [HttpDelete("{id:int}/source")]
     public async Task<ActionResult<ApiResponse<AppDraftDto>>> RemoveSource(int id, CancellationToken ct) => Ok(ApiResponse.Ok(await editor.RemoveSourceAsync(id, ct)));
 

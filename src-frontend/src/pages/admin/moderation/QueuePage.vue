@@ -42,7 +42,7 @@ function fetchPage(query: Record<string, unknown>) {
           </div>
         </template>
       </ElTableColumn>
-      <ElTableColumn :label="t('adm_kind')" width="110"><template #default="{ row }">{{ row.kind === 'version' ? `v${row.version}` : t('adm_new_app') }}</template></ElTableColumn>
+      <ElTableColumn :label="t('adm_kind')" width="110"><template #default="{ row }">{{ row.kind === 'version' ? `v${row.version}` : t('adm_new_app') }} <ElTag v-if="row.handoff" type="warning" size="small" effect="dark">{{ t('adm_handoff') }}</ElTag></template></ElTableColumn>
       <ElTableColumn :label="t('status')" width="130"><template #default="{ row }"><StatusTag :value="row.versionStatus ?? row.appStatus" /></template></ElTableColumn>
       <ElTableColumn :label="t('uploader')" width="150"><template #default="{ row }">{{ row.uploaderUsername }} <ElTag v-if="row.uploaderTrustLevel" size="small" type="success">T{{ row.uploaderTrustLevel }}</ElTag></template></ElTableColumn>
       <ElTableColumn :label="t('category')" prop="categoryName" width="160" show-overflow-tooltip />

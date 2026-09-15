@@ -81,6 +81,7 @@ const addNote = () => run(() => service.note(appId, decision.note, pendingVersio
     <div v-if="data" class="rv">
       <div class="rv__main">
         <div class="rv__status"><StatusTag :value="data.draft.status" /><StatusTag v-if="pendingVersion" :value="pendingVersion.status" /><span v-if="pendingVersion" class="gm-muted">v{{ pendingVersion.version }}</span><span v-if="data.draft.rejectionReason" class="rv__reason">{{ data.draft.rejectionReason }}</span></div>
+        <ElAlert v-if="data.draft.handoffRequested" type="warning" :closable="false" show-icon :title="t('adm_handoff_title')" :description="data.draft.handoffNote || t('adm_handoff_no_note')" style="margin-bottom: 10px" />
         <ElAlert v-if="data.licenseIssue" type="error" :closable="false" show-icon :title="data.licenseIssue" style="margin-bottom: 10px" />
         <ElAlert v-if="data.reports.length" type="warning" :closable="false" show-icon :title="t('adm_has_reports', { n: data.reports.length })" style="margin-bottom: 10px" />
         <ScreenshotGallery :screenshots="data.preview.screenshots" />

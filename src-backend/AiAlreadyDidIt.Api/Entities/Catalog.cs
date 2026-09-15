@@ -91,6 +91,11 @@ public class App
     public string? SourceWarnings { get; set; }
     /// <summary>An admin confirmed the license manually (declared id kept even if the text was not recognised).</summary>
     public bool LicenseVerifiedByAdmin { get; set; }
+    /// <summary>Set when the uploader asked the store team to complete the listing (details, files, screenshots) from the source alone.</summary>
+    public DateTime? HandoffRequestedAt { get; set; }
+    public string? HandoffNote { get; set; }
+    /// <summary>The uploader confirmed the code is theirs to publish under the declared license.</summary>
+    public DateTime? AuthorshipAttestedAt { get; set; }
     public string? SourcePrimaryLanguage { get; set; }
 
     // counters (cached)

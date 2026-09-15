@@ -73,6 +73,11 @@ export class MyAppsService extends BaseService {
     return this.upload<AppDraft>(`${id}/source/archive`, form, onProgress)
   }
 
+  /** "Add an MIT LICENSE for me": rewrites the uploaded archive with a LICENSE file (archives only). */
+  addLicenseFile(id: number, spdxId = 'MIT', attest = true) {
+    return this.post<AppDraft>(`${id}/source/license`, { spdxId, attest })
+  }
+
   removeSource(id: number) {
     return this.delete<AppDraft>(`${id}/source`)
   }

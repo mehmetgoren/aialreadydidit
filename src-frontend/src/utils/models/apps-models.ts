@@ -6,6 +6,10 @@ export interface PromptInput {
 }
 
 export interface SaveDraftRequest {
+  /** "Let the store team finish my listing". */
+  handoffRequested?: boolean
+  handoffNote?: string | null
+  attestAuthorship?: boolean
   name?: string
   shortDescription?: string
   longDescription?: string
@@ -79,12 +83,17 @@ export interface ReadinessIssue {
 }
 
 export interface Readiness {
+  /** The uploader handed the listing to the store team: details / files / screenshots issues no longer block. */
+  handoff?: boolean
   canSubmit: boolean
   issues: ReadinessIssue[]
 }
 
 export interface AppDraft {
   id: number
+  handoffRequested: boolean
+  handoffNote: string | null
+  authorshipAttested: boolean
   slug: string
   name: string
   shortDescription: string

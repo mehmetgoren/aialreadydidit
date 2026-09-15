@@ -21,6 +21,19 @@ public class SaveDraftRequest
     /// <summary>Real numbers from the uploader's own session (optional; overrides the heuristic).</summary>
     public long? EstGenerationTokens { get; set; }
     public decimal? EstGenerationCostUsd { get; set; }
+    /// <summary>"Let the store team finish my listing": only the source (and the authorship attestation) are required to submit.</summary>
+    public bool? HandoffRequested { get; set; }
+    [MaxLength(2000)] public string? HandoffNote { get; set; }
+    /// <summary>The uploader confirms the code is their own work and open source under the declared license.</summary>
+    public bool? AttestAuthorship { get; set; }
+}
+
+public class AddLicenseFileRequest
+{
+    /// <summary>Only MIT is offered for now.</summary>
+    [Required, MaxLength(40)] public string SpdxId { get; set; } = "MIT";
+    /// <summary>Must be true: the uploader asserts authorship, otherwise nobody may attach a license to the code.</summary>
+    public bool Attest { get; set; }
 }
 
 public class PromptInput
@@ -174,6 +187,8 @@ public class ReadinessIssueDto
 public class ReadinessDto
 {
     public bool CanSubmit { get; set; }
+    /// <summary>True when the uploader handed the listing to the store team: details / files / screenshots issues no longer block.</summary>
+    public bool Handoff { get; set; }
     public List<ReadinessIssueDto> Issues { get; set; } = [];
 }
 
@@ -231,6 +246,9 @@ public class AppDraftDto
     public long EstGenerationTokens { get; set; }
     public decimal EstGenerationCostUsd { get; set; }
     public bool EstIsOverride { get; set; }
+    public bool HandoffRequested { get; set; }
+    public string? HandoffNote { get; set; }
+    public bool AuthorshipAttested { get; set; }
     public ReadinessDto Readiness { get; set; } = new();
     public int DownloadCount { get; set; }
     public int ViewCount { get; set; }
