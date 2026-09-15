@@ -256,6 +256,7 @@ the migration was regenerated after the build.
 | Admin › Apps grid actions (unlist / restore / remove / feature / unfeature) → 404 "Request failed with status code 404" (owner, 2026-09-08): the route was `[HttpPost("{id:int}/{action}")]` and `action` is MVC's reserved route token, so the segment only matched the literal method name | parameter renamed to `{verb}`; `RouteTemplateTests` scans every controller for `{action}`/`{controller}`; "feature" now requires Published (422 otherwise) and assigns `FeaturedOrder` (also when approving with the feature checkbox) |
 | Headless Chrome (`--headless=new --enable-logging=stderr --v=0`) prints page console messages, so CSP violations ("Refused to …") can be checked from the shell without the extension | used for the CSP verification crawl |
 | Claude Chrome extension screenshots time out when the tab is in the background (`document.visibilityState === 'hidden'`) | verify via the JavaScript tool / DOM, or headless `google-chrome --screenshot` from the shell |
+| `ElMessageBox` confirm painted under the page on pages without an `ElDialog` (overlay static/transparent) | programmatic components need their styles imported globally: `overlay.scss` added to `styles/index.scss` |
 
 ## 9. Seed data facts
 
@@ -569,6 +570,12 @@ the migration was regenerated after the build.
     `SourceWarnings`; the readiness message for 0 source files now mentions submodules. Verified locally: feniks → 366 files,
     53 754 lines, Go, 6 submodules, ~10 s. 12 new tests (parser, URL spellings, re-rooting, merge + analyzer) → backend 198.
     Deployed. The owner's production draft 29 still holds the old empty snapshot — re-attach the repository to re-import.
+38. Owner (2026-09-15): Admin › Apps › Actions › Remove confirm rendered broken (box painted under the table rows, message
+    invisible, no dim). Cause: `ElMessageBox` is opened from code, so the ElementPlusResolver never injects `overlay.css`;
+    pages that render an `ElDialog` (dashboard wizard) got it as a side effect, the admin Apps page did not → `.el-overlay`
+    was `position: static`, transparent. Fix: `@use 'element-plus/theme-chalk/src/overlay.scss'` next to the message-box /
+    message / notification / loading imports in `styles/index.scss`. Reproduced and verified with the headless CDP script
+    (`PRE_JS` clicks Actions → Remove, `POST_JS` reads computed styles + `elementFromPoint`). Deployed.
 
 ## 12. Where things stand (2026-09-14)
 
