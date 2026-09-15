@@ -590,6 +590,8 @@ the migration was regenerated after the build.
     ("Questions? Write to …"), on the crawler-rendered home page and in `llms.txt` ("## Contact"). Keys `about_contact_*`,
     `handoff_contact` in 11 locales. Verified live: `site/config.contactEmail`, llms.txt and the bot home page all show it.
     Change it later in Admin › Settings › General › contact e-mail (no deploy needed).
+    Owner (2026-09-16): **no "partnership" wording anywhere — this is a non-commercial project.** Contact copy is now
+    "Questions, feedback or takedown requests" (11 locales + llms.txt). Keep all copy free of business / monetisation framing.
 
 ## 12. Where things stand (2026-09-14)
 
