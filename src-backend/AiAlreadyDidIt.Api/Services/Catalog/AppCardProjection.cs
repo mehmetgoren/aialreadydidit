@@ -30,6 +30,7 @@ public static class AppCardProjection
         UpdatedAt = a.UpdatedAt,
         UploaderUsername = a.Uploader.Username,
         IsFeatured = a.IsFeatured,
+        HandoffRequested = a.HandoffRequestedAt != null,
         EstGenerationTokens = a.EstGenerationTokens,
         EstGenerationCostUsd = a.EstGenerationCostUsd,
         Status = a.Status,

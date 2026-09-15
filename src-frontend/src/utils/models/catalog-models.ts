@@ -84,6 +84,7 @@ export interface AppCardDto {
   updatedAt: string
   uploaderUsername: string
   isFeatured: boolean
+  handoffRequested: boolean
   estGenerationTokens: number
   estGenerationCostUsd: number
   similarity: number | null

@@ -19,10 +19,10 @@ const handoff = reactive({ requested: props.draft.handoffRequested, note: props.
 const handingOff = ref(false)
 const addingLicense = ref(false)
 const licenseLabel = computed(() => props.draft.source.detectedLicenseSpdxId || props.draft.licenseSpdxId || 'MIT')
-const canHandoff = computed(() => Boolean(props.draft.source.analyzedAt || props.draft.repoUrl) && !props.draft.publishedAt)
+const canHandoff = computed(() => !props.draft.publishedAt)
 const importPending = computed(() => Boolean(props.draft.repoUrl) && !props.draft.source.analyzedAt)
 /** Why "Submit for the team" is disabled, so nobody stares at a grey button. */
-const handoffBlocker = computed(() => (importPending.value ? t('handoff_waiting') : !handoff.attest ? t('handoff_tick_first') : ''))
+const handoffBlocker = computed(() => (!hasSource.value ? t('handoff_attach_first') : importPending.value ? t('handoff_waiting') : !handoff.attest ? t('handoff_tick_first') : ''))
 
 // The repository snapshot is imported by a background job: poll the draft until the analysis lands, then the card unlocks itself.
 let pollTimer = 0
@@ -149,15 +149,16 @@ async function removeSource() {
       <ElAlert v-if="draft.source.warnings && draft.source.analyzedAt" type="warning" :closable="false" :title="draft.source.warnings" style="margin-top: 8px" />
     </div>
 
-    <div v-if="editable && canHandoff" class="gm-card step__handoff">
+    <div v-if="editable && canHandoff" class="gm-card step__handoff" :class="{ 'is-locked': !hasSource }">
       <h3>{{ t('handoff_title') }}</h3>
       <p class="gm-muted">{{ t('handoff_help') }}</p>
+      <p v-if="!hasSource" class="step__handoff-hint">{{ t('handoff_attach_first') }}</p>
       <div v-if="draft.sourceKind === 'archive' && draft.source.analyzedAt && !draft.source.hasLicenseFile" class="step__mit">
         <span>{{ t('add_mit_license_hint') }}</span>
         <ElButton size="small" :loading="addingLicense" @click="addMitLicense">{{ t('add_mit_license') }}</ElButton>
       </div>
-      <ElCheckbox v-model="handoff.attest">{{ t('handoff_attest', { license: licenseLabel }) }}</ElCheckbox>
-      <ElCheckbox v-model="handoff.requested">{{ t('handoff_label') }}</ElCheckbox>
+      <ElCheckbox v-model="handoff.attest" :disabled="!hasSource">{{ t('handoff_attest', { license: licenseLabel }) }}</ElCheckbox>
+      <ElCheckbox v-model="handoff.requested" :disabled="!hasSource">{{ t('handoff_label') }}</ElCheckbox>
       <template v-if="handoff.requested">
         <ElInput v-model="handoff.note" type="textarea" :rows="3" maxlength="2000" :placeholder="t('handoff_note_placeholder')" style="margin: 8px 0" />
         <div class="step__mit">
@@ -213,6 +214,8 @@ async function removeSource() {
 <style scoped lang="scss">
 .step__handoff { padding: 14px 16px; margin: 14px 0; display: flex; flex-direction: column; gap: 6px; border-color: var(--gm-primary); h3 { margin: 0; font-size: 15px; } }
 .step__mit { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; color: var(--gm-text-muted); font-size: 13px; }
+.step__handoff.is-locked { border-color: var(--gm-border); }
+.step__handoff-hint { margin: 0; font-size: 13px; color: var(--gm-primary); }
 .step {
   &__intro { color: var(--gm-text-muted); margin: 0 0 12px; }
   &__current { padding: 14px 16px; margin-bottom: 16px; &-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; } }

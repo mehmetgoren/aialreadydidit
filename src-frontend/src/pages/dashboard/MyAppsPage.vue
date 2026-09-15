@@ -58,7 +58,7 @@ async function remove(app: AppCardDto) {
           </div>
         </template>
       </ElTableColumn>
-      <ElTableColumn :label="t('status')" width="130"><template #default="{ row }"><StatusTag :value="row.status" /></template></ElTableColumn>
+      <ElTableColumn :label="t('status')" width="200"><template #default="{ row }"><StatusTag :value="row.status" /><ElTag v-if="row.handoffRequested && row.status !== 'published'" type="success" size="small" effect="plain" style="margin-left: 6px">{{ t('handoff_tag') }}</ElTag></template></ElTableColumn>
       <ElTableColumn :label="t('version')" width="90" prop="latestVersion" />
       <ElTableColumn :label="t('downloads')" width="110" prop="downloadCount" align="right" />
       <ElTableColumn :label="t('rating')" width="90" align="right"><template #default="{ row }">{{ row.ratingCount ? Math.round(row.ratingAvg) : '—' }}</template></ElTableColumn>

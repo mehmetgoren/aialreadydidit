@@ -89,6 +89,8 @@ public class AppCardDto
     public DateTime UpdatedAt { get; set; }
     public string UploaderUsername { get; set; } = string.Empty;
     public bool IsFeatured { get; set; }
+    /// <summary>The uploader handed the listing to the store team and it is not published yet ("we're working on it").</summary>
+    public bool HandoffRequested { get; set; }
     public long EstGenerationTokens { get; set; }
     public decimal EstGenerationCostUsd { get; set; }
     /// <summary>Set by semantic search (0..1).</summary>

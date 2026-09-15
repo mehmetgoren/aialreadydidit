@@ -154,6 +154,8 @@ void pending
         </div>
       </header>
 
+      <ElAlert v-if="draft?.handoffRequested && (draft.status === 'pendingScan' || draft.status === 'pendingReview')" type="success" :closable="false" show-icon :title="t('handoff_in_progress_title')" :description="t('handoff_in_progress_text')" class="editor__handoff" />
+
       <ElSteps :active="step" finish-status="success" align-center class="editor__steps">
         <ElStep v-for="(s, i) in steps" :key="s" :title="t(`step_${s}`)" :status="stepIssues[s] ? 'error' : i < step ? 'success' : i === step ? 'process' : 'wait'" @click="step = i" />
       </ElSteps>
@@ -170,6 +172,7 @@ void pending
 </template>
 
 <style scoped lang="scss">
+.editor__handoff { margin: 12px 0 4px; }
 .editor {
   padding: 16px 16px 32px;
   &__card { padding: 22px 26px 26px; }
