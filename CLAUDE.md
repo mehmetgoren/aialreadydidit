@@ -538,6 +538,25 @@ the migration was regenerated after the build.
     `docs/screenshots/home.png` with PIL). Verified locally and on production after deploy (6011cec): Googlebot UA gets the
     rendered home/category pages, humans the SPA, og.png 200. Still the owner's: Google Search Console + Bing Webmaster
     (DNS TXT at Cloudflare, or the HTML-tag method via index.html) and submitting the sitemap.
+36. Upload friction (2026-09-15, owner: "4 users don't upload, it's difficult"). Evidence from production: 5 drafts by 5
+    people, every one stopped after Source/Details — none reached install files or screenshots; one archive blocked by a
+    missing LICENSE. Built the **handoff**: on the Source step, once a repo or archive is attached, a card offers (a) "Add an
+    MIT LICENSE for me" (archives only; requires the authorship attestation; downloads the archive from MinIO, adds `LICENSE`
+    inside the common root folder — zip via `ZipArchiveMode.Update`, tar.gz via `System.Formats.Tar` re-pack — re-stores and
+    re-analyses it; `POST my/apps/{id}/source/license`), (b) the attestation checkbox "This is my own work and it is open
+    source under {license}", (c) "Let the store team finish my listing" + note + "Submit for the team". Model: `App.
+    HandoffRequestedAt`, `HandoffNote`, `AuthorshipAttestedAt` (migration `HandoffListing`); `SaveDraftRequest.
+    HandoffRequested/HandoffNote/AttestAuthorship`; `GetReadinessAsync(…, forPublish)` — with a handoff every non-source
+    blocking issue becomes a warning suffixed "(the store team will do this for you)" and the attestation becomes required;
+    `ApproveAsync` re-runs readiness with `forPublish: true` and refuses ("Complete the listing first: …") until the moderator
+    filled details / files / screenshots, then clears the flag. Queue items carry `Handoff` (orange "Handoff" tag), the review
+    page shows the note. 13 i18n keys × 11 locales. Tests: backend 186 (`AddLicenseFileTests`: root-folder detection, MIT
+    text recognised by `LicenseDetector`), frontend 116. Verified end to end on the local stack via the API (draft → archive
+    without LICENSE → 422 without attest → MIT added, detected → handoff submit 200 → queue shows the flag → approve 422 with
+    the 7 missing items → note visible). Deployed 9f0da24; migration applied on production. Local dev ClamAV container was
+    down during the test (scan job retrying) — unrelated. Follow-ups from the same analysis, not built yet: install-command
+    references (pip/npm/brew/winget) as an install-file kind, README images → screenshots, prompt optional, agent-side
+    `publish_app`, stalled-draft reminder e-mail.
 
 ## 12. Where things stand (2026-09-14)
 
@@ -554,7 +573,7 @@ the migration was regenerated after the build.
   blocked (new-account brake), r/ClaudeAI waits for karma > 50; rest of the schedule in the kit (log 32).
   Copy-ready texts: `docs/launch/posts.md` and the "Launch Kit" artifact. Owner posts from own accounts; Claude fills forms
   in the owner's signed-in Chrome tab (Claude tab group) and drafts replies.
-- Next: watch r/SideProject + the r/ClaudeCode showcase comment (say "check"); r/TurkDev after modmail approval; social one-liner (owner); r/ClaudeCode standalone write-up in a few days; 
+- Next: watch r/SideProject + the r/ClaudeCode showcase comment (say "check"); r/TurkDev after modmail approval; social one-liner (owner); r/ClaudeCode standalone write-up in a few days; owner sets up Search Console + Bing; handoff drafts arrive in the moderation queue with a "Handoff" tag — complete them in the editor, then approve; 
   r/coolgithubprojects Tuesday; owner comments in r/ClaudeAI to reach 50 karma; HN exception e-mail (owner). Still open:
   AdBlock screenshot (owner, phone), a few ratings.
 - Older candidates: (1) ~~SMTP~~ done 2026-09-11; (2) grow the catalogue to 20–30
