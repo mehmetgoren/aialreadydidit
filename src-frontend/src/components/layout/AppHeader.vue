@@ -73,11 +73,13 @@ const user = useUserStore()
     }
   }
   &__search {
-    flex: 1;
-    max-width: 520px;
+    // takes the free space; the spacer only keeps a small gap so the box no longer shares half the room with it
+    flex: 1 1 320px;
+    min-width: 240px;
+    max-width: 720px;
   }
   &__spacer {
-    flex: 1;
+    flex: 0 1 24px;
   }
   &__link {
     color: var(--gm-text);

@@ -242,6 +242,7 @@ public static class ReferenceData
     [
         new("Anthropic", "Claude Fable", "5.1", "2026-08-01"),
         new("Anthropic", "Claude Opus", "5", "2026-06-01"),
+        new("Anthropic", "Claude Opus", "4.8", null),
         new("Anthropic", "Claude Sonnet", "5", "2026-06-01"),
         new("Anthropic", "Claude Opus", "4.6", "2026-02-01"),
         new("Anthropic", "Claude Sonnet", "4.6", "2026-02-01"),
@@ -262,6 +263,8 @@ public static class ReferenceData
         new("Google", "Gemini 2.5 Flash", null, "2025-06-17"),
         new("xAI", "Grok 4", null, "2025-07-09"),
         new("Meta", "Llama 4", null, "2025-04-05"),
+        new("DeepSeek", "DeepSeek V4 Pro", null, null),
+        new("DeepSeek", "DeepSeek Flash", null, null),
         new("DeepSeek", "DeepSeek V4", null, "2026-01-01"),
         new("DeepSeek", "DeepSeek R1", null, "2025-01-20"),
         new("Alibaba", "Qwen3 Coder", null, "2025-07-22"),
