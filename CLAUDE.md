@@ -597,6 +597,13 @@ the migration was regenerated after the build.
     backend `"handoff"` case), an orange dark "Handed to the team" tag right next to the app name, Admin › Apps shows a
     "Handoff" tag beside the status (`AdminAppsService` projection sets `HandoffRequested`), and the dashboard has a
     "Handed to the team" counter card (`HandoffPending`, links to the filter). Key `adm_handoff_pending` ×11. Deployed.
+42. Owner (2026-09-17): (a) header search box "so small" — `.header__search` and `.header__spacer` both had `flex: 1`, so they
+    split the free width and the input shrank to ~120 px at 1280 px; now search `flex: 1 1 320px; min-width 240px; max-width
+    720px`, spacer `flex: 0 1 24px` (≈ 500 px wide at 1280). (b) LLM list: added Anthropic "Claude Opus 4.8" and DeepSeek
+    "DeepSeek V4 Pro" + "DeepSeek Flash" to `ReferenceData.LlmModels` (release dates unknown → null); the seeder adds missing
+    slugs at startup, so production got them on deploy (slugs `anthropic-claude-opus-4-8`, `deepseek-deepseek-v4-pro`,
+    `deepseek-deepseek-flash`). Search Console "Page with redirect" for http:// and www variants is the intended
+    canonicalisation (308/301 → https://aialreadydidit.com/), nothing to fix.
 
 ## 12. Where things stand (2026-09-14)
 
