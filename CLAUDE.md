@@ -133,7 +133,7 @@ AiAlreadyDidIt/
     AiAlreadyDidIt.Tests/      xunit unit tests (110, pure logic, no DB/network) — `dotnet test` in src-backend
   src-frontend/                (mirrors Gemecik/src-frontend; own git repo, initial commit 71bf4d3)
     src/{boot,i18n/{en-US,tr-TR},layouts,components,pages,router,stores,utils,styles}
-    src/**/__tests__/          Vitest specs (96, jsdom, no API) — `npm run test` in src-frontend
+    src/**/__tests__/          Vitest specs (119, jsdom, no API) — `npm run test` in src-frontend
     docker/nginx.conf          SPA + /api,/files proxy (HTTP/1.1) + crawler → /seo/app/*
 ```
 
@@ -604,6 +604,26 @@ the migration was regenerated after the build.
     slugs at startup, so production got them on deploy (slugs `anthropic-claude-opus-4-8`, `deepseek-deepseek-v4-pro`,
     `deepseek-deepseek-flash`). Search Console "Page with redirect" for http:// and www variants is the intended
     canonicalisation (308/301 → https://aialreadydidit.com/), nothing to fix.
+43. Owner (2026-09-21): "the mobile version looks terrible". Measured with a CDP phone emulation (390×844, DPR 2, mobile
+    UA; scratchpad `mshot.mjs` prints `scrollWidth` vs `clientWidth` and the elements sticking out): the header was 600 px wide
+    on a 390 px screen (search `min-width: 240px` from log 42 + publish button + language + sign-in), so **every** page panned
+    sideways. Fixes (b0c3f3c, deployed): (a) header ≤ 640 px = brand + actions on row 1, search on its own row; the text links
+    live in a hamburger `ElDropdown` (For agents, Wanted, Publish, About; key `menu`) from ≤ 900 px; publish button icon-only,
+    hidden when signed in and ≤ 400 px. (b) Search / category: the sidebar sat above the results (~1 250 px) → ≤ 860 px it
+    opens from a "Filters" button (active-filter count badge) in a bottom `ElDrawer` with a "Show {n} apps" footer (keys
+    `filters`, `show_results`); the mode switch takes a full row. (c) App page ≤ 900 px: flex column with
+    `.app-page__side { display: contents }` and `order` so the **download box comes before the gallery/README** (the grid's
+    `align-items: start` must become `stretch`, otherwise the gallery sizes to its content — 1048 px). (d) Dashboard menu =
+    swipeable pill strip that scrolls the active entry into view; the wizard names only the current step. (e) Admin ≤ 860 px:
+    sidebar is an off-canvas drawer with backdrop (closes on navigation, RTL aware); `useTablePin()` unpins the six
+    `fixed="right"` action columns there. (f) `/for-agents` grid `minmax(0, 1fr)` (a long `<pre>` widened the column to
+    756 px), Markdown tables keep 120 px columns and scroll, `.grid-form` stacks, dialogs/message boxes capped to the screen,
+    16 px inputs (no iOS focus zoom), long checkbox/radio labels wrap — **Element Plus injects its component CSS after
+    `styles/index.scss`, so equal-specificity overrides lose: double the class (`.el-checkbox.el-checkbox`)**. New
+    `src/composables/use-media-query.ts` (`useMediaQuery`, `useTablePin`) + 3 tests → frontend 119. Verified at 360 / 390 /
+    1280 px, in es / de / ar (RTL), signed in as demo and admin, locally (dev server + nginx image) and on production.
+    Headless notes: localStorage written just before `chrome.kill()` is not flushed — switch language and `location.reload()`
+    inside one session; a reused `--user-data-dir` keeps the previous sign-in.
 
 ## 12. Where things stand (2026-09-14)
 
@@ -614,6 +634,7 @@ the migration was regenerated after the build.
 - Redeploy: `SSH_KEY=~/.ssh/LightsailDefaultKey-eu-central-1.pem deploy/deploy.sh` from the project root.
 - Production content (2026-09-14): 17 published apps (6 with Windows builds, 1 Android, rest Linux; all MIT, all Claude-built), 3 drafts,
   4 members, 5 wanted requests, 0 ratings. Platform icons: real Windows (blue) / Apple logos since 2026-09-13. Google sign-in live; Brevo SMTP live with authenticated domain (2026-09-11).
+- Phone layout reworked and deployed 2026-09-21 (log 43); production that day: 24 apps, 10 members, 144 downloads, counter 24.5 M tokens / $147.
 - Deployed on 2026-09-11: review-page latency fix, conservative savings counter (`SavingsRealism` migration), scrollable admin
   sidebar, several install files per platform, editable install files on published versions (admin / trusted).
 - **Launch**: r/SideProject posted 2026-09-14 15:40 UTC (https://www.reddit.com/r/SideProject/comments/1wg6ucf/); HN
