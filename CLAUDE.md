@@ -624,6 +624,14 @@ the migration was regenerated after the build.
     1280 px, in es / de / ar (RTL), signed in as demo and admin, locally (dev server + nginx image) and on production.
     Headless notes: localStorage written just before `chrome.kill()` is not flushed — switch language and `location.reload()`
     inside one session; a reused `--user-data-dir` keeps the previous sign-in.
+44. Owner (2026-09-21): Admin › Apps / Users "filter elements look terrible" — Status + Uploader (Role + Status) were ~277 px
+    wide and **stacked** next to the search box. Same cause as the checkbox trap in log 43: the `.f-xs/.f-sm/.f-md/.f-range`
+    width helpers in `styles/index.scss` lose against Element Plus' later-injected `.el-select, .el-input { width: 100% }`
+    (equal specificity), so each control filled the flex row. Fix (b2d776d, deployed): helpers written as doubled classes
+    (`.f-sm.f-sm { width: 180px }`; `.f-range` sets `--el-date-editor-daterange-width`, the date editor ignores `width`);
+    `AdminDataTable` ≤ 640 px: search on a full row, filters share the next row with the refresh button (radio groups keep
+    their natural size). Affects Apps, Users, Jobs, Audit log. Seen in passing, not fixed: in Arabic (RTL) the pinned action
+    column of admin tables is clipped at the left edge (Element Plus fixed columns + RTL).
 
 ## 12. Where things stand (2026-09-14)
 
