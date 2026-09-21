@@ -14,6 +14,7 @@ export default {
   signup: '注册',
   logout: '退出登录',
   about: '关于',
+  menu: '菜单',
   language: '语言',
   light_theme: '浅色主题',
   dark_theme: '深色主题',

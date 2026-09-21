@@ -14,6 +14,7 @@ export default {
   signup: 'Регистрация',
   logout: 'Выйти',
   about: 'О проекте',
+  menu: 'Меню',
   language: 'Язык',
   light_theme: 'Светлая тема',
   dark_theme: 'Тёмная тема',

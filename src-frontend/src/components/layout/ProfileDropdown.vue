@@ -58,4 +58,9 @@ async function onCommand(cmd: string) {
     display: none;
   }
 }
+@media (max-width: 640px) {
+  .profile {
+    gap: 2px;
+  }
+}
 </style>

@@ -29,6 +29,8 @@ export default {
   savings_energy: 'Energía',
   savings_downloads: 'Descargas',
   results_count: '{n} aplicaciones',
+  filters: 'Filtros',
+  show_results: 'Mostrar {n} apps',
   mode_used: 'modo de búsqueda: {mode}',
   no_results_title: 'Nada encontrado… todavía',
   no_results_text: 'Nadie ha publicado esto todavía. Publícalo en el tablón de solicitudes para que la gente y los agentes sepan que se necesita, o publica el tuyo.',

@@ -29,6 +29,8 @@ export default {
   savings_energy: 'Énergie',
   savings_downloads: 'Téléchargements',
   results_count: '{n} applications',
+  filters: 'Filtres',
+  show_results: 'Afficher {n} applications',
   mode_used: 'mode de recherche : {mode}',
   no_results_title: 'Rien trouvé — pour le moment',
   no_results_text: "Personne n'a encore publié cela. Publiez une demande pour que les internautes et les agents sachent qu'elle est nécessaire, ou publiez la vôtre.",

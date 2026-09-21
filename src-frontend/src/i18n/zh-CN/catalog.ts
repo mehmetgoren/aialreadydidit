@@ -29,6 +29,8 @@ export default {
   savings_energy: '能源',
   savings_downloads: '下载量',
   results_count: '{n} 个应用',
+  filters: '筛选',
+  show_results: '显示 {n} 个应用',
   mode_used: '搜索模式：{mode}',
   no_results_title: '暂时没有找到',
   no_results_text: '还没有人发布过这个。把它发到心愿单上，让人们和智能体知道有这个需求，或者自己发布一个。',

@@ -9,6 +9,9 @@ import type { AdminAppRow } from '@/utils/models/admin-models'
 import type { Paged } from '@/utils/models/common-models'
 import { assetUrl, confirmX, notifyError, notifyS } from '@/utils/tools'
 import { formatDate, formatNumber } from '@/utils/format'
+import { useTablePin } from '@/composables/use-media-query'
+
+const pin = useTablePin()
 
 const { t } = useI18n()
 const service = new AdminAppsService()
@@ -52,7 +55,7 @@ async function action(row: AdminAppRow, a: 'unlist' | 'restore' | 'remove' | 'fe
       <ElTableColumn :label="t('adm_embedding')" width="90" align="center"><template #default="{ row }"><ElTag :type="row.hasEmbedding && !row.embeddingStale ? 'success' : 'warning'" size="small">{{ row.hasEmbedding ? (row.embeddingStale ? t('adm_stale') : 'ok') : '—' }}</ElTag></template></ElTableColumn>
       <ElTableColumn :label="t('adm_reports')" width="80" align="center"><template #default="{ row }"><ElTag v-if="row.openReports" type="danger" size="small">{{ row.openReports }}</ElTag><span v-else class="gm-muted">0</span></template></ElTableColumn>
       <ElTableColumn prop="updated" :label="t('updated')" width="110" sortable="custom"><template #default="{ row }">{{ formatDate(row.updatedAt) }}</template></ElTableColumn>
-      <ElTableColumn :label="t('actions')" width="200" align="right" fixed="right">
+      <ElTableColumn :label="t('actions')" width="200" align="right" :fixed="pin">
         <template #default="{ row }">
           <ElDropdown trigger="click" @command="action(row as AdminAppRow, $event)">
             <ElButton size="small">{{ t('actions') }} <ElIcon><ArrowDown /></ElIcon></ElButton>

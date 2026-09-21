@@ -9,6 +9,9 @@ import { AdminModerationService } from '@/utils/services/admin-service'
 import type { Paged } from '@/utils/models/common-models'
 import { formatDateTime } from '@/utils/format'
 import { assetUrl } from '@/utils/tools'
+import { useTablePin } from '@/composables/use-media-query'
+
+const pin = useTablePin()
 
 const { t } = useI18n()
 const route = useRoute()
@@ -53,7 +56,7 @@ function fetchPage(query: Record<string, unknown>) {
       <ElTableColumn :label="t('screenshots')" prop="screenshotCount" width="90" align="center" />
       <ElTableColumn :label="t('adm_reports')" width="80" align="center"><template #default="{ row }"><ElTag v-if="row.openReports" type="danger" size="small">{{ row.openReports }}</ElTag><span v-else class="gm-muted">0</span></template></ElTableColumn>
       <ElTableColumn :label="t('submitted')" width="150"><template #default="{ row }">{{ formatDateTime(row.submittedAt) }}</template></ElTableColumn>
-      <ElTableColumn width="100" align="right" fixed="right"><template #default="{ row }"><ElButton size="small" type="primary" @click="$router.push(`/admin/moderation/${row.appId}`)">{{ t('adm_review') }}</ElButton></template></ElTableColumn>
+      <ElTableColumn width="100" align="right" :fixed="pin"><template #default="{ row }"><ElButton size="small" type="primary" @click="$router.push(`/admin/moderation/${row.appId}`)">{{ t('adm_review') }}</ElButton></template></ElTableColumn>
     </AdminDataTable>
   </AdminPage>
 </template>

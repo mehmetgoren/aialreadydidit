@@ -29,6 +29,8 @@ export default {
   savings_energy: 'Enerji',
   savings_downloads: 'İndirme',
   results_count: '{n} uygulama',
+  filters: 'Filtreler',
+  show_results: '{n} uygulamayı göster',
   mode_used: 'arama modu: {mode}',
   no_results_title: 'Henüz bulunamadı',
   no_results_text: 'Bunu henüz kimse yayınlamamış. İhtiyacın bilinsin diye aranıyor panosuna ekle ya da kendin yayınla.',

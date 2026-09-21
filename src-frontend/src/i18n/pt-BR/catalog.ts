@@ -29,6 +29,8 @@ export default {
   savings_energy: 'Energia',
   savings_downloads: 'Downloads',
   results_count: '{n} apps',
+  filters: 'Filtros',
+  show_results: 'Mostrar {n} apps',
   mode_used: 'modo de busca: {mode}',
   no_results_title: 'Nada encontrado — ainda',
   no_results_text: 'Ninguém publicou isso ainda. Poste no mural de procurados para que pessoas e agentes saibam que é necessário, ou publique o seu próprio.',

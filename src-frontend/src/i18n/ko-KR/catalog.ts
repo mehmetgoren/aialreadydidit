@@ -29,6 +29,8 @@ export default {
   savings_energy: '에너지',
   savings_downloads: '다운로드',
   results_count: '앱 {n}개',
+  filters: '필터',
+  show_results: '앱 {n}개 보기',
   mode_used: '검색 모드: {mode}',
   no_results_title: '아직 검색 결과가 없습니다',
   no_results_text: '아직 아무도 게시하지 않았습니다. 요청 게시판에 올려 사람들과 에이전트에게 필요성을 알리거나, 직접 게시해 보세요.',

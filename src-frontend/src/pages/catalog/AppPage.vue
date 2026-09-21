@@ -180,7 +180,7 @@ function openReport(ratingId: number | null = null) {
           </main>
 
           <aside class="app-page__side">
-            <section class="gm-card app-page__box">
+            <section class="gm-card app-page__box app-page__box--download">
               <h3>{{ t('download') }}</h3>
               <DownloadButtons v-if="files.length" :slug="app.slug" :files="files" :version="app.latestVersion?.version ?? ''" @downloaded="onDownloaded" />
               <div v-else class="gm-muted">{{ t('no_files_yet') }}</div>
@@ -365,8 +365,40 @@ function openReport(ratingId: number | null = null) {
     align-items: center;
     color: var(--gm-text);
   }
+  // one column: the download box jumps above the gallery / README, the other side boxes follow the content
   @media (max-width: 900px) {
-    &__grid { grid-template-columns: 1fr; }
+    &__grid {
+      display: flex;
+      flex-direction: column;
+      align-items: stretch; // the desktop grid uses `start`, which would size the column items to their content
+      gap: 0;
+    }
+    &__side { display: contents; }
+    &__main {
+      order: 2;
+      margin-bottom: 18px;
+    }
+    &__box { order: 3; }
+    &__box--download { order: 1; }
+  }
+  @media (max-width: 640px) {
+    &__head {
+      gap: 12px 14px;
+      padding: 14px;
+      h1 { font-size: 21px; }
+    }
+    &__icon {
+      width: 60px;
+      height: 60px;
+      border-radius: 14px;
+      &--letter { font-size: 26px; }
+    }
+    &__titles {
+      flex: 1 1 0;
+      min-width: 0;
+    }
+    &__short { font-size: 14px; }
+    &__actions { width: 100%; }
   }
 }
 </style>

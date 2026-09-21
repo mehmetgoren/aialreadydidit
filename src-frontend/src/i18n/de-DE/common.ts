@@ -14,6 +14,7 @@ export default {
   signup: 'Registrieren',
   logout: 'Abmelden',
   about: 'Über uns',
+  menu: 'Menü',
   language: 'Sprache',
   light_theme: 'Helles Design',
   dark_theme: 'Dunkles Design',

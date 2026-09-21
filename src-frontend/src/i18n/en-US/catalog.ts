@@ -29,6 +29,8 @@ export default {
   savings_energy: 'Energy',
   savings_downloads: 'Downloads',
   results_count: '{n} apps',
+  filters: 'Filters',
+  show_results: 'Show {n} apps',
   mode_used: 'search mode: {mode}',
   no_results_title: 'Nothing found — yet',
   no_results_text: 'Nobody has published this yet. Post it on the wanted board so people and agents know it is needed, or publish your own.',

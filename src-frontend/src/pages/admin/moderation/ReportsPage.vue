@@ -9,6 +9,9 @@ import type { AdminReportDto } from '@/utils/models/admin-models'
 import type { Paged } from '@/utils/models/common-models'
 import { enableAfter, notifyError, notifyS } from '@/utils/tools'
 import { formatDateTime } from '@/utils/format'
+import { useTablePin } from '@/composables/use-media-query'
+
+const pin = useTablePin()
 
 const { t } = useI18n()
 const service = new AdminReportsService()
@@ -60,7 +63,7 @@ async function save() {
       <ElTableColumn :label="t('adm_reporter')" width="140"><template #default="{ row }">{{ row.reporterUsername ?? row.reporterEmail ?? t('anonymous') }}</template></ElTableColumn>
       <ElTableColumn :label="t('status')" width="110"><template #default="{ row }"><StatusTag :value="row.status" /></template></ElTableColumn>
       <ElTableColumn :label="t('date')" width="150"><template #default="{ row }">{{ formatDateTime(row.createdAt) }}</template></ElTableColumn>
-      <ElTableColumn width="120" align="right" fixed="right"><template #default="{ row }"><ElButton size="small" type="primary" @click="open(row as AdminReportDto)">{{ t('adm_resolve') }}</ElButton></template></ElTableColumn>
+      <ElTableColumn width="120" align="right" :fixed="pin"><template #default="{ row }"><ElButton size="small" type="primary" @click="open(row as AdminReportDto)">{{ t('adm_resolve') }}</ElButton></template></ElTableColumn>
     </AdminDataTable>
     <ElDialog v-model="dialog" :title="`${t('adm_resolve')} #${current?.id}`" width="520px">
       <p v-if="current"><strong>{{ current.appName }}</strong> · {{ t(`report_reason_${current.reason}`) }}<br /><span class="gm-muted">{{ current.details }}</span></p>

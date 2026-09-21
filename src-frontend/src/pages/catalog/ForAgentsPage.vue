@@ -123,7 +123,7 @@ async function check() {
   max-width: 1000px;
   &__lead { font-size: 16px; color: var(--gm-text-muted); }
   &__box { padding: 20px 22px; margin-top: 16px; h2 { margin: 0 0 8px; font-size: 18px; } }
-  &__cols { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  &__cols { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 16px; } // minmax(0, …): a long <pre> must not widen the column
   &__result { margin-top: 14px; p { margin: 10px 0; } ul { margin: 0; padding-left: 18px; } }
   &__flow { padding-left: 20px; line-height: 1.8; margin: 0; }
   &__snippet {
@@ -136,6 +136,10 @@ async function check() {
   }
   &__endpoints { list-style: none; padding: 0; margin: 10px 0; li { display: flex; flex-direction: column; gap: 2px; padding: 6px 0; border-top: 1px solid var(--gm-border); font-size: 12px; } code { font-size: 12px; } }
   &__keys { display: flex; justify-content: space-between; align-items: center; gap: 16px; }
-  @media (max-width: 860px) { &__cols { grid-template-columns: 1fr; } }
+  @media (max-width: 860px) { &__cols { grid-template-columns: minmax(0, 1fr); } }
+  @media (max-width: 640px) {
+    &__box { padding: 16px; overflow-wrap: anywhere; }
+    &__keys { flex-direction: column; align-items: stretch; }
+  }
 }
 </style>

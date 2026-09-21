@@ -29,6 +29,8 @@ export default {
   savings_energy: 'الطاقة',
   savings_downloads: 'التنزيلات',
   results_count: '{n} تطبيق',
+  filters: 'عوامل التصفية',
+  show_results: 'عرض {n} تطبيقًا',
   mode_used: 'وضع البحث: {mode}',
   no_results_title: 'لم يُعثر على شيء — بعد',
   no_results_text: 'لم ينشر أحد هذا بعد. انشره في لوحة المطلوبات ليعلم الأشخاص والوكلاء أنه مطلوب، أو انشر نسختك الخاصة.',

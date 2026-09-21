@@ -14,6 +14,7 @@ export default {
   signup: 'إنشاء حساب',
   logout: 'تسجيل الخروج',
   about: 'حول',
+  menu: 'القائمة',
   language: 'اللغة',
   light_theme: 'المظهر الفاتح',
   dark_theme: 'المظهر الداكن',

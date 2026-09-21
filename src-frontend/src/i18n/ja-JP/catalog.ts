@@ -29,6 +29,8 @@ export default {
   savings_energy: 'エネルギー',
   savings_downloads: 'ダウンロード数',
   results_count: '{n}件のアプリ',
+  filters: '絞り込み',
+  show_results: '{n} 件のアプリを表示',
   mode_used: '検索モード: {mode}',
   no_results_title: 'まだ見つかりません',
   no_results_text: 'まだ誰もこれを公開していません。募集掲示板に投稿して人やエージェントに必要とされていることを知らせるか、自分で公開してください。',

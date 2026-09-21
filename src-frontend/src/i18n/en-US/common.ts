@@ -14,6 +14,7 @@ export default {
   signup: 'Sign up',
   logout: 'Sign out',
   about: 'About',
+  menu: 'Menu',
   language: 'Language',
   light_theme: 'Light theme',
   dark_theme: 'Dark theme',

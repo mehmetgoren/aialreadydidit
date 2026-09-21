@@ -10,6 +10,9 @@ import type { JobDto } from '@/utils/models/admin-models'
 import type { Paged } from '@/utils/models/common-models'
 import { confirmX, notifyError, notifyS } from '@/utils/tools'
 import { formatDateTime } from '@/utils/format'
+import { useTablePin } from '@/composables/use-media-query'
+
+const pin = useTablePin()
 
 const { t } = useI18n()
 const service = new AdminSystemService()
@@ -46,7 +49,7 @@ async function maintenance(task: string) {
       <ElTableColumn :label="t('adm_run_at')" width="160"><template #default="{ row }">{{ formatDateTime(row.runAt) }}</template></ElTableColumn>
       <ElTableColumn :label="t('adm_finished')" width="160"><template #default="{ row }">{{ row.finishedAt ? formatDateTime(row.finishedAt) : '—' }}</template></ElTableColumn>
       <ElTableColumn prop="lastError" :label="t('adm_error')" min-width="220" show-overflow-tooltip />
-      <ElTableColumn width="200" align="right" fixed="right"><template #default="{ row }"><ElButton size="small" text @click="detail = row as JobDto">{{ t('detail') }}</ElButton><ElButton v-if="row.status === 'failed' || row.status === 'cancelled'" size="small" @click="retry(row as JobDto)">{{ t('adm_retry') }}</ElButton><ElButton v-if="row.status === 'queued'" size="small" type="danger" text @click="cancel(row as JobDto)">{{ t('cancel') }}</ElButton></template></ElTableColumn>
+      <ElTableColumn width="200" align="right" :fixed="pin"><template #default="{ row }"><ElButton size="small" text @click="detail = row as JobDto">{{ t('detail') }}</ElButton><ElButton v-if="row.status === 'failed' || row.status === 'cancelled'" size="small" @click="retry(row as JobDto)">{{ t('adm_retry') }}</ElButton><ElButton v-if="row.status === 'queued'" size="small" type="danger" text @click="cancel(row as JobDto)">{{ t('cancel') }}</ElButton></template></ElTableColumn>
     </AdminDataTable>
     <ElDialog :model-value="Boolean(detail)" :title="`#${detail?.id} ${detail?.type}`" width="700px" @close="detail = null"><AdminJsonView :value="detail?.payloadJson" /><pre v-if="detail?.lastError" class="err">{{ detail.lastError }}</pre></ElDialog>
   </AdminPage>

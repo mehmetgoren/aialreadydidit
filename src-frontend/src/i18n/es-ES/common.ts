@@ -14,6 +14,7 @@ export default {
   signup: 'Registrarse',
   logout: 'Cerrar sesión',
   about: 'Acerca de',
+  menu: 'Menú',
   language: 'Idioma',
   light_theme: 'Tema claro',
   dark_theme: 'Tema oscuro',

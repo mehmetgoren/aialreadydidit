@@ -5,6 +5,7 @@ import { useCategoryStore, useCategoryName } from '@/stores/category-store'
 import { useCommonStore } from '@/stores/common-store'
 import { useSiteStore } from '@/stores/site-store'
 import { useAppBrowser } from './use-app-browser'
+import { useMediaQuery } from '@/composables/use-media-query'
 import FilterSidebar from '@/components/catalog/FilterSidebar.vue'
 import AppGrid from '@/components/catalog/AppGrid.vue'
 import PagePagination from '@/components/common/PagePagination.vue'
@@ -43,6 +44,18 @@ watch(
   { immediate: true },
 )
 
+// phones: the sidebar would push the results two screens down, so it lives in a drawer behind a "Filters" button
+const narrow = useMediaQuery('(max-width: 860px)')
+const filtersOpen = ref(false)
+const activeFilters = computed(() => {
+  const v = query.value
+  const picked = [v.platform, v.license, v.model, v.minRating, v.tags, props.fixedCategory ? undefined : v.category]
+  return picked.filter((x) => x !== undefined && x !== null && x !== '').length
+})
+watch(narrow, (v) => {
+  if (!v) filtersOpen.value = false
+})
+
 function submit() {
   update({ q: localQ.value.trim() || undefined, page: 1 })
 }
@@ -57,18 +70,21 @@ function submit() {
           <template #append><ElButton type="primary" native-type="submit">{{ t('search') }}</ElButton></template>
         </ElInput>
       </form>
-      <ElRadioGroup v-if="query.q && site.semantic" :model-value="query.mode ?? 'hybrid'" size="small" @update:model-value="update({ mode: $event as never, page: 1 })">
+      <ElRadioGroup v-if="query.q && site.semantic" class="search__mode" :model-value="query.mode ?? 'hybrid'" size="small" @update:model-value="update({ mode: $event as never, page: 1 })">
         <ElRadioButton value="hybrid">{{ t('mode_hybrid') }}</ElRadioButton>
         <ElRadioButton value="semantic">{{ t('mode_semantic') }}</ElRadioButton>
         <ElRadioButton value="keyword">{{ t('mode_keyword') }}</ElRadioButton>
       </ElRadioGroup>
+      <ElButton v-if="narrow" class="search__filters-btn" @click="filtersOpen = true">
+        <ElIcon><Filter /></ElIcon>{{ t('filters') }}<span v-if="activeFilters" class="search__filters-count">{{ activeFilters }}</span>
+      </ElButton>
       <ElSelect :model-value="query.sort ?? (query.q ? 'relevance' : 'downloads')" size="default" class="search__sort" @update:model-value="update({ sort: $event, page: 1 })">
         <ElOption v-for="o in sortOptions" :key="o.value" :value="o.value" :label="o.label" />
       </ElSelect>
     </div>
 
     <div class="search__layout">
-      <FilterSidebar :query="query" :category="category" :facets="result" @update="update" />
+      <FilterSidebar v-if="!narrow" :query="query" :category="category" :facets="result" @update="update" />
       <div class="search__results">
         <div class="search__meta gm-muted">
           <span v-if="!loading">{{ t('results_count', { n: result.page.totalCount }) }}</span>
@@ -82,6 +98,15 @@ function submit() {
         <PagePagination :page="result.page.page" :page-size="result.page.pageSize" :total="result.page.totalCount" @update:page="update({ page: $event })" />
       </div>
     </div>
+
+    <ElDrawer v-if="narrow" v-model="filtersOpen" direction="btt" size="82%" :title="t('filters')" class="search__drawer" append-to-body>
+      <FilterSidebar :query="query" :category="category" :facets="result" @update="update" />
+      <template #footer>
+        <ElButton type="primary" size="large" class="search__drawer-done" :loading="loading" @click="filtersOpen = false">
+          {{ t('show_results', { n: result.page.totalCount }) }}
+        </ElButton>
+      </template>
+    </ElDrawer>
   </div>
 </template>
 
@@ -117,10 +142,75 @@ function submit() {
     font-size: 13px;
     margin-bottom: 10px;
   }
+  &__filters-count {
+    display: inline-grid;
+    place-items: center;
+    min-width: 18px;
+    height: 18px;
+    margin-inline-start: 6px;
+    padding: 0 5px;
+    border-radius: 9px;
+    background: var(--gm-primary);
+    color: #fff;
+    font-size: 11px;
+    font-weight: 700;
+  }
   @media (max-width: 860px) {
     &__layout {
       grid-template-columns: 1fr;
     }
+    &__bar {
+      gap: 10px;
+    }
+    &__form {
+      flex: 1 1 100%;
+      min-width: 0;
+    }
+    // the mode switch gets its own full-width row so "Filters" and the sort select share the next one evenly
+    &__mode {
+      display: flex;
+      flex: 1 1 100%;
+      :deep(.el-radio-button) {
+        flex: 1;
+      }
+      :deep(.el-radio-button__inner) {
+        width: 100%;
+      }
+    }
+    &__filters-btn {
+      flex: 1 1 0;
+      .el-icon {
+        margin-inline-end: 6px;
+      }
+    }
+    &__sort {
+      flex: 1 1 0;
+      width: auto;
+      min-width: 0;
+    }
+  }
+}
+</style>
+
+<style lang="scss">
+// the drawer is teleported to <body>, so it cannot be reached from the scoped block
+.search__drawer {
+  border-radius: 16px 16px 0 0;
+  .el-drawer__header {
+    margin-bottom: 0;
+    padding: 16px 16px 8px;
+    font-weight: 700;
+    color: var(--gm-text);
+  }
+  .el-drawer__body {
+    padding: 8px 16px 16px;
+  }
+  .el-drawer__footer {
+    padding: 10px 16px calc(12px + env(safe-area-inset-bottom));
+    border-top: 1px solid var(--gm-border);
+  }
+  .search__drawer-done {
+    width: 100%;
   }
 }
 </style>

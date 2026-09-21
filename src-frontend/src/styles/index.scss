@@ -212,6 +212,12 @@ html.dark .gm-table .el-table__header th {
   th:first-child, td:first-child { white-space: nowrap; } // short label columns must not wrap letter by letter
   blockquote { margin: 0.8em 0; padding: 4px 14px; border-left: 3px solid var(--gm-primary); color: var(--gm-text-muted); }
   ul, ol { padding-left: 22px; }
+  // phones: let wide tables scroll sideways instead of squeezing every column to a few characters
+  @media (max-width: 640px) {
+    th, td { min-width: 120px; }
+    th:first-child, td:first-child { min-width: 0; }
+    td code { word-break: normal; overflow-wrap: anywhere; }
+  }
 }
 
 /* form helpers used by admin dialogs */
@@ -220,6 +226,9 @@ html.dark .gm-table .el-table__header th {
   grid-template-columns: 1fr 1fr;
   column-gap: 16px;
   .full { grid-column: 1 / -1; }
+  @media (max-width: 640px) {
+    grid-template-columns: 1fr;
+  }
 }
 .f-xs { width: 130px; }
 .f-sm { width: 170px; }
@@ -242,4 +251,38 @@ html.dark .gm-table .el-table__header th {
 [dir='rtl'] {
   .catnav__all { border-right: 0; border-left: 1px solid var(--gm-border); padding: 0 0 0 10px; margin: 0 0 0 6px; }
   .el-breadcrumb__separator { transform: scaleX(-1); }
+}
+
+/* phones */
+@media (max-width: 640px) {
+  // Element Plus keeps checkbox / radio labels on one line; long sentences must wrap inside their card
+  // (doubled class: Element Plus injects its component CSS after this file, so equal specificity would lose)
+  .el-checkbox.el-checkbox,
+  .el-radio.el-radio {
+    height: auto;
+    min-height: 32px;
+    align-items: flex-start;
+    white-space: normal;
+  }
+  .el-checkbox__input,
+  .el-radio__input {
+    margin-top: 3px;
+  }
+  .el-checkbox__label,
+  .el-radio__label {
+    line-height: 1.4;
+  }
+  // dialogs and message boxes never wider than the screen
+  .el-dialog {
+    --el-dialog-width: calc(100vw - 24px) !important;
+    max-width: calc(100vw - 24px);
+  }
+  .el-message-box {
+    max-width: calc(100vw - 24px);
+  }
+  // 16px inputs stop iOS Safari from zooming the page on focus
+  .el-input__inner,
+  .el-textarea__inner {
+    font-size: 16px;
+  }
 }

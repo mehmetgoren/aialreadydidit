@@ -14,6 +14,7 @@ export default {
   signup: 'Inscription',
   logout: 'Déconnexion',
   about: 'À propos',
+  menu: 'Menu',
   language: 'Langue',
   light_theme: 'Thème clair',
   dark_theme: 'Thème sombre',

@@ -14,6 +14,7 @@ export default {
   signup: 'Kayıt ol',
   logout: 'Çıkış yap',
   about: 'Hakkında',
+  menu: 'Menü',
   language: 'Dil',
   light_theme: 'Açık tema',
   dark_theme: 'Koyu tema',

@@ -14,6 +14,7 @@ export default {
   signup: '회원가입',
   logout: '로그아웃',
   about: '소개',
+  menu: '메뉴',
   language: '언어',
   light_theme: '라이트 테마',
   dark_theme: '다크 테마',

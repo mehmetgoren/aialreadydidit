@@ -9,6 +9,9 @@ import type { AdminRequestDto } from '@/utils/models/admin-models'
 import type { Paged } from '@/utils/models/common-models'
 import { confirmX, notifyError, notifyS, promptX } from '@/utils/tools'
 import { formatDateTime } from '@/utils/format'
+import { useTablePin } from '@/composables/use-media-query'
+
+const pin = useTablePin()
 
 const { t } = useI18n()
 const service = new AdminRequestsService()
@@ -52,7 +55,7 @@ async function remove(r: AdminRequestDto) {
       <ElTableColumn :label="t('adm_requester')" width="140"><template #default="{ row }">{{ row.requesterUsername ?? t('an_agent') }}</template></ElTableColumn>
       <ElTableColumn :label="t('status')" width="120"><template #default="{ row }"><StatusTag :value="row.status" /><RouterLink v-if="row.fulfilledByAppSlug" :to="`/app/${row.fulfilledByAppSlug}`" class="gm-link" target="_blank"> {{ row.fulfilledByAppName }}</RouterLink></template></ElTableColumn>
       <ElTableColumn :label="t('date')" width="150"><template #default="{ row }">{{ formatDateTime(row.createdAt) }}</template></ElTableColumn>
-      <ElTableColumn width="260" align="right" fixed="right">
+      <ElTableColumn width="260" align="right" :fixed="pin">
         <template #default="{ row }">
           <ElButton size="small" type="success" plain @click="setStatus(row as AdminRequestDto, 'fulfilled')">{{ t('status_fulfilled') }}</ElButton>
           <ElButton size="small" @click="setStatus(row as AdminRequestDto, row.status === 'closed' ? 'open' : 'closed')">{{ row.status === 'closed' ? t('reopen') : t('close') }}</ElButton>

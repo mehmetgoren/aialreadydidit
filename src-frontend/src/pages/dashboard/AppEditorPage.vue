@@ -160,7 +160,7 @@ void pending
       </ElAlert>
 
       <ElSteps :active="step" finish-status="success" align-center class="editor__steps">
-        <ElStep v-for="(s, i) in steps" :key="s" :title="t(`step_${s}`)" :status="stepIssues[s] ? 'error' : i < step ? 'success' : i === step ? 'process' : 'wait'" @click="step = i" />
+        <ElStep v-for="(s, i) in steps" :key="s" :title="t(`step_${s}`)" :class="{ 'is-current': i === step }" :status="stepIssues[s] ? 'error' : i < step ? 'success' : i === step ? 'process' : 'wait'" @click="step = i" />
       </ElSteps>
 
       <div v-if="draft" class="editor__body">
@@ -184,5 +184,22 @@ void pending
   &__reason { color: var(--el-color-danger); }
   &__actions { display: flex; gap: 8px; flex-wrap: wrap; .el-button + .el-button { margin-left: 0; } }
   &__steps { margin: 14px 0 22px; :deep(.el-step) { cursor: pointer; } }
+  // phones: five titles do not fit side by side — keep the circles and name only the current step
+  @media (max-width: 640px) {
+    padding-left: 10px;
+    padding-right: 10px;
+    &__steps {
+      margin: 12px 0 18px;
+      :deep(.el-step__title) {
+        display: none;
+        font-size: 13px;
+        line-height: 1.3;
+        white-space: nowrap;
+      }
+      :deep(.el-step__title.is-process),
+      :deep(.el-step.is-current .el-step__title) { display: block; }
+      :deep(.el-step__main) { overflow: visible; }
+    }
+  }
 }
 </style>

@@ -14,6 +14,7 @@ export default {
   signup: 'Cadastrar',
   logout: 'Sair',
   about: 'Sobre',
+  menu: 'Menu',
   language: 'Idioma',
   light_theme: 'Tema claro',
   dark_theme: 'Tema escuro',

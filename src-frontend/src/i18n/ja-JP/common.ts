@@ -14,6 +14,7 @@ export default {
   signup: '新規登録',
   logout: 'ログアウト',
   about: '概要',
+  menu: 'メニュー',
   language: '言語',
   light_theme: 'ライトテーマ',
   dark_theme: 'ダークテーマ',

@@ -29,6 +29,8 @@ export default {
   savings_energy: 'Energie',
   savings_downloads: 'Downloads',
   results_count: '{n} Apps',
+  filters: 'Filter',
+  show_results: '{n} Apps anzeigen',
   mode_used: 'Suchmodus: {mode}',
   no_results_title: 'Noch nichts gefunden',
   no_results_text: 'Das hat noch niemand veröffentlicht. Posten Sie es auf der Wanted-Pinnwand, damit Menschen und Agenten wissen, dass es gebraucht wird, oder veröffentlichen Sie Ihre eigene Version.',

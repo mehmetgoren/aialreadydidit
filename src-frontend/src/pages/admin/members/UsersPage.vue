@@ -8,6 +8,9 @@ import type { AdminUserRow, RoleDto } from '@/utils/models/admin-models'
 import type { Paged } from '@/utils/models/common-models'
 import { confirmX, notifyError, notifyS } from '@/utils/tools'
 import { formatDate, formatDateTime } from '@/utils/format'
+import { useTablePin } from '@/composables/use-media-query'
+
+const pin = useTablePin()
 
 const { t } = useI18n()
 const service = new AdminIdentityService()
@@ -42,7 +45,7 @@ async function toggleBan(row: AdminUserRow) {
       <ElTableColumn prop="lastLogin" :label="t('last_login')" width="150" sortable="custom"><template #default="{ row }">{{ row.lastLoginAt ? formatDateTime(row.lastLoginAt) : '—' }}</template></ElTableColumn>
       <ElTableColumn prop="created" :label="t('created')" width="110" sortable="custom"><template #default="{ row }">{{ formatDate(row.createdAt) }}</template></ElTableColumn>
       <ElTableColumn :label="t('status')" width="100"><template #default="{ row }"><ElTag v-if="row.isBanned" type="danger" size="small">{{ t('banned') }}</ElTag><ElTag v-else-if="!row.isActive" type="info" size="small">{{ t('inactive') }}</ElTag><ElTag v-else type="success" size="small">{{ t('active') }}</ElTag></template></ElTableColumn>
-      <ElTableColumn width="170" align="right" fixed="right"><template #default="{ row }"><ElButton size="small" type="primary" @click="$router.push(`/admin/users/${row.id}`)">{{ t('detail') }}</ElButton><ElButton size="small" :type="row.isBanned ? 'success' : 'danger'" plain @click="toggleBan(row as AdminUserRow)">{{ row.isBanned ? t('unban') : t('ban') }}</ElButton></template></ElTableColumn>
+      <ElTableColumn width="170" align="right" :fixed="pin"><template #default="{ row }"><ElButton size="small" type="primary" @click="$router.push(`/admin/users/${row.id}`)">{{ t('detail') }}</ElButton><ElButton size="small" :type="row.isBanned ? 'success' : 'danger'" plain @click="toggleBan(row as AdminUserRow)">{{ row.isBanned ? t('unban') : t('ban') }}</ElButton></template></ElTableColumn>
     </AdminDataTable>
   </AdminPage>
 </template>

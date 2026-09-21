@@ -11,6 +11,7 @@ import { ADMIN_MENU } from '@/pages/admin/admin-menu'
 import { AdminPanelService } from '@/utils/services/admin-service'
 import type { MenuItem } from '@/utils/models/common-models'
 import type { AdminMenuItemDto } from '@/utils/models/admin-models'
+import { useMediaQuery } from '@/composables/use-media-query'
 
 /** Prototype MainLayout: header + drawer with LeftMenu + router-view. Menu comes from the API (role → menus). */
 const { t, locale } = useI18n()
@@ -19,6 +20,13 @@ const route = useRoute()
 const user = useUserStore()
 const common = useCommonStore()
 const collapsed = ref(false)
+// phones / small tablets: the sidebar is an off-canvas drawer opened from the header button
+const narrow = useMediaQuery('(max-width: 860px)')
+const drawerOpen = ref(false)
+function toggleMenu() {
+  if (narrow.value) drawerOpen.value = !drawerOpen.value
+  else collapsed.value = !collapsed.value
+}
 const menu = ref<MenuItem[]>(ADMIN_MENU)
 
 function toMenu(items: AdminMenuItemDto[]): MenuItem[] {
@@ -37,6 +45,7 @@ onMounted(async () => {
 watch(
   () => route.fullPath,
   () => {
+    drawerOpen.value = false
     const key = route.meta.titleKey
     if (key) {
       common.setActiveMenu({ label: t(key), route: route.path })
@@ -58,26 +67,27 @@ async function onCommand(cmd: string) {
 </script>
 
 <template>
-  <ElContainer class="admin">
-    <ElAside :width="collapsed ? '64px' : '230px'" class="admin__aside">
+  <ElContainer class="admin" :class="{ 'admin--narrow': narrow, 'admin--drawer-open': narrow && drawerOpen }">
+    <div v-if="narrow && drawerOpen" class="admin__backdrop" @click="drawerOpen = false" />
+    <ElAside :width="narrow ? '264px' : collapsed ? '64px' : '230px'" class="admin__aside">
       <div class="admin__brand" @click="router.push('/admin')">
         <ElIcon :size="22"><Setting /></ElIcon>
-        <span v-show="!collapsed">{{ t('admin_panel') }}</span>
+        <span v-show="narrow || !collapsed">{{ t('admin_panel') }}</span>
       </div>
-      <div class="admin__menu"><LeftMenu :items="menu" :collapsed="collapsed" /></div>
+      <div class="admin__menu"><LeftMenu :items="menu" :collapsed="!narrow && collapsed" /></div>
     </ElAside>
     <ElContainer>
       <ElHeader class="admin__header">
         <div class="admin__left">
-          <ElButton text circle @click="collapsed = !collapsed">
-            <ElIcon :size="18"><component :is="collapsed ? 'Expand' : 'Fold'" /></ElIcon>
+          <ElButton text circle @click="toggleMenu">
+            <ElIcon :size="18"><component :is="(narrow ? !drawerOpen : collapsed) ? 'Expand' : 'Fold'" /></ElIcon>
           </ElButton>
           <span class="admin__title">{{ common.activeMenu?.label || t('admin_panel') }}</span>
         </div>
         <ElDropdown trigger="click" @command="onCommand">
           <span class="admin__user">
             <ElAvatar :size="28" :src="user.me?.avatarUrl || undefined">{{ user.displayName.slice(0, 1).toUpperCase() }}</ElAvatar>
-            <span>{{ user.displayName }}</span>
+            <span class="admin__user-name">{{ user.displayName }}</span>
             <ElIcon><ArrowDown /></ElIcon>
           </span>
           <template #dropdown>
@@ -156,5 +166,50 @@ async function onCommand(cmd: string) {
   &__main {
     overflow: auto;
   }
+  &__backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 29;
+    background: rgba(0, 0, 0, 0.45);
+  }
+  &--narrow {
+    .admin__aside {
+      position: fixed;
+      inset: 0 auto 0 0;
+      z-index: 30;
+      max-width: 84vw;
+      transform: translateX(-100%);
+      transition: transform 0.2s;
+      box-shadow: var(--gm-shadow-hover);
+    }
+    .admin__header {
+      padding: 0 10px;
+    }
+    .admin__left {
+      min-width: 0;
+    }
+    .admin__title {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .admin__user-name {
+      display: none;
+    }
+    .admin__main {
+      padding: 12px 10px;
+    }
+  }
+  &--drawer-open .admin__aside {
+    transform: none;
+  }
+}
+// RTL: the drawer slides in from the right
+[dir='rtl'] .admin--narrow .admin__aside {
+  inset: 0 0 0 auto;
+  transform: translateX(100%);
+}
+[dir='rtl'] .admin--drawer-open .admin__aside {
+  transform: none;
 }
 </style>
