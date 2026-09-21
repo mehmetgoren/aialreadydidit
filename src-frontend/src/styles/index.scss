@@ -230,10 +230,13 @@ html.dark .gm-table .el-table__header th {
     grid-template-columns: 1fr;
   }
 }
-.f-xs { width: 130px; }
-.f-sm { width: 170px; }
-.f-md { width: 220px; }
-.f-range { width: 260px; }
+// Width helpers for filter controls. Element Plus injects its component CSS after this file and sets
+// `.el-select` / `.el-input` to `width: 100%`, so a single class would lose on equal specificity (the filters then
+// stretched and stacked) — the doubled class wins regardless of the injection order.
+.f-xs.f-xs { width: 130px; }
+.f-sm.f-sm { width: 180px; }
+.f-md.f-md { width: 220px; }
+.f-range.f-range { --el-date-editor-daterange-width: 300px; flex: 0 0 auto; } // the date range editor takes its width from this variable
 .mr4 { margin-right: 4px; }
 .sub { font-size: 12px; color: var(--gm-text-muted); }
 

@@ -198,5 +198,24 @@ defineExpose({ reload, rows, loading })
   &__count {
     font-size: 12px;
   }
+  // phones: search on its own row, the filters share the next one with the refresh button
+  @media (max-width: 640px) {
+    &__search {
+      flex: 1 1 100%;
+      width: auto;
+    }
+    &__filters {
+      flex: 1 1 0;
+      min-width: 0;
+    }
+    & &__filters > :deep(:not(.el-radio-group)) {
+      flex: 1 1 120px;
+      width: auto;
+      min-width: 0;
+    }
+    &__spacer {
+      display: none;
+    }
+  }
 }
 </style>
